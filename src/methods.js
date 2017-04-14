@@ -1,3 +1,5 @@
+import Dom7 from './dom7-class';
+import $ from './$';
 import Utils from './utils';
 
 const Methods = {
@@ -514,7 +516,6 @@ const Methods = {
 
     for (let k = 0; k < args.length; k += 1) {
       newChild = args[k];
-
       for (let i = 0; i < this.length; i += 1) {
         if (typeof newChild === 'string') {
           const tempDiv = document.createElement('div');
