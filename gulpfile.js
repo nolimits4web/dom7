@@ -72,7 +72,7 @@
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('./dist/'))
         .on('end', function () {
-            gulp.src('./dist/framework7-vue.js')
+            gulp.src('./dist/dom7.js')
                 .pipe(sourcemaps.init())
                 .pipe(uglify())
                 .pipe(header(banner, {
