@@ -1,7 +1,7 @@
 {
   "name": "dom7",
   "version": "1.6.0",
-  "description": "Minimalist JavaScript library for DOM manipulation, with a jQuery-compatible API",
+  "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
   "repository": {
     "type": "git",

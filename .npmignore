@@ -1,6 +1,8 @@
-*
-!README.md
-!LICENSE
-!dist/dom7.js
-!dist/dom7.min.js
-!src/*.js
+.git
+build
+node_modules
+npm-debug.log
+index.html
+.editorconfig
+.eslintrc.js
+gulpfile.js
