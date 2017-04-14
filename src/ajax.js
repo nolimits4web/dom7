@@ -1,3 +1,15 @@
+import $ from './$';
+import Utils from './utils';
+
+// Global Ajax Setup
+const globalAjaxOptions = {};
+$.ajaxSetup = function ajaxSetup(options) {
+  if (options.type && !options.method) options.method = options.type;
+  Utils.each(options, (optionName, optionValue) => {
+    globalAjaxOptions[optionName] = optionValue;
+  });
+};
+
 // Ajax
 let jsonpRequests = 0;
 function ajax(options) {
@@ -18,16 +30,14 @@ function ajax(options) {
   };
   const callbacks = ['beforeSend', 'error', 'complete', 'success', 'statusCode'];
 
-  const $ = Dom7;
-
   // For jQuery guys
   if (options.type) options.method = options.type;
 
   // Global options
-  const globals = $.globalAjaxOptions;
+  const globals = globalAjaxOptions;
 
   // Merge global and defaults
-  $.each(globals, (globalOptionName, globalOptionValue) => {
+  Utils.each(globals, (globalOptionName, globalOptionValue) => {
     if (callbacks.indexOf(globalOptionName) < 0) defaults[globalOptionName] = globalOptionValue;
   });
 
@@ -44,7 +54,7 @@ function ajax(options) {
   }
 
   // Merge options and defaults
-  $.each(defaults, (prop, defaultValue) => {
+  Utils.each(defaults, (prop, defaultValue) => {
     if (!(prop in options)) options[prop] = defaultValue;
   });
 
@@ -67,7 +77,7 @@ function ajax(options) {
       else stringData = options.data;
     } else {
       // Should be key=value object
-      stringData = $.serializeObject(options.data);
+      stringData = Utils.serializeObject(options.data);
     }
     if (stringData.length) {
       options.url += paramsPrefix + stringData;
@@ -152,7 +162,7 @@ function ajax(options) {
           xhr.setRequestHeader('Content-Type', options.contentType);
         }
         postData = '';
-        let data = $.serializeObject(options.data);
+        let data = Utils.serializeObject(options.data);
         if (options.contentType === 'multipart\/form-data') {
           boundary = `---------------------------${Date.now().toString(16)}`;
           data = data.split('&');
@@ -172,7 +182,7 @@ function ajax(options) {
 
   // Additional headers
   if (options.headers) {
-    $.each(options.headers, (headerName, headerCallback) => {
+    Utils.each(options.headers, (headerName, headerCallback) => {
       xhr.setRequestHeader(headerName, headerCallback);
     });
   }
@@ -187,7 +197,7 @@ function ajax(options) {
   }
 
   if (options.xhrFields) {
-    $.each(options.xhrFields, (fieldName, fieldValue) => {
+    Utils.each(options.xhrFields, (fieldName, fieldValue) => {
       xhr[fieldName] = fieldValue;
     });
   }
@@ -247,4 +257,5 @@ function ajax(options) {
   // Return XHR object
   return xhr;
 }
+
 export default ajax;
