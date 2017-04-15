@@ -1,3 +1,6 @@
+<a href="https://www.patreon.com/vladimirkharlampidi"><img src="https://cdn.framework7.io/i/support-badge.png" height="20"></a>
+[![devDependency Status](https://david-dm.org/nolimits4web/dom7/dev-status.svg)](https://david-dm.org/nolimits4web/dom7#info=devDependencies)
+
 # Dom7
 
 ## Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
