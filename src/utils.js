@@ -193,7 +193,7 @@ const Utils = {
             }
           }
           if (toPush.length > 0) resultArray.push(toPush.join(separator));
-        } else if (obj[prop] === null) {
+        } else if (obj[prop] === null || obj[prop] === '') {
           resultArray.push(`${varName(prop)}=`);
         } else if (typeof obj[prop] === 'object') {
           // Object, convert to named array
