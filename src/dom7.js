@@ -4,6 +4,7 @@ import Utils from './utils';
 import Ajax from './ajax';
 import Scroll from './scroll';
 import Methods from './methods';
+import Animate from './animate';
 
 function dom7() {
   // Utils & Helpers
@@ -20,6 +21,12 @@ function dom7() {
   Object.keys(Scroll).forEach((key) => {
     Dom7.prototype[key] = Scroll[key];
   });
+
+  // Animate
+  Dom7.prototype.animate = function animate(props, params) {
+    Animate(this, props, params);
+    return this;
+  };
 
   // Ajax
   $.ajax = Ajax;
