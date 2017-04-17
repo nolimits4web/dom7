@@ -26,14 +26,32 @@ function dom7() {
 
   // Ajax Shrotcuts
   ('get post getJSON').split(' ').forEach((method) => {
-    $[method] = function ajax(url, data, success, error) {
+    $[method] = function ajax(...args) {
+      let url;
+      let data;
+      let success;
+      let error;
+      let dataType;
+      if (typeof args[1] === 'function') {
+        [url, success, error, dataType] = args;
+      } else {
+        [url, data, success, error, dataType] = args;
+      }
+      [success, error].forEach((callback) => {
+        if (typeof callback === 'string') {
+          dataType = callback;
+          if (callback === success) success = undefined;
+          else error = undefined;
+        }
+      });
+      dataType = dataType || (method === 'getJSON' ? 'json' : undefined);
       return $.ajax({
         url,
         method: method === 'post' ? 'POST' : 'GET',
-        data: typeof data === 'function' ? undefined : data,
-        success: typeof data === 'function' ? data : success,
-        error: typeof data === 'function' ? success : error,
-        dataType: method === 'getJSON' ? 'json' : undefined,
+        data,
+        success,
+        error,
+        dataType,
       });
     };
   });
