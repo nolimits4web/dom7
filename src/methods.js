@@ -141,7 +141,7 @@ const Methods = {
     for (const key in dataset) {
       if (dataset[key] === 'false') dataset[key] = false;
       else if (dataset[key] === 'true') dataset[key] = true;
-      else if (parseFloat(dataset[key]) === dataset[key] * 1) dataset[key] = dataset[key] * 1;
+      else if (parseFloat(dataset[key]) === dataset[key] * 1) dataset[key] *= 1;
     }
     return dataset;
   },
