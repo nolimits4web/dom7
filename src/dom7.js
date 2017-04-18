@@ -4,7 +4,7 @@ import Utils from './utils';
 import Ajax from './ajax';
 import Scroll from './scroll';
 import Methods from './methods';
-import Animate from './animate';
+import { Animate, Stop } from './animate';
 
 function dom7() {
   // Utils & Helpers
@@ -23,10 +23,8 @@ function dom7() {
   });
 
   // Animate
-  Dom7.prototype.animate = function animate(props, params) {
-    Animate(this, props, params);
-    return this;
-  };
+  Dom7.prototype.animate = Animate;
+  Dom7.prototype.stop = Stop;
 
   // Ajax
   $.ajax = Ajax;

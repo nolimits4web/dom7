@@ -1,7 +1,8 @@
 import $ from './$';
 import Utils from './utils';
 
-function Animate(els, initialProps, initialParams) {
+function Animate(initialProps, initialParams) {
+  const els = this;
   const a = {
     props: $.extend({}, initialProps),
     params: $.extend({
@@ -14,7 +15,7 @@ function Animate(els, initialProps, initialParams) {
       */
     }, initialParams),
 
-    elements: $(els),
+    elements: els,
     animating: false,
     que: [],
 
@@ -64,6 +65,8 @@ function Animate(els, initialProps, initialParams) {
         let unit;
         let finalValue;
         let finalFullValue;
+
+        if (!el.dom7AnimateInstance) a.elements[index].dom7AnimateInstance = a;
 
         elements[index] = {
           container: el,
@@ -151,7 +154,7 @@ function Animate(els, initialProps, initialParams) {
   };
 
   if (a.elements.length === 0) {
-    return a;
+    return els;
   }
 
   let animateInstance;
@@ -164,7 +167,22 @@ function Animate(els, initialProps, initialParams) {
     animateInstance = a;
   }
 
-  return animateInstance.animate(a.props, a.params);
+  if (initialProps === 'stop') {
+    animateInstance.stop();
+  } else {
+    animateInstance.animate(a.props, a.params);
+  }
+
+  return els;
 }
 
-export default Animate;
+function Stop() {
+  const els = this;
+  for (let i = 0; i < els.length; i += 1) {
+    if (els[i].dom7AnimateInstance) {
+      els[i].dom7AnimateInstance.stop();
+    }
+  }
+}
+
+export { Animate, Stop };
