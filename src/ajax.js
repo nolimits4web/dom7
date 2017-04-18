@@ -10,9 +10,11 @@ $.ajaxSetup = function ajaxSetup(options) {
   });
 };
 
-// Ajax
+// JSONP Requests
 let jsonpRequests = 0;
-function ajax(options) {
+
+// Ajax
+function Ajax(options) {
   const defaults = {
     method: 'GET',
     data: false,
@@ -258,4 +260,4 @@ function ajax(options) {
   return xhr;
 }
 
-export default ajax;
+export default Ajax;
