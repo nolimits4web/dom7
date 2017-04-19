@@ -2,7 +2,6 @@
     'use strict';
     var gulp = require('gulp'),
         connect = require('gulp-connect'),
-        eslint = require('gulp-eslint'),
         open = require('gulp-open'),
         header = require('gulp-header'),
         uglify = require('gulp-uglify'),
@@ -29,6 +28,7 @@
             ' */',
             ''].join('\n');
 
+    // Build
     gulp.task('build', function (cb) {
         rollup({
             entry: './src/dom7.js',
@@ -47,64 +47,93 @@
             cb();
         });
     });
-    gulp.task('dist', function (cb) {
-        rollup({
-            entry: './src/dom7.js',
-            plugins: [buble()],
-            format: 'umd',
-            moduleName: 'Dom7',
-            useStrict: true,
-            sourceMap: true
-        })
-        .pipe(source('dom7.js', './src'))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(header(banner, {
+
+    // UMD DIST
+    function umd(cb) {
+      rollup({
+          entry: './src/dom7.js',
+          plugins: [buble()],
+          format: 'umd',
+          moduleName: 'Dom7',
+          useStrict: true,
+          sourceMap: true
+      })
+      .pipe(source('dom7.js', './src'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(header(banner, {
+          pkg: pkg,
+          date: (function () {
+              return {
+                  year: new Date().getFullYear(),
+                  month: ('January February March April May June July August September October November December').split(' ')[new Date().getMonth()],
+                  day: new Date().getDate()
+              };
+          })()
+      }))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest('./dist/'))
+      .on('end', function () {
+        gulp.src('./dist/dom7.js')
+          .pipe(sourcemaps.init())
+          .pipe(uglify())
+          .pipe(header(banner, {
             pkg: pkg,
             date: (function () {
-                return {
-                    year: new Date().getFullYear(),
-                    month: ('January February March April May June July August September October November December').split(' ')[new Date().getMonth()],
-                    day: new Date().getDate()
-                };
+              return {
+                year: new Date().getFullYear(),
+                month: ('January February March April May June July August September October November December').split(' ')[new Date().getMonth()],
+                day: new Date().getDate()
+              };
             })()
-        }))
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./dist/'))
-        .on('end', function () {
-            gulp.src('./dist/dom7.js')
-                .pipe(sourcemaps.init())
-                .pipe(uglify())
-                .pipe(header(banner, {
-                    pkg: pkg,
-                    date: (function () {
-                        return {
-                            year: new Date().getFullYear(),
-                            month: ('January February March April May June July August September October November December').split(' ')[new Date().getMonth()],
-                            day: new Date().getDate()
-                        };
-                    })()
-                }))
-                .pipe(rename('dom7.min.js'))
-                .pipe(sourcemaps.write('./'))
-                .pipe(gulp.dest('./dist/'))
-                .on('end', function () {
-                    cb();
-                });
+          }))
+          .pipe(rename('dom7.min.js'))
+          .pipe(sourcemaps.write('./'))
+          .pipe(gulp.dest('./dist/'))
+          .on('end', function () {
+              if (cb) cb();
+          });
+      });
+    }
+    // ES MODULE DIST
+    function es(cb) {
+      rollup({
+          entry: './src/dom7.js',
+          plugins: [buble()],
+          format: 'es',
+          moduleName: 'Dom7',
+          useStrict: true,
+          sourceMap: true
+      })
+      .pipe(source('dom7.js', './src'))
+      .pipe(buffer())
+      .pipe(header(banner, {
+          pkg: pkg,
+          date: (function () {
+              return {
+                  year: new Date().getFullYear(),
+                  month: ('January February March April May June July August September October November December').split(' ')[new Date().getMonth()],
+                  day: new Date().getDate()
+              };
+          })()
+      }))
+      .pipe(rename('dom7.es2015.js'))
+      .pipe(gulp.dest('./dist/'))
+      .on('end', function () {
+        if (cb) cb();
+      });
+    }
+    // Dist
+    gulp.task('dist', function (cb) {
+        var cbs = 0;
+        umd(function () {
+          cbs += 1;
+          if (cbs === 2) cb();
         });
-    });
-
-    gulp.task('lint', function () {
-        return gulp.src(['./src/*.js','!node_modules/**'])
-            // eslint() attaches the lint output to the "eslint" property
-            // of the file object so it can be used by other modules.
-            .pipe(eslint())
-            // eslint.format() outputs the lint results to the console.
-            // Alternatively use eslint.formatEach() (see Docs).
-            .pipe(eslint.format())
-            // To have the process exit with an error code (1) on
-            // lint error, return the stream and pipe to failAfterError last.
-            .pipe(eslint.failAfterError());
+        es(function () {
+          cbs += 1;
+          if (cbs === 2) cb();
+        });
     });
 
     gulp.task('watch', function () {

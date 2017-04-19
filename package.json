@@ -3,6 +3,8 @@
   "version": "1.6.0",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
+  "jsnext:main": "dist/dom7.es2015.js",
+  "module": "dist/dom7.es2015.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nolimits4web/Dom7.git"
@@ -26,7 +28,6 @@
     "eslint-plugin-import": "^2.2.0",
     "gulp": "^3.9.1",
     "gulp-connect": "^5.0.0",
-    "gulp-eslint": "^3.0.1",
     "gulp-header": "^1.8.8",
     "gulp-open": "^2.0.0",
     "gulp-rename": "^1.2.2",
