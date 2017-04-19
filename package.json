@@ -1,6 +1,6 @@
 {
   "name": "dom7",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
   "jsnext:main": "dist/dom7.es2015.js",
