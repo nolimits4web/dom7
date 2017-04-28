@@ -1,3 +1,4 @@
+import Dom7 from './dom7-class';
 import $ from './$';
 
 // Remove Diacritics
