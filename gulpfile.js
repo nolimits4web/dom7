@@ -99,11 +99,10 @@
     function es(cb) {
       rollup({
           entry: './src/dom7.js',
-          plugins: [buble()],
           format: 'es',
           moduleName: 'Dom7',
           useStrict: true,
-          sourceMap: true
+          sourceMap: false
       })
       .pipe(source('dom7.js', './src'))
       .pipe(buffer())
@@ -117,7 +116,7 @@
               };
           })()
       }))
-      .pipe(rename('dom7.es2015.js'))
+      .pipe(rename('dom7.module.js'))
       .pipe(gulp.dest('./dist/'))
       .on('end', function () {
         if (cb) cb();

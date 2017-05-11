@@ -1,10 +1,10 @@
 {
   "name": "dom7",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
-  "jsnext:main": "dist/dom7.es2015.js",
-  "module": "dist/dom7.es2015.js",
+  "jsnext:main": "dist/dom7.module.js",
+  "module": "dist/dom7.module.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nolimits4web/Dom7.git"
