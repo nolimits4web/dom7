@@ -186,56 +186,104 @@ const Methods = {
     return this;
   },
   // Events
-  on(eventName, targetSelector, listener, capture) {
+  on(...args) {
+    const eventType = args[0];
+    let targetSelector;
+    let listener;
+    let capture = false;
+    if (typeof args[1] === 'function') {
+      targetSelector = false;
+      listener = args[1];
+      capture = args[2];
+    } else {
+      targetSelector = args[1];
+      listener = args[2];
+      capture = args[3];
+    }
     function handleLiveEvent(e) {
       const target = e.target;
-      if ($(target).is(targetSelector)) listener.call(target, e);
+      const eventData = e.target.dom7EventData || [];
+      eventData.unshift(e);
+      if ($(target).is(targetSelector)) listener.apply(target, eventData);
       else {
         const parents = $(target).parents();
         for (let k = 0; k < parents.length; k += 1) {
-          if ($(parents[k]).is(targetSelector)) listener.call(parents[k], e);
+          if ($(parents[k]).is(targetSelector)) listener.apply(parents[k], eventData);
         }
       }
     }
-    const events = eventName.split(' ');
+    function handleEvent(e) {
+      const eventData = e.target.dom7EventData || [];
+      eventData.unshift(e);
+      listener.apply(this, eventData);
+    }
+    const events = eventType.split(' ');
     let j;
     for (let i = 0; i < this.length; i += 1) {
-      if (typeof targetSelector === 'function' || targetSelector === false) {
-        // Usual events
-        if (typeof targetSelector === 'function') {
-          listener = arguments[1];
-          capture = arguments[2] || false;
-        }
+      const el = this[i];
+      if (!targetSelector) {
         for (j = 0; j < events.length; j += 1) {
-          this[i].addEventListener(events[j], listener, capture);
+          if (!el.dom7Listeners) el.dom7Listeners = [];
+          el.dom7Listeners.push({
+            type: eventType,
+            listener,
+            proxyListener: handleEvent,
+          });
+          el.addEventListener(events[j], handleEvent, capture);
         }
       } else {
         // Live events
         for (j = 0; j < events.length; j += 1) {
-          if (!this[i].dom7LiveListeners) this[i].dom7LiveListeners = [];
-          this[i].dom7LiveListeners.push({ listener, liveListener: handleLiveEvent });
-          this[i].addEventListener(events[j], handleLiveEvent, capture);
+          if (!el.dom7LiveListeners) el.dom7LiveListeners = [];
+          el.dom7LiveListeners.push({
+            type: eventType,
+            listener,
+            proxyListener: handleLiveEvent,
+          });
+          el.addEventListener(events[j], handleLiveEvent, capture);
         }
       }
     }
-
     return this;
   },
-  off(eventName, targetSelector, listener, capture) {
-    const events = eventName.split(' ');
+  off(...args) {
+    const eventType = args[0];
+    let targetSelector;
+    let listener;
+    let capture = false;
+    if (typeof args[1] === 'function') {
+      targetSelector = false;
+      listener = args[1];
+      capture = args[2];
+    } else {
+      targetSelector = args[1];
+      listener = args[2];
+      capture = args[3];
+    }
+    const events = eventType.split(' ');
     for (let i = 0; i < events.length; i += 1) {
       for (let j = 0; j < this.length; j += 1) {
-        if (typeof targetSelector === 'function' || targetSelector === false) {
-          // Usual events
-          if (typeof targetSelector === 'function') {
-            listener = arguments[1];
-            capture = arguments[2] || false;
+        const el = this[j];
+        if (!targetSelector) {
+          if (el.dom7Listeners) {
+            for (let k = 0; k < el.dom7Listeners.length; k += 1) {
+              if (listener) {
+                if (el.dom7Listeners[k].listener === listener) {
+                  el.removeEventListener(events[i], el.dom7Listeners[k].proxyListener, capture);
+                }
+              } else if (el.dom7Listeners[k].type === events[i]) {
+                el.removeEventListener(events[i], el.dom7Listeners[k].proxyListener, capture);
+              }
+            }
           }
-          this[j].removeEventListener(events[i], listener, capture);
-        } else if (this[j].dom7LiveListeners) {
-          for (let k = 0; k < this[j].dom7LiveListeners.length; k += 1) {
-            if (this[j].dom7LiveListeners[k].listener === listener) {
-              this[j].removeEventListener(events[i], this[j].dom7LiveListeners[k].liveListener, capture);
+        } else if (el.dom7LiveListeners) {
+          for (let k = 0; k < el.dom7LiveListeners.length; k += 1) {
+            if (listener) {
+              if (el.dom7LiveListeners[k].listener === listener) {
+                el.removeEventListener(events[i], el.dom7LiveListeners[k].proxyListener, capture);
+              }
+            } else if (el.dom7Listeners[k].type === events[i]) {
+              el.removeEventListener(events[i], el.dom7LiveListeners[k].proxyListener, capture);
             }
           }
         }
@@ -251,13 +299,15 @@ const Methods = {
       targetSelector = false;
     }
     function proxy(e) {
-      listener.call(e.target, e);
+      const eventData = e.target.dom7EventData || [];
+      listener.apply(this, eventData);
       dom.off(eventName, targetSelector, proxy, capture);
     }
     return dom.on(eventName, targetSelector, proxy, capture);
   },
-  trigger(eventName, eventData) {
-    const events = eventName.split(' ');
+  trigger(...args) {
+    const events = args[0].split(' ');
+    const eventData = args[1];
     for (let i = 0; i < events.length; i += 1) {
       for (let j = 0; j < this.length; j += 1) {
         let evt;
@@ -268,7 +318,10 @@ const Methods = {
           evt.initEvent(events[i], true, true);
           evt.detail = eventData;
         }
+        this[j].dom7EventData = args.filter((data, dataIndex) => dataIndex > 0);
         this[j].dispatchEvent(evt);
+        this[j].dom7EventData = [];
+        delete this[j].dom7EventData;
       }
     }
     return this;
