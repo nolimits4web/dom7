@@ -1,5 +1,5 @@
 /**
- * Dom7 1.6.2
+ * Dom7 1.6.3
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  * 
@@ -9,7 +9,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: May 11, 2017
+ * Released on: May 30, 2017
  */
 class Dom7 {
   constructor(arr) {
@@ -384,7 +384,7 @@ $.ajaxSetup = function ajaxSetup(options) {
 let jsonpRequests = 0;
 
 // Ajax
-function Ajax(options) {
+function ajax(options) {
   const defaults = {
     method: 'GET',
     data: false,
@@ -628,6 +628,48 @@ function Ajax(options) {
 
   // Return XHR object
   return xhr;
+}
+
+function ajaxShortcut(method, ...args) {
+  let url;
+  let data;
+  let success;
+  let error;
+  let dataType;
+  if (typeof args[1] === 'function') {
+    [url, success, error, dataType] = args;
+  } else {
+    [url, data, success, error, dataType] = args;
+  }
+  [success, error].forEach((callback) => {
+    if (typeof callback === 'string') {
+      dataType = callback;
+      if (callback === success) success = undefined;
+      else error = undefined;
+    }
+  });
+  dataType = dataType || (method === 'getJSON' ? 'json' : undefined);
+  return $.ajax({
+    url,
+    method: method === 'post' ? 'POST' : 'GET',
+    data,
+    success,
+    error,
+    dataType,
+  });
+}
+
+function get(...args) {
+  args.unshift('get');
+  return ajaxShortcut.apply(this, args);
+}
+function post(...args) {
+  args.unshift('post');
+  return ajaxShortcut.apply(this, args);
+}
+function getJSON(...args) {
+  args.unshift('getJSON');
+  return ajaxShortcut.apply(this, args);
 }
 
 const Scroll = {
@@ -1067,7 +1109,7 @@ const Methods = {
     const dom = this;
     let i;
     function fireCallBack(e) {
-          /* jshint validthis:true */
+      /* jshint validthis:true */
       if (e.target !== this) return;
       callback.call(this, e);
       for (i = 0; i < events.length; i += 1) {
@@ -1529,7 +1571,30 @@ const Methods = {
   },
 };
 
-function Animate(initialProps, initialParams) {
+// Shortcuts
+const shortcuts = ('click blur focus focusin focusout keyup keydown keypress submit change mousedown mousemove mouseup mouseenter mouseleave mouseout mouseover touchstart touchend touchmove resize scroll').split(' ');
+const notTrigger = ('resize scroll').split(' ');
+function createMethod(name) {
+  Methods[name] = function eventShortcut(targetSelector, listener, capture) {
+    if (typeof targetSelector === 'undefined') {
+      for (let i = 0; i < this.length; i += 1) {
+        if (notTrigger.indexOf(name) < 0) {
+          if (name in this[i]) this[i][name]();
+          else {
+            $(this[i]).trigger(name);
+          }
+        }
+      }
+      return this;
+    }
+    return this.on(name, targetSelector, listener, capture);
+  };
+}
+for (let i = 0; i < shortcuts.length; i += 1) {
+  createMethod(shortcuts[i]);
+}
+
+function animate(initialProps, initialParams) {
   const els = this;
   const a = {
     props: $.extend({}, initialProps),
@@ -1704,7 +1769,7 @@ function Animate(initialProps, initialParams) {
   return els;
 }
 
-function Stop() {
+function stop() {
   const els = this;
   for (let i = 0; i < els.length; i += 1) {
     if (els[i].dom7AnimateInstance) {
@@ -1730,43 +1795,14 @@ function dom7() {
   });
 
   // Animate
-  Dom7.prototype.animate = Animate;
-  Dom7.prototype.stop = Stop;
+  Dom7.prototype.animate = animate;
+  Dom7.prototype.stop = stop;
 
   // Ajax
-  $.ajax = Ajax;
-
-  // Ajax Shrotcuts
-  ('get post getJSON').split(' ').forEach((method) => {
-    $[method] = function ajax(...args) {
-      let url;
-      let data;
-      let success;
-      let error;
-      let dataType;
-      if (typeof args[1] === 'function') {
-        [url, success, error, dataType] = args;
-      } else {
-        [url, data, success, error, dataType] = args;
-      }
-      [success, error].forEach((callback) => {
-        if (typeof callback === 'string') {
-          dataType = callback;
-          if (callback === success) success = undefined;
-          else error = undefined;
-        }
-      });
-      dataType = dataType || (method === 'getJSON' ? 'json' : undefined);
-      return $.ajax({
-        url,
-        method: method === 'post' ? 'POST' : 'GET',
-        data,
-        success,
-        error,
-        dataType,
-      });
-    };
-  });
+  $.ajax = ajax;
+  $.get = get;
+  $.post = post;
+  $.getJSON = getJSON;
 
   // Link to prototype
   $.fn = Dom7.prototype;

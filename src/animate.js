@@ -1,7 +1,7 @@
 import $ from './$';
 import Utils from './utils';
 
-function Animate(initialProps, initialParams) {
+function animate(initialProps, initialParams) {
   const els = this;
   const a = {
     props: $.extend({}, initialProps),
@@ -176,7 +176,7 @@ function Animate(initialProps, initialParams) {
   return els;
 }
 
-function Stop() {
+function stop() {
   const els = this;
   for (let i = 0; i < els.length; i += 1) {
     if (els[i].dom7AnimateInstance) {
@@ -185,4 +185,4 @@ function Stop() {
   }
 }
 
-export { Animate, Stop };
+export { animate, stop };

@@ -14,7 +14,7 @@ $.ajaxSetup = function ajaxSetup(options) {
 let jsonpRequests = 0;
 
 // Ajax
-function Ajax(options) {
+function ajax(options) {
   const defaults = {
     method: 'GET',
     data: false,
@@ -260,4 +260,46 @@ function Ajax(options) {
   return xhr;
 }
 
-export default Ajax;
+function ajaxShortcut(method, ...args) {
+  let url;
+  let data;
+  let success;
+  let error;
+  let dataType;
+  if (typeof args[1] === 'function') {
+    [url, success, error, dataType] = args;
+  } else {
+    [url, data, success, error, dataType] = args;
+  }
+  [success, error].forEach((callback) => {
+    if (typeof callback === 'string') {
+      dataType = callback;
+      if (callback === success) success = undefined;
+      else error = undefined;
+    }
+  });
+  dataType = dataType || (method === 'getJSON' ? 'json' : undefined);
+  return $.ajax({
+    url,
+    method: method === 'post' ? 'POST' : 'GET',
+    data,
+    success,
+    error,
+    dataType,
+  });
+}
+
+function get(...args) {
+  args.unshift('get');
+  return ajaxShortcut.apply(this, args);
+}
+function post(...args) {
+  args.unshift('post');
+  return ajaxShortcut.apply(this, args);
+}
+function getJSON(...args) {
+  args.unshift('getJSON');
+  return ajaxShortcut.apply(this, args);
+}
+
+export { ajax, get, post, getJSON };

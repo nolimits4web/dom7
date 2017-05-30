@@ -331,7 +331,7 @@ const Methods = {
     const dom = this;
     let i;
     function fireCallBack(e) {
-          /* jshint validthis:true */
+      /* jshint validthis:true */
       if (e.target !== this) return;
       callback.call(this, e);
       for (i = 0; i < events.length; i += 1) {
@@ -792,5 +792,28 @@ const Methods = {
     return this;
   },
 };
+
+// Shortcuts
+const shortcuts = ('click blur focus focusin focusout keyup keydown keypress submit change mousedown mousemove mouseup mouseenter mouseleave mouseout mouseover touchstart touchend touchmove resize scroll').split(' ');
+const notTrigger = ('resize scroll').split(' ');
+function createMethod(name) {
+  Methods[name] = function eventShortcut(targetSelector, listener, capture) {
+    if (typeof targetSelector === 'undefined') {
+      for (let i = 0; i < this.length; i += 1) {
+        if (notTrigger.indexOf(name) < 0) {
+          if (name in this[i]) this[i][name]();
+          else {
+            $(this[i]).trigger(name);
+          }
+        }
+      }
+      return this;
+    }
+    return this.on(name, targetSelector, listener, capture);
+  };
+}
+for (let i = 0; i < shortcuts.length; i += 1) {
+  createMethod(shortcuts[i]);
+}
 
 export default Methods;
