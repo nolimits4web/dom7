@@ -202,6 +202,7 @@ const Methods = {
     }
     function handleLiveEvent(e) {
       const target = e.target;
+      if (!target) return;
       const eventData = e.target.dom7EventData || [];
       eventData.unshift(e);
       if ($(target).is(targetSelector)) listener.apply(target, eventData);
@@ -213,7 +214,7 @@ const Methods = {
       }
     }
     function handleEvent(e) {
-      const eventData = e.target.dom7EventData || [];
+      const eventData = e && e.target ? e.target.dom7EventData || [] : [];
       eventData.unshift(e);
       listener.apply(this, eventData);
     }
