@@ -1,5 +1,9 @@
 # Change Log
 
+## Dom7 v1.6.4 - Released on August 2, 2017
+  * Fixed issue with handling events without target (e.g. Cordova "resume" event)
+  * Fixed issue with Ajax post method throwing error with "multipart/form-data" content type
+
 ## Dom7 v1.6.3 - Released on May 30, 2017
   * Added shortcut methods `click blur focus focusin focusout keyup keydown keypress submit change mousedown mousemove mouseup mouseenter mouseleave mouseout mouseover touchstart touchend touchmove resize scroll`
 

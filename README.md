@@ -35,4 +35,4 @@ $ gulp dist
 The resulting files are:
 
   1. dist/dom7.js
-  1. dist/dom7.min.js
+  2. dist/dom7.min.js

@@ -1,5 +1,5 @@
 /**
- * Dom7 1.6.3
+ * Dom7 1.6.4
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  * 
@@ -9,7 +9,7 @@
  * 
  * Licensed under MIT
  * 
- * Released on: May 30, 2017
+ * Released on: August 2, 2017
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -538,19 +538,18 @@ function ajax(options) {
         // POST Headers
         var boundary = "---------------------------" + (Date.now().toString(16));
 
-        if (options.contentType === 'multipart\/form-data') {
+        if (options.contentType === 'multipart/form-data') {
           xhr.setRequestHeader('Content-Type', ("multipart/form-data; boundary=" + boundary));
         } else {
           xhr.setRequestHeader('Content-Type', options.contentType);
         }
         postData = '';
         var data = Utils.serializeObject(options.data);
-        if (options.contentType === 'multipart\/form-data') {
-          boundary = "---------------------------" + (Date.now().toString(16));
+        if (options.contentType === 'multipart/form-data') {
           data = data.split('&');
           var newData = [];
           for (var i = 0; i < data.length; i += 1) {
-            newData.push('Content-Disposition: form-data; name="' + _data[i].split('=')[0] + '"\r\n\r\n' + _data[i].split('=')[1] + '\r\n');
+            newData.push(("Content-Disposition: form-data; name=\"" + (data[i].split('=')[0]) + "\"\r\n\r\n" + (data[i].split('=')[1]) + "\r\n"));
           }
           postData = "--" + boundary + "\r\n" + (newData.join(("--" + boundary + "\r\n"))) + "--" + boundary + "--\r\n";
         } else {
@@ -1036,6 +1035,7 @@ var Methods = {
     }
     function handleLiveEvent(e) {
       var target = e.target;
+      if (!target) { return; }
       var eventData = e.target.dom7EventData || [];
       eventData.unshift(e);
       if ($(target).is(targetSelector)) { listener.apply(target, eventData); }
@@ -1047,7 +1047,7 @@ var Methods = {
       }
     }
     function handleEvent(e) {
-      var eventData = e.target.dom7EventData || [];
+      var eventData = e && e.target ? e.target.dom7EventData || [] : [];
       eventData.unshift(e);
       listener.apply(this, eventData);
     }
