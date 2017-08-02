@@ -158,19 +158,18 @@ function ajax(options) {
         // POST Headers
         let boundary = `---------------------------${Date.now().toString(16)}`;
 
-        if (options.contentType === 'multipart\/form-data') {
-          xhr.setRequestHeader('Content-Type', `multipart\/form-data; boundary=${boundary}`);
+        if (options.contentType === 'multipart/form-data') {
+          xhr.setRequestHeader('Content-Type', `multipart/form-data; boundary=${boundary}`);
         } else {
           xhr.setRequestHeader('Content-Type', options.contentType);
         }
         postData = '';
         let data = Utils.serializeObject(options.data);
-        if (options.contentType === 'multipart\/form-data') {
-          boundary = `---------------------------${Date.now().toString(16)}`;
+        if (options.contentType === 'multipart/form-data') {
           data = data.split('&');
           const newData = [];
           for (let i = 0; i < data.length; i += 1) {
-            newData.push('Content-Disposition: form-data; name="' + _data[i].split('=')[0] + '"\r\n\r\n' + _data[i].split('=')[1] + '\r\n');
+            newData.push(`Content-Disposition: form-data; name="${data[i].split('=')[0]}"\r\n\r\n${data[i].split('=')[1]}\r\n`);
           }
           postData = `--${boundary}\r\n${newData.join(`--${boundary}\r\n`)}--${boundary}--\r\n`;
         } else {
