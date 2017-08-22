@@ -462,6 +462,13 @@ const Methods = {
   },
 
   // Dom manipulation
+  toArray() {
+    const arr = [];
+    for (let i = 0; i < this.length; i+= 1) {
+      arr.push(this[i]);
+    }
+    return arr;
+  },
   // Iterate over the collection passing elements to `callback`
   each(callback) {
     // Don't bother continuing without a callback
@@ -477,6 +484,20 @@ const Methods = {
     // Return `this` to allow chained DOM operations
     return this;
   },
+  forEach(callback) {
+    // Don't bother continuing without a callback
+    if (!callback) return this;
+    // Iterate over the current collection
+    for (let i = 0; i < this.length; i += 1) {
+      // If the callback returns false
+      if (callback.call(this[i], this[i], i) === false) {
+        // End the loop early
+        return this;
+      }
+    }
+    // Return `this` to allow chained DOM operations
+    return this;
+  },
   filter(callback) {
     const matchedItems = [];
     const dom = this;
@@ -484,6 +505,14 @@ const Methods = {
       if (callback.call(dom[i], i, dom[i])) matchedItems.push(dom[i]);
     }
     return new Dom7(matchedItems);
+  },
+  map(callback) {
+    const modifiedItems = [];
+    const dom = this;
+    for (let i = 0; i < dom.length; i += 1) {
+      modifiedItems.push(callback.call(dom[i], i, dom[i]));
+    }
+    return new Dom7(modifiedItems);
   },
   html(html) {
     if (typeof html === 'undefined') {
