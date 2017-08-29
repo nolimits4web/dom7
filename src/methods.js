@@ -283,7 +283,7 @@ const Methods = {
               if (el.dom7LiveListeners[k].listener === listener) {
                 el.removeEventListener(events[i], el.dom7LiveListeners[k].proxyListener, capture);
               }
-            } else if (el.dom7Listeners[k].type === events[i]) {
+            } else if (el.dom7LiveListeners[k].type === events[i]) {
               el.removeEventListener(events[i], el.dom7LiveListeners[k].proxyListener, capture);
             }
           }
@@ -313,7 +313,7 @@ const Methods = {
       for (let j = 0; j < this.length; j += 1) {
         let evt;
         try {
-          evt = new CustomEvent(events[i], { detail: eventData, bubbles: true, cancelable: true });
+          evt = new window.CustomEvent(events[i], { detail: eventData, bubbles: true, cancelable: true });
         } catch (e) {
           evt = document.createEvent('Event');
           evt.initEvent(events[i], true, true);
