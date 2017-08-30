@@ -1,40 +1,33 @@
-import Dom7 from './dom7-class';
 import $ from './$';
 import Utils from './utils';
-import { ajax, get, post, getJSON } from './ajax';
+import * as Ajax from './ajax';
 import Scroll from './scroll';
 import Methods from './methods';
-import { animate, stop } from './animate';
+import * as Animate from './animate';
 
-function dom7() {
-  // Utils & Helpers
-  Object.keys(Utils).forEach((key) => {
-    $[key] = Utils[key];
-  });
+// Utils & Helpers
+Object.keys(Utils).forEach((key) => {
+  $[key] = Utils[key];
+});
 
-  // Methods
-  Object.keys(Methods).forEach((key) => {
-    Dom7.prototype[key] = Methods[key];
-  });
+// Methods
+Object.keys(Methods).forEach((key) => {
+  $.fn[key] = Methods[key];
+});
 
-  // Scroll
-  Object.keys(Scroll).forEach((key) => {
-    Dom7.prototype[key] = Scroll[key];
-  });
+// Scroll
+Object.keys(Scroll).forEach((key) => {
+  $.fn[key] = Scroll[key];
+});
 
-  // Animate
-  Dom7.prototype.animate = animate;
-  Dom7.prototype.stop = stop;
+// Animate
+Object.keys(Animate).forEach((key) => {
+  $.fn[key] = Animate[key];
+});
 
-  // Ajax
-  $.ajax = ajax;
-  $.get = get;
-  $.post = post;
-  $.getJSON = getJSON;
+// Ajax
+Object.keys(Ajax).forEach((key) => {
+  $[key] = Ajax[key];
+});
 
-  // Link to prototype
-  $.fn = Dom7.prototype;
-
-  return $;
-}
-export default dom7();
+export default $;
