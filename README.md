@@ -20,19 +20,21 @@ $ npm install
 
 To build development version:
 ```
-$ gulp build
+$ npm run build-dev
 ```
 
 The resulting files are:
 
   1. buid/dom7.js
+  2. buid/dom7.module.js
 
-To build release (minified) version:
+To build production (minified) version:
 ```
-$ gulp dist
+$ npm run build-prod
 ```
 
 The resulting files are:
 
   1. dist/dom7.js
   2. dist/dom7.min.js
+  3. dist/dom7.module.js

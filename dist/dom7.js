@@ -1,15 +1,15 @@
 /**
- * Dom7 1.6.4
+ * Dom7 1.7.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
- * 
+ *
  * Copyright 2017, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
- * 
+ *
  * Licensed under MIT
- * 
- * Released on: August 2, 2017
+ *
+ * Released on: August 30, 2017
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -28,7 +28,7 @@ var Dom7 = function Dom7(arr) {
   return this;
 };
 
-function $(selector, context) {
+function $$1(selector, context) {
   var arr = [];
   var i = 0;
   if (selector && !context) {
@@ -79,316 +79,224 @@ function $(selector, context) {
   return new Dom7(arr);
 }
 
-// Remove Diacritics
-var defaultDiacriticsRemovalap = [
-  { base: 'A', letters: '\u0041\u24B6\uFF21\u00C0\u00C1\u00C2\u1EA6\u1EA4\u1EAA\u1EA8\u00C3\u0100\u0102\u1EB0\u1EAE\u1EB4\u1EB2\u0226\u01E0\u00C4\u01DE\u1EA2\u00C5\u01FA\u01CD\u0200\u0202\u1EA0\u1EAC\u1EB6\u1E00\u0104\u023A\u2C6F' },
-  { base: 'AA', letters: '\uA732' },
-  { base: 'AE', letters: '\u00C6\u01FC\u01E2' },
-  { base: 'AO', letters: '\uA734' },
-  { base: 'AU', letters: '\uA736' },
-  { base: 'AV', letters: '\uA738\uA73A' },
-  { base: 'AY', letters: '\uA73C' },
-  { base: 'B', letters: '\u0042\u24B7\uFF22\u1E02\u1E04\u1E06\u0243\u0182\u0181' },
-  { base: 'C', letters: '\u0043\u24B8\uFF23\u0106\u0108\u010A\u010C\u00C7\u1E08\u0187\u023B\uA73E' },
-  { base: 'D', letters: '\u0044\u24B9\uFF24\u1E0A\u010E\u1E0C\u1E10\u1E12\u1E0E\u0110\u018B\u018A\u0189\uA779' },
-  { base: 'DZ', letters: '\u01F1\u01C4' },
-  { base: 'Dz', letters: '\u01F2\u01C5' },
-  { base: 'E', letters: '\u0045\u24BA\uFF25\u00C8\u00C9\u00CA\u1EC0\u1EBE\u1EC4\u1EC2\u1EBC\u0112\u1E14\u1E16\u0114\u0116\u00CB\u1EBA\u011A\u0204\u0206\u1EB8\u1EC6\u0228\u1E1C\u0118\u1E18\u1E1A\u0190\u018E' },
-  { base: 'F', letters: '\u0046\u24BB\uFF26\u1E1E\u0191\uA77B' },
-  { base: 'G', letters: '\u0047\u24BC\uFF27\u01F4\u011C\u1E20\u011E\u0120\u01E6\u0122\u01E4\u0193\uA7A0\uA77D\uA77E' },
-  { base: 'H', letters: '\u0048\u24BD\uFF28\u0124\u1E22\u1E26\u021E\u1E24\u1E28\u1E2A\u0126\u2C67\u2C75\uA78D' },
-  { base: 'I', letters: '\u0049\u24BE\uFF29\u00CC\u00CD\u00CE\u0128\u012A\u012C\u0130\u00CF\u1E2E\u1EC8\u01CF\u0208\u020A\u1ECA\u012E\u1E2C\u0197' },
-  { base: 'J', letters: '\u004A\u24BF\uFF2A\u0134\u0248' },
-  { base: 'K', letters: '\u004B\u24C0\uFF2B\u1E30\u01E8\u1E32\u0136\u1E34\u0198\u2C69\uA740\uA742\uA744\uA7A2' },
-  { base: 'L', letters: '\u004C\u24C1\uFF2C\u013F\u0139\u013D\u1E36\u1E38\u013B\u1E3C\u1E3A\u0141\u023D\u2C62\u2C60\uA748\uA746\uA780' },
-  { base: 'LJ', letters: '\u01C7' },
-  { base: 'Lj', letters: '\u01C8' },
-  { base: 'M', letters: '\u004D\u24C2\uFF2D\u1E3E\u1E40\u1E42\u2C6E\u019C' },
-  { base: 'N', letters: '\u004E\u24C3\uFF2E\u01F8\u0143\u00D1\u1E44\u0147\u1E46\u0145\u1E4A\u1E48\u0220\u019D\uA790\uA7A4' },
-  { base: 'NJ', letters: '\u01CA' },
-  { base: 'Nj', letters: '\u01CB' },
-  { base: 'O', letters: '\u004F\u24C4\uFF2F\u00D2\u00D3\u00D4\u1ED2\u1ED0\u1ED6\u1ED4\u00D5\u1E4C\u022C\u1E4E\u014C\u1E50\u1E52\u014E\u022E\u0230\u00D6\u022A\u1ECE\u0150\u01D1\u020C\u020E\u01A0\u1EDC\u1EDA\u1EE0\u1EDE\u1EE2\u1ECC\u1ED8\u01EA\u01EC\u00D8\u01FE\u0186\u019F\uA74A\uA74C' },
-  { base: 'OI', letters: '\u01A2' },
-  { base: 'OO', letters: '\uA74E' },
-  { base: 'OU', letters: '\u0222' },
-  { base: 'OE', letters: '\u008C\u0152' },
-  { base: 'oe', letters: '\u009C\u0153' },
-  { base: 'P', letters: '\u0050\u24C5\uFF30\u1E54\u1E56\u01A4\u2C63\uA750\uA752\uA754' },
-  { base: 'Q', letters: '\u0051\u24C6\uFF31\uA756\uA758\u024A' },
-  { base: 'R', letters: '\u0052\u24C7\uFF32\u0154\u1E58\u0158\u0210\u0212\u1E5A\u1E5C\u0156\u1E5E\u024C\u2C64\uA75A\uA7A6\uA782' },
-  { base: 'S', letters: '\u0053\u24C8\uFF33\u1E9E\u015A\u1E64\u015C\u1E60\u0160\u1E66\u1E62\u1E68\u0218\u015E\u2C7E\uA7A8\uA784' },
-  { base: 'T', letters: '\u0054\u24C9\uFF34\u1E6A\u0164\u1E6C\u021A\u0162\u1E70\u1E6E\u0166\u01AC\u01AE\u023E\uA786' },
-  { base: 'TZ', letters: '\uA728' },
-  { base: 'U', letters: '\u0055\u24CA\uFF35\u00D9\u00DA\u00DB\u0168\u1E78\u016A\u1E7A\u016C\u00DC\u01DB\u01D7\u01D5\u01D9\u1EE6\u016E\u0170\u01D3\u0214\u0216\u01AF\u1EEA\u1EE8\u1EEE\u1EEC\u1EF0\u1EE4\u1E72\u0172\u1E76\u1E74\u0244' },
-  { base: 'V', letters: '\u0056\u24CB\uFF36\u1E7C\u1E7E\u01B2\uA75E\u0245' },
-  { base: 'VY', letters: '\uA760' },
-  { base: 'W', letters: '\u0057\u24CC\uFF37\u1E80\u1E82\u0174\u1E86\u1E84\u1E88\u2C72' },
-  { base: 'X', letters: '\u0058\u24CD\uFF38\u1E8A\u1E8C' },
-  { base: 'Y', letters: '\u0059\u24CE\uFF39\u1EF2\u00DD\u0176\u1EF8\u0232\u1E8E\u0178\u1EF6\u1EF4\u01B3\u024E\u1EFE' },
-  { base: 'Z', letters: '\u005A\u24CF\uFF3A\u0179\u1E90\u017B\u017D\u1E92\u1E94\u01B5\u0224\u2C7F\u2C6B\uA762' },
-  { base: 'a', letters: '\u0061\u24D0\uFF41\u1E9A\u00E0\u00E1\u00E2\u1EA7\u1EA5\u1EAB\u1EA9\u00E3\u0101\u0103\u1EB1\u1EAF\u1EB5\u1EB3\u0227\u01E1\u00E4\u01DF\u1EA3\u00E5\u01FB\u01CE\u0201\u0203\u1EA1\u1EAD\u1EB7\u1E01\u0105\u2C65\u0250' },
-  { base: 'aa', letters: '\uA733' },
-  { base: 'ae', letters: '\u00E6\u01FD\u01E3' },
-  { base: 'ao', letters: '\uA735' },
-  { base: 'au', letters: '\uA737' },
-  { base: 'av', letters: '\uA739\uA73B' },
-  { base: 'ay', letters: '\uA73D' },
-  { base: 'b', letters: '\u0062\u24D1\uFF42\u1E03\u1E05\u1E07\u0180\u0183\u0253' },
-  { base: 'c', letters: '\u0063\u24D2\uFF43\u0107\u0109\u010B\u010D\u00E7\u1E09\u0188\u023C\uA73F\u2184' },
-  { base: 'd', letters: '\u0064\u24D3\uFF44\u1E0B\u010F\u1E0D\u1E11\u1E13\u1E0F\u0111\u018C\u0256\u0257\uA77A' },
-  { base: 'dz', letters: '\u01F3\u01C6' },
-  { base: 'e', letters: '\u0065\u24D4\uFF45\u00E8\u00E9\u00EA\u1EC1\u1EBF\u1EC5\u1EC3\u1EBD\u0113\u1E15\u1E17\u0115\u0117\u00EB\u1EBB\u011B\u0205\u0207\u1EB9\u1EC7\u0229\u1E1D\u0119\u1E19\u1E1B\u0247\u025B\u01DD' },
-  { base: 'f', letters: '\u0066\u24D5\uFF46\u1E1F\u0192\uA77C' },
-  { base: 'g', letters: '\u0067\u24D6\uFF47\u01F5\u011D\u1E21\u011F\u0121\u01E7\u0123\u01E5\u0260\uA7A1\u1D79\uA77F' },
-  { base: 'h', letters: '\u0068\u24D7\uFF48\u0125\u1E23\u1E27\u021F\u1E25\u1E29\u1E2B\u1E96\u0127\u2C68\u2C76\u0265' },
-  { base: 'hv', letters: '\u0195' },
-  { base: 'i', letters: '\u0069\u24D8\uFF49\u00EC\u00ED\u00EE\u0129\u012B\u012D\u00EF\u1E2F\u1EC9\u01D0\u0209\u020B\u1ECB\u012F\u1E2D\u0268\u0131' },
-  { base: 'j', letters: '\u006A\u24D9\uFF4A\u0135\u01F0\u0249' },
-  { base: 'k', letters: '\u006B\u24DA\uFF4B\u1E31\u01E9\u1E33\u0137\u1E35\u0199\u2C6A\uA741\uA743\uA745\uA7A3' },
-  { base: 'l', letters: '\u006C\u24DB\uFF4C\u0140\u013A\u013E\u1E37\u1E39\u013C\u1E3D\u1E3B\u017F\u0142\u019A\u026B\u2C61\uA749\uA781\uA747' },
-  { base: 'lj', letters: '\u01C9' },
-  { base: 'm', letters: '\u006D\u24DC\uFF4D\u1E3F\u1E41\u1E43\u0271\u026F' },
-  { base: 'n', letters: '\u006E\u24DD\uFF4E\u01F9\u0144\u00F1\u1E45\u0148\u1E47\u0146\u1E4B\u1E49\u019E\u0272\u0149\uA791\uA7A5' },
-  { base: 'nj', letters: '\u01CC' },
-  { base: 'o', letters: '\u006F\u24DE\uFF4F\u00F2\u00F3\u00F4\u1ED3\u1ED1\u1ED7\u1ED5\u00F5\u1E4D\u022D\u1E4F\u014D\u1E51\u1E53\u014F\u022F\u0231\u00F6\u022B\u1ECF\u0151\u01D2\u020D\u020F\u01A1\u1EDD\u1EDB\u1EE1\u1EDF\u1EE3\u1ECD\u1ED9\u01EB\u01ED\u00F8\u01FF\u0254\uA74B\uA74D\u0275' },
-  { base: 'oi', letters: '\u01A3' },
-  { base: 'ou', letters: '\u0223' },
-  { base: 'oo', letters: '\uA74F' },
-  { base: 'p', letters: '\u0070\u24DF\uFF50\u1E55\u1E57\u01A5\u1D7D\uA751\uA753\uA755' },
-  { base: 'q', letters: '\u0071\u24E0\uFF51\u024B\uA757\uA759' },
-  { base: 'r', letters: '\u0072\u24E1\uFF52\u0155\u1E59\u0159\u0211\u0213\u1E5B\u1E5D\u0157\u1E5F\u024D\u027D\uA75B\uA7A7\uA783' },
-  { base: 's', letters: '\u0073\u24E2\uFF53\u00DF\u015B\u1E65\u015D\u1E61\u0161\u1E67\u1E63\u1E69\u0219\u015F\u023F\uA7A9\uA785\u1E9B' },
-  { base: 't', letters: '\u0074\u24E3\uFF54\u1E6B\u1E97\u0165\u1E6D\u021B\u0163\u1E71\u1E6F\u0167\u01AD\u0288\u2C66\uA787' },
-  { base: 'tz', letters: '\uA729' },
-  { base: 'u', letters: '\u0075\u24E4\uFF55\u00F9\u00FA\u00FB\u0169\u1E79\u016B\u1E7B\u016D\u00FC\u01DC\u01D8\u01D6\u01DA\u1EE7\u016F\u0171\u01D4\u0215\u0217\u01B0\u1EEB\u1EE9\u1EEF\u1EED\u1EF1\u1EE5\u1E73\u0173\u1E77\u1E75\u0289' },
-  { base: 'v', letters: '\u0076\u24E5\uFF56\u1E7D\u1E7F\u028B\uA75F\u028C' },
-  { base: 'vy', letters: '\uA761' },
-  { base: 'w', letters: '\u0077\u24E6\uFF57\u1E81\u1E83\u0175\u1E87\u1E85\u1E98\u1E89\u2C73' },
-  { base: 'x', letters: '\u0078\u24E7\uFF58\u1E8B\u1E8D' },
-  { base: 'y', letters: '\u0079\u24E8\uFF59\u1EF3\u00FD\u0177\u1EF9\u0233\u1E8F\u00FF\u1EF7\u1E99\u1EF5\u01B4\u024F\u1EFF' },
-  { base: 'z', letters: '\u007A\u24E9\uFF5A\u017A\u1E91\u017C\u017E\u1E93\u1E95\u01B6\u0225\u0240\u2C6C\uA763' } ];
+$$1.fn = Dom7.prototype;
+$$1.Class = Dom7;
 
-var diacriticsMap = {};
-for (var i = 0; i < defaultDiacriticsRemovalap.length; i += 1) {
-  var letters = defaultDiacriticsRemovalap[i].letters;
-  for (var j = 0; j < letters.length; j += 1) {
-    diacriticsMap[letters[j]] = defaultDiacriticsRemovalap[i].base;
+function parseUrlQuery(url) {
+  var query = {};
+  var urlToParse = url || window.location.href;
+  var i;
+  var params;
+  var param;
+  var length;
+  if (typeof urlToParse === 'string' && urlToParse.length) {
+    urlToParse = urlToParse.indexOf('?') > -1 ? urlToParse.replace(/\S*\?/, '') : '';
+    params = urlToParse.split('&').filter(function (paramsPart) { return paramsPart !== ''; });
+    length = params.length;
+
+    for (i = 0; i < length; i += 1) {
+      param = params[i].replace(/#\S+/g, '').split('=');
+      query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
+    }
   }
+  return query;
 }
-
-var Utils = {
-  parseUrlQuery: function parseUrlQuery(url) {
-    var query = {};
-    var urlToParse = url || window.location.href;
-    var i;
-    var params;
-    var param;
-    var length;
-    if (typeof urlToParse === 'string' && urlToParse.length) {
-      urlToParse = urlToParse.indexOf('?') > -1 ? urlToParse.replace(/\S*\?/, '') : '';
-      params = urlToParse.split('&').filter(function (paramsPart) { return paramsPart !== ''; });
-      length = params.length;
-
-      for (i = 0; i < length; i += 1) {
-        param = params[i].replace(/#\S+/g, '').split('=');
-        query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
+function isArray(arr) {
+  return Array.isArray(arr);
+}
+function each(obj, callback) {
+  // Check it's iterable
+  // TODO: Should probably raise a value error here
+  if (typeof obj !== 'object') { return; }
+  // Don't bother continuing without a callback
+  if (!callback) { return; }
+  if (Array.isArray(obj) || obj instanceof Dom7) {
+    // Array
+    for (var i = 0; i < obj.length; i += 1) {
+      // If callback returns false
+      if (callback(i, obj[i]) === false) {
+        // Break out of the loop
+        return;
       }
     }
-    return query;
-  },
-  isArray: function isArray(arr) {
-    return Array.isArray(arr);
-  },
-  each: function each(obj, callback) {
-      // Check it's iterable
-      // TODO: Should probably raise a value error here
-    if (typeof obj !== 'object') { return; }
-    // Don't bother continuing without a callback
-    if (!callback) { return; }
-    if (Array.isArray(obj) || obj instanceof Dom7) {
-      // Array
-      for (var i = 0; i < obj.length; i++) {
-        // If callback returns false
-        if (callback(i, obj[i]) === false) {
-          // Break out of the loop
+  } else {
+    // Object
+    for (var prop in obj) {
+      // Check the propertie belongs to the object
+      // not it's prototype
+      if (obj.hasOwnProperty(prop)) {
+        // If the callback returns false
+        if (callback(prop, obj[prop]) === false) {
+          // Break out of the loop;
           return;
         }
       }
-    } else {
-      // Object
-      for (var prop in obj) {
-        // Check the propertie belongs to the object
-        // not it's prototype
-        if (obj.hasOwnProperty(prop)) {
-          // If the callback returns false
-          if (callback(prop, obj[prop]) === false) {
-            // Break out of the loop;
-            return;
-          }
-        }
-      }
     }
-  },
-  unique: function unique(arr) {
-    var uniqueArray = [];
-    for (var i = 0; i < arr.length; i += 1) {
-      if (uniqueArray.indexOf(arr[i]) === -1) { uniqueArray.push(arr[i]); }
-    }
-    return uniqueArray;
-  },
-  serializeObject: function serializeObject(obj, parents) {
-    if ( parents === void 0 ) parents = [];
+  }
+}
+function unique(arr) {
+  var uniqueArray = [];
+  for (var i = 0; i < arr.length; i += 1) {
+    if (uniqueArray.indexOf(arr[i]) === -1) { uniqueArray.push(arr[i]); }
+  }
+  return uniqueArray;
+}
+function serializeObject(obj, parents) {
+  if ( parents === void 0 ) parents = [];
 
-    if (typeof obj === 'string') { return obj; }
-    var resultArray = [];
-    var separator = '&';
-    var newParents;
-    function varName(name) {
-      if (parents.length > 0) {
-        var parentParts = '';
-        for (var j = 0; j < parents.length; j += 1) {
-          if (j === 0) { parentParts += parents[j]; }
-          else { parentParts += "[" + (encodeURIComponent(parents[j])) + "]"; }
-        }
-        return (parentParts + "[" + (encodeURIComponent(name)) + "]");
+  if (typeof obj === 'string') { return obj; }
+  var resultArray = [];
+  var separator = '&';
+  var newParents;
+  function varName(name) {
+    if (parents.length > 0) {
+      var parentParts = '';
+      for (var j = 0; j < parents.length; j += 1) {
+        if (j === 0) { parentParts += parents[j]; }
+        else { parentParts += "[" + (encodeURIComponent(parents[j])) + "]"; }
       }
-      return encodeURIComponent(name);
+      return (parentParts + "[" + (encodeURIComponent(name)) + "]");
     }
-    function varValue(value) {
-      return encodeURIComponent(value);
-    }
-    for (var prop in obj) {
-      if (obj.hasOwnProperty(prop)) {
-        var toPush = (void 0);
-        if (Array.isArray(obj[prop])) {
-          toPush = [];
-          for (var i = 0; i < obj[prop].length; i += 1) {
-            if (!Array.isArray(obj[prop][i]) && typeof obj[prop][i] === 'object') {
-              newParents = parents.slice();
-              newParents.push(prop);
-              newParents.push(String(i));
-              toPush.push(Utils.serializeObject(obj[prop][i], newParents));
-            } else {
-              toPush.push(((varName(prop)) + "[]=" + (varValue(obj[prop][i]))));
-            }
-          }
-          if (toPush.length > 0) { resultArray.push(toPush.join(separator)); }
-        } else if (obj[prop] === null || obj[prop] === '') {
-          resultArray.push(((varName(prop)) + "="));
-        } else if (typeof obj[prop] === 'object') {
-          // Object, convert to named array
+    return encodeURIComponent(name);
+  }
+  function varValue(value) {
+    return encodeURIComponent(value);
+  }
+  Object.keys(obj).forEach(function (prop) {
+    var toPush;
+    if (Array.isArray(obj[prop])) {
+      toPush = [];
+      for (var i = 0; i < obj[prop].length; i += 1) {
+        if (!Array.isArray(obj[prop][i]) && typeof obj[prop][i] === 'object') {
           newParents = parents.slice();
           newParents.push(prop);
-          toPush = Utils.serializeObject(obj[prop], newParents);
-          if (toPush !== '') { resultArray.push(toPush); }
-        } else if (typeof obj[prop] !== 'undefined' && obj[prop] !== '') {
-          // Should be string or plain value
-          resultArray.push(((varName(prop)) + "=" + (varValue(obj[prop]))));
-        } else if (obj[prop] === '') { resultArray.push(varName(prop)); }
+          newParents.push(String(i));
+          toPush.push(serializeObject(obj[prop][i], newParents));
+        } else {
+          toPush.push(((varName(prop)) + "[]=" + (varValue(obj[prop][i]))));
+        }
       }
+      if (toPush.length > 0) { resultArray.push(toPush.join(separator)); }
+    } else if (obj[prop] === null || obj[prop] === '') {
+      resultArray.push(((varName(prop)) + "="));
+    } else if (typeof obj[prop] === 'object') {
+      // Object, convert to named array
+      newParents = parents.slice();
+      newParents.push(prop);
+      toPush = serializeObject(obj[prop], newParents);
+      if (toPush !== '') { resultArray.push(toPush); }
+    } else if (typeof obj[prop] !== 'undefined' && obj[prop] !== '') {
+      // Should be string or plain value
+      resultArray.push(((varName(prop)) + "=" + (varValue(obj[prop]))));
+    } else if (obj[prop] === '') { resultArray.push(varName(prop)); }
+  });
+  return resultArray.join(separator);
+}
+function toCamelCase(string) {
+  return string.toLowerCase().replace(/-(.)/g, function (match, group1) { return group1.toUpperCase(); });
+}
+function dataset(el) {
+  return $$1(el).dataset();
+}
+function getTranslate(el, axis) {
+  if ( axis === void 0 ) axis = 'x';
+
+  var curStyle = window.getComputedStyle(el, null);
+  var matrix;
+  var curTransform;
+  var transformMatrix;
+
+  if (window.WebKitCSSMatrix) {
+    curTransform = curStyle.transform || curStyle.webkitTransform;
+    if (curTransform.split(',').length > 6) {
+      curTransform = curTransform.split(', ').map(function (a) { return a.replace(',', '.'); }).join(', ');
     }
-    return resultArray.join(separator);
-  },
-  toCamelCase: function toCamelCase(string) {
-    return string.toLowerCase().replace(/-(.)/g, function (match, group1) { return group1.toUpperCase(); });
-  },
-  dataset: function dataset(el) {
-    return $(el).dataset();
-  },
-  getTranslate: function getTranslate(el, axis) {
-    if ( axis === void 0 ) axis = 'x';
+    // Some old versions of Webkit choke when 'none' is passed; pass
+    // empty string instead in this case
+    transformMatrix = new window.WebKitCSSMatrix(curTransform === 'none' ? '' : curTransform);
+  } else {
+    transformMatrix = curStyle.transform || curStyle.getPropertyValue('transform').replace('translate(', 'matrix(1, 0, 0, 1,');
+    matrix = transformMatrix.toString().split(',');
+  }
 
-    var curStyle = window.getComputedStyle(el, null);
-    var matrix;
-    var curTransform;
-    var transformMatrix;
+  if (axis === 'x') {
+    // Latest Chrome and webkits Fix
+    if (window.WebKitCSSMatrix) { curTransform = transformMatrix.m41; }
+    // Crazy IE10 Matrix
+    else if (matrix.length === 16) { curTransform = parseFloat(matrix[12]); }
+    // Normal Browsers
+    else { curTransform = parseFloat(matrix[4]); }
+  }
+  if (axis === 'y') {
+    // Latest Chrome and webkits Fix
+    if (window.WebKitCSSMatrix) { curTransform = transformMatrix.m42; }
+    // Crazy IE10 Matrix
+    else if (matrix.length === 16) { curTransform = parseFloat(matrix[13]); }
+    // Normal Browsers
+    else { curTransform = parseFloat(matrix[5]); }
+  }
 
-    if (window.WebKitCSSMatrix) {
-      curTransform = curStyle.transform || curStyle.webkitTransform;
-      if (curTransform.split(',').length > 6) {
-        curTransform = curTransform.split(', ').map(function map(a) {
-          return a.replace(',', '.');
-        }).join(', ');
-      }
-      // Some old versions of Webkit choke when 'none' is passed; pass
-      // empty string instead in this case
-      transformMatrix = new window.WebKitCSSMatrix(curTransform === 'none' ? '' : curTransform);
-    } else {
-      transformMatrix = curStyle.transform || curStyle.getPropertyValue('transform').replace('translate(', 'matrix(1, 0, 0, 1,');
-      matrix = transformMatrix.toString().split(',');
-    }
+  return curTransform || 0;
+}
+function requestAnimationFrame(callback) {
+  if (window.requestAnimationFrame) { return window.requestAnimationFrame(callback); }
+  else if (window.webkitRequestAnimationFrame) { return window.webkitRequestAnimationFrame(callback); }
+  return window.setTimeout(callback, 1000 / 60);
+}
+function cancelAnimationFrame(id) {
+  if (window.cancelAnimationFrame) { return window.cancelAnimationFrame(id); }
+  else if (window.webkitCancelAnimationFrame) { return window.webkitCancelAnimationFrame(id); }
+  return window.clearTimeout(id);
+}
+function extend() {
+  var args = [], len$1 = arguments.length;
+  while ( len$1-- ) args[ len$1 ] = arguments[ len$1 ];
 
-    if (axis === 'x') {
-      // Latest Chrome and webkits Fix
-      if (window.WebKitCSSMatrix) { curTransform = transformMatrix.m41; }
-      // Crazy IE10 Matrix
-      else if (matrix.length === 16) { curTransform = parseFloat(matrix[12]); }
-      // Normal Browsers
-      else { curTransform = parseFloat(matrix[4]); }
-    }
-    if (axis === 'y') {
-      // Latest Chrome and webkits Fix
-      if (window.WebKitCSSMatrix) { curTransform = transformMatrix.m42; }
-      // Crazy IE10 Matrix
-      else if (matrix.length === 16) { curTransform = parseFloat(matrix[13]); }
-      // Normal Browsers
-      else { curTransform = parseFloat(matrix[5]); }
-    }
-
-    return curTransform || 0;
-  },
-  requestAnimationFrame: function requestAnimationFrame(callback) {
-    if (window.requestAnimationFrame) { return window.requestAnimationFrame(callback); }
-    else if (window.webkitRequestAnimationFrame) { return window.webkitRequestAnimationFrame(callback); }
-    return window.setTimeout(callback, 1000 / 60);
-  },
-  cancelAnimationFrame: function cancelAnimationFrame(id) {
-    if (window.cancelAnimationFrame) { return window.cancelAnimationFrame(id); }
-    else if (window.webkitCancelAnimationFrame) { return window.webkitCancelAnimationFrame(id); }
-    return window.clearTimeout(id);
-  },
-  supportTouch: !!(('ontouchstart' in window) || (window.DocumentTouch && document instanceof window.DocumentTouch)),
-  removeDiacritics: function removeDiacritics(str) {
-    return str.replace(/[^\u0000-\u007E]/g, function (a) { return diacriticsMap[a] || a; });
-  },
-  extend: function extend() {
-    var args = [], len$1 = arguments.length;
-    while ( len$1-- ) args[ len$1 ] = arguments[ len$1 ];
-
-    var to = Object(args[0]);
-    for (var i = 1; i < args.length; i += 1) {
-      var nextSource = args[i];
-      if (nextSource !== undefined && nextSource !== null) {
-        var keysArray = Object.keys(Object(nextSource));
-        for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex += 1) {
-          var nextKey = keysArray[nextIndex];
-          var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
-          if (desc !== undefined && desc.enumerable) {
-            if (typeof to[nextKey] === 'object' && typeof nextSource[nextKey] === 'object') {
-              Utils.extend(to[nextKey], nextSource[nextKey]);
-            } else {
-              to[nextKey] = nextSource[nextKey];
-            }
+  var to = Object(args[0]);
+  for (var i = 1; i < args.length; i += 1) {
+    var nextSource = args[i];
+    if (nextSource !== undefined && nextSource !== null) {
+      var keysArray = Object.keys(Object(nextSource));
+      for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex += 1) {
+        var nextKey = keysArray[nextIndex];
+        var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
+        if (desc !== undefined && desc.enumerable) {
+          if (typeof to[nextKey] === 'object' && typeof nextSource[nextKey] === 'object') {
+            extend(to[nextKey], nextSource[nextKey]);
+          } else {
+            to[nextKey] = nextSource[nextKey];
           }
         }
       }
     }
-    return to;
-  },
-};
+  }
+  return to;
+}
 
-// Aliases
-Utils.parseQuery = Utils.parseUrlQuery;
-Utils.param = Utils.serializeObject;
+var Utils = {
+  parseUrlQuery: parseUrlQuery,
+  parseQuery: parseUrlQuery,
+  isArray: isArray,
+  each: each,
+  unique: unique,
+  serializeObject: serializeObject,
+  param: serializeObject,
+  toCamelCase: toCamelCase,
+  dataset: dataset,
+  getTranslate: getTranslate,
+  requestAnimationFrame: requestAnimationFrame,
+  cancelAnimationFrame: cancelAnimationFrame,
+  extend: extend,
+};
 
 // Global Ajax Setup
 var globalAjaxOptions = {};
-$.ajaxSetup = function ajaxSetup(options) {
+function ajaxSetup(options) {
   if (options.type && !options.method) { options.method = options.type; }
-  Utils.each(options, function (optionName, optionValue) {
+  each(options, function (optionName, optionValue) {
     globalAjaxOptions[optionName] = optionValue;
   });
-};
+}
 
 // JSONP Requests
 var jsonpRequests = 0;
@@ -419,14 +327,14 @@ function ajax(options) {
   var globals = globalAjaxOptions;
 
   // Merge global and defaults
-  Utils.each(globals, function (globalOptionName, globalOptionValue) {
+  each(globals, function (globalOptionName, globalOptionValue) {
     if (callbacks.indexOf(globalOptionName) < 0) { defaults[globalOptionName] = globalOptionValue; }
   });
 
   // Function to run XHR callbacks and events
   function fireAjaxCallback(eventName, eventData, callbackName) {
     var a = arguments;
-    if (eventName) { $(document).trigger(eventName, eventData); }
+    if (eventName) { $$1(document).trigger(eventName, eventData); }
     if (callbackName) {
       // Global callback
       if (callbackName in globals) { globals[callbackName](a[3], a[4], a[5], a[6]); }
@@ -436,7 +344,7 @@ function ajax(options) {
   }
 
   // Merge options and defaults
-  Utils.each(defaults, function (prop, defaultValue) {
+  each(defaults, function (prop, defaultValue) {
     if (!(prop in options)) { options[prop] = defaultValue; }
   });
 
@@ -459,7 +367,7 @@ function ajax(options) {
       else { stringData = options.data; }
     } else {
       // Should be key=value object
-      stringData = Utils.serializeObject(options.data);
+      stringData = serializeObject(options.data);
     }
     if (stringData.length) {
       options.url += paramsPrefix + stringData;
@@ -544,7 +452,7 @@ function ajax(options) {
           xhr.setRequestHeader('Content-Type', options.contentType);
         }
         postData = '';
-        var data = Utils.serializeObject(options.data);
+        var data = serializeObject(options.data);
         if (options.contentType === 'multipart/form-data') {
           data = data.split('&');
           var newData = [];
@@ -563,7 +471,7 @@ function ajax(options) {
 
   // Additional headers
   if (options.headers) {
-    Utils.each(options.headers, function (headerName, headerCallback) {
+    each(options.headers, function (headerName, headerCallback) {
       xhr.setRequestHeader(headerName, headerCallback);
     });
   }
@@ -578,7 +486,7 @@ function ajax(options) {
   }
 
   if (options.xhrFields) {
-    Utils.each(options.xhrFields, function (fieldName, fieldValue) {
+    each(options.xhrFields, function (fieldName, fieldValue) {
       xhr[fieldName] = fieldValue;
     });
   }
@@ -663,7 +571,7 @@ function ajaxShortcut(method) {
     }
   });
   dataType = dataType || (method === 'getJSON' ? 'json' : undefined);
-  return $.ajax({
+  return ajax({
     url: url,
     method: method === 'post' ? 'POST' : 'GET',
     data: data,
@@ -695,14 +603,34 @@ function getJSON() {
   return ajaxShortcut.apply(this, args);
 }
 
-var Scroll = {
-  scrollTo: function scrollTo(left, top, duration, easing, callback) {
-    if ( easing === void 0 ) easing = 'swing';
 
-    if (arguments.length === 4 && typeof easing === 'function') {
+
+
+var Ajax = Object.freeze({
+	ajaxSetup: ajaxSetup,
+	ajax: ajax,
+	get: get,
+	post: post,
+	getJSON: getJSON
+});
+
+var Scroll = {
+  scrollTo: function scrollTo() {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    var left = args[0];
+    var top = args[1];
+    var duration = args[2];
+    var easing = args[3];
+    var callback = args[4];
+    if (args.length === 4 && typeof easing === 'function') {
       callback = easing;
-      easing = undefined;
+      var assign;
+      (assign = args, left = assign[0], top = assign[1], duration = assign[2], callback = assign[3], easing = assign[4]);
     }
+    if (typeof easing === 'undefined') { easing = 'swing'; }
+
     return this.each(function animate() {
       var el = this;
       var currentTop;
@@ -776,15 +704,23 @@ var Scroll = {
         }
         if (animateTop) { el.scrollTop = scrollTop; }
         if (animateLeft) { el.scrollLeft = scrollLeft; }
-        Utils.requestAnimationFrame(render);
+        requestAnimationFrame(render);
       }
-      Utils.requestAnimationFrame(render);
+      requestAnimationFrame(render);
     });
   },
-  scrollTop: function scrollTop(top, duration, easing, callback) {
-    if (arguments.length === 3 && typeof easing === 'function') {
-      callback = easing;
-      easing = undefined;
+  // scrollTop(top, duration, easing, callback) {
+  scrollTop: function scrollTop() {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    var top = args[0];
+    var duration = args[1];
+    var easing = args[2];
+    var callback = args[3];
+    if (args.length === 3 && typeof easing === 'function') {
+      var assign;
+      (assign = args, top = assign[0], duration = assign[1], callback = assign[2], easing = assign[3]);
     }
     var dom = this;
     if (typeof top === 'undefined') {
@@ -793,10 +729,17 @@ var Scroll = {
     }
     return dom.scrollTo(undefined, top, duration, easing, callback);
   },
-  scrollLeft: function scrollLeft(left, duration, easing, callback) {
-    if (arguments.length === 3 && typeof easing === 'function') {
-      callback = easing;
-      easing = undefined;
+  scrollLeft: function scrollLeft() {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    var left = args[0];
+    var duration = args[1];
+    var easing = args[2];
+    var callback = args[3];
+    if (args.length === 3 && typeof easing === 'function') {
+      var assign;
+      (assign = args, left = assign[0], duration = assign[1], callback = assign[2], easing = assign[3]);
     }
     var dom = this;
     if (typeof left === 'undefined') {
@@ -945,28 +888,28 @@ var Methods = {
       }
     }
   },
-  dataset: function dataset() {
+  dataset: function dataset$$1() {
     var el = this[0];
     if (!el) { return undefined; }
-    var dataset = {};
+    var dataset$$1 = {};
     if (el.dataset) {
       for (var dataKey in el.dataset) {
-        dataset[dataKey] = el.dataset[dataKey];
+        dataset$$1[dataKey] = el.dataset[dataKey];
       }
     } else {
       for (var i = 0; i < el.attributes.length; i += 1) {
         var attr = el.attributes[i];
         if (attr.name.indexOf('data-') >= 0) {
-          dataset[Utils.toCamelCase(attr.name.split('data-')[1])] = attr.value;
+          dataset$$1[toCamelCase(attr.name.split('data-')[1])] = attr.value;
         }
       }
     }
-    for (var key in dataset) {
-      if (dataset[key] === 'false') { dataset[key] = false; }
-      else if (dataset[key] === 'true') { dataset[key] = true; }
-      else if (parseFloat(dataset[key]) === dataset[key] * 1) { dataset[key] *= 1; }
+    for (var key in dataset$$1) {
+      if (dataset$$1[key] === 'false') { dataset$$1[key] = false; }
+      else if (dataset$$1[key] === 'true') { dataset$$1[key] = true; }
+      else if (parseFloat(dataset$$1[key]) === dataset$$1[key] * 1) { dataset$$1[key] *= 1; }
     }
-    return dataset;
+    return dataset$$1;
   },
   val: function val(value) {
     var this$1 = this;
@@ -1038,11 +981,11 @@ var Methods = {
       if (!target) { return; }
       var eventData = e.target.dom7EventData || [];
       eventData.unshift(e);
-      if ($(target).is(targetSelector)) { listener.apply(target, eventData); }
+      if ($$1(target).is(targetSelector)) { listener.apply(target, eventData); }
       else {
-        var parents = $(target).parents();
+        var parents = $$1(target).parents();
         for (var k = 0; k < parents.length; k += 1) {
-          if ($(parents[k]).is(targetSelector)) { listener.apply(parents[k], eventData); }
+          if ($$1(parents[k]).is(targetSelector)) { listener.apply(parents[k], eventData); }
         }
       }
     }
@@ -1120,7 +1063,7 @@ var Methods = {
               if (el.dom7LiveListeners[k$1].listener === listener) {
                 el.removeEventListener(events[i], el.dom7LiveListeners[k$1].proxyListener, capture);
               }
-            } else if (el.dom7Listeners[k$1].type === events[i]) {
+            } else if (el.dom7LiveListeners[k$1].type === events[i]) {
               el.removeEventListener(events[i], el.dom7LiveListeners[k$1].proxyListener, capture);
             }
           }
@@ -1154,7 +1097,7 @@ var Methods = {
       for (var j = 0; j < this.length; j += 1) {
         var evt = (void 0);
         try {
-          evt = new CustomEvent(events[i], { detail: eventData, bubbles: true, cancelable: true });
+          evt = new window.CustomEvent(events[i], { detail: eventData, bubbles: true, cancelable: true });
         } catch (e) {
           evt = document.createEvent('Event');
           evt.initEvent(events[i], true, true);
@@ -1309,8 +1252,17 @@ var Methods = {
   },
 
   // Dom manipulation
+  toArray: function toArray() {
+    var this$1 = this;
+
+    var arr = [];
+    for (var i = 0; i < this.length; i+= 1) {
+      arr.push(this$1[i]);
+    }
+    return arr;
+  },
   // Iterate over the collection passing elements to `callback`
-  each: function each(callback) {
+  each: function each$$1(callback) {
     var this$1 = this;
 
     // Don't bother continuing without a callback
@@ -1326,6 +1278,22 @@ var Methods = {
     // Return `this` to allow chained DOM operations
     return this;
   },
+  forEach: function forEach(callback) {
+    var this$1 = this;
+
+    // Don't bother continuing without a callback
+    if (!callback) { return this; }
+    // Iterate over the current collection
+    for (var i = 0; i < this.length; i += 1) {
+      // If the callback returns false
+      if (callback.call(this$1[i], this$1[i], i) === false) {
+        // End the loop early
+        return this$1;
+      }
+    }
+    // Return `this` to allow chained DOM operations
+    return this;
+  },
   filter: function filter(callback) {
     var matchedItems = [];
     var dom = this;
@@ -1333,6 +1301,14 @@ var Methods = {
       if (callback.call(dom[i], i, dom[i])) { matchedItems.push(dom[i]); }
     }
     return new Dom7(matchedItems);
+  },
+  map: function map(callback) {
+    var modifiedItems = [];
+    var dom = this;
+    for (var i = 0; i < dom.length; i += 1) {
+      modifiedItems.push(callback.call(dom[i], i, dom[i]));
+    }
+    return new Dom7(modifiedItems);
   },
   html: function html(html$1) {
     var this$1 = this;
@@ -1371,7 +1347,7 @@ var Methods = {
       else if (el.webkitMatchesSelector) { return el.webkitMatchesSelector(selector); }
       else if (el.msMatchesSelector) { return el.msMatchesSelector(selector); }
 
-      compareWith = $(selector);
+      compareWith = $$1(selector);
       for (i = 0; i < compareWith.length; i += 1) {
         if (compareWith[i] === el) { return true; }
       }
@@ -1449,7 +1425,7 @@ var Methods = {
     return this;
   },
   appendTo: function appendTo(parent) {
-    $(parent).append(this);
+    $$1(parent).append(this);
     return this;
   },
   prepend: function prepend(newChild) {
@@ -1475,13 +1451,13 @@ var Methods = {
     return this;
   },
   prependTo: function prependTo(parent) {
-    $(parent).prepend(this);
+    $$1(parent).prepend(this);
     return this;
   },
   insertBefore: function insertBefore(selector) {
     var this$1 = this;
 
-    var before = $(selector);
+    var before = $$1(selector);
     for (var i = 0; i < this.length; i += 1) {
       if (before.length === 1) {
         before[0].parentNode.insertBefore(this$1[i], before[0]);
@@ -1495,7 +1471,7 @@ var Methods = {
   insertAfter: function insertAfter(selector) {
     var this$1 = this;
 
-    var after = $(selector);
+    var after = $$1(selector);
     for (var i = 0; i < this.length; i += 1) {
       if (after.length === 1) {
         after[0].parentNode.insertBefore(this$1[i], after[0].nextSibling);
@@ -1509,7 +1485,7 @@ var Methods = {
   next: function next(selector) {
     if (this.length > 0) {
       if (selector) {
-        if (this[0].nextElementSibling && $(this[0].nextElementSibling).is(selector)) { return new Dom7([this[0].nextElementSibling]); }
+        if (this[0].nextElementSibling && $$1(this[0].nextElementSibling).is(selector)) { return new Dom7([this[0].nextElementSibling]); }
         return new Dom7([]);
       }
 
@@ -1525,7 +1501,7 @@ var Methods = {
     while (el.nextElementSibling) {
       var next = el.nextElementSibling;
       if (selector) {
-        if ($(next).is(selector)) { nextEls.push(next); }
+        if ($$1(next).is(selector)) { nextEls.push(next); }
       } else { nextEls.push(next); }
       el = next;
     }
@@ -1535,7 +1511,7 @@ var Methods = {
     if (this.length > 0) {
       var el = this[0];
       if (selector) {
-        if (el.previousElementSibling && $(el.previousElementSibling).is(selector)) { return new Dom7([el.previousElementSibling]); }
+        if (el.previousElementSibling && $$1(el.previousElementSibling).is(selector)) { return new Dom7([el.previousElementSibling]); }
         return new Dom7([]);
       }
 
@@ -1551,7 +1527,7 @@ var Methods = {
     while (el.previousElementSibling) {
       var prev = el.previousElementSibling;
       if (selector) {
-        if ($(prev).is(selector)) { prevEls.push(prev); }
+        if ($$1(prev).is(selector)) { prevEls.push(prev); }
       } else { prevEls.push(prev); }
       el = prev;
     }
@@ -1567,13 +1543,13 @@ var Methods = {
     for (var i = 0; i < this.length; i += 1) {
       if (this$1[i].parentNode !== null) {
         if (selector) {
-          if ($(this$1[i].parentNode).is(selector)) { parents.push(this$1[i].parentNode); }
+          if ($$1(this$1[i].parentNode).is(selector)) { parents.push(this$1[i].parentNode); }
         } else {
           parents.push(this$1[i].parentNode);
         }
       }
     }
-    return $(Utils.unique(parents));
+    return $$1(unique(parents));
   },
   parents: function parents(selector) {
     var this$1 = this;
@@ -1583,14 +1559,14 @@ var Methods = {
       var parent = this$1[i].parentNode;
       while (parent) {
         if (selector) {
-          if ($(parent).is(selector)) { parents.push(parent); }
+          if ($$1(parent).is(selector)) { parents.push(parent); }
         } else {
           parents.push(parent);
         }
         parent = parent.parentNode;
       }
     }
-    return $(Utils.unique(parents));
+    return $$1(unique(parents));
   },
   closest: function closest(selector) {
     var closest = this;
@@ -1624,10 +1600,10 @@ var Methods = {
       for (var j = 0; j < childNodes.length; j += 1) {
         if (!selector) {
           if (childNodes[j].nodeType === 1) { children.push(childNodes[j]); }
-        } else if (childNodes[j].nodeType === 1 && $(childNodes[j]).is(selector)) { children.push(childNodes[j]); }
+        } else if (childNodes[j].nodeType === 1 && $$1(childNodes[j]).is(selector)) { children.push(childNodes[j]); }
       }
     }
-    return new Dom7(Utils.unique(children));
+    return new Dom7(unique(children));
   },
   remove: function remove() {
     var this$1 = this;
@@ -1648,7 +1624,7 @@ var Methods = {
     var i;
     var j;
     for (i = 0; i < args.length; i += 1) {
-      var toAdd = $(args[i]);
+      var toAdd = $$1(args[i]);
       for (j = 0; j < toAdd.length; j += 1) {
         dom[dom.length] = toAdd[j];
         dom.length += 1;
@@ -1686,7 +1662,7 @@ function createMethod(name) {
         if (notTrigger.indexOf(name) < 0) {
           if (name in this$1[i]) { this$1[i][name](); }
           else {
-            $(this$1[i]).trigger(name);
+            $$1(this$1[i]).trigger(name);
           }
         }
       }
@@ -1695,15 +1671,15 @@ function createMethod(name) {
     return this.on(name, targetSelector, listener, capture);
   };
 }
-for (var i$1 = 0; i$1 < shortcuts.length; i$1 += 1) {
-  createMethod(shortcuts[i$1]);
+for (var i = 0; i < shortcuts.length; i += 1) {
+  createMethod(shortcuts[i]);
 }
 
 function animate(initialProps, initialParams) {
   var els = this;
   var a = {
-    props: $.extend({}, initialProps),
-    params: $.extend({
+    props: $$1.extend({}, initialProps),
+    params: $$1.extend({
       duration: 300,
       easing: 'swing', // or 'linear'
       /* Callbacks
@@ -1728,7 +1704,7 @@ function animate(initialProps, initialParams) {
     },
     stop: function stop() {
       if (a.frameId) {
-        Utils.cancelAnimationFrame(a.frameId);
+        cancelAnimationFrame(a.frameId);
       }
       a.animating = false;
       a.elements.each(function (index, el) {
@@ -1847,9 +1823,9 @@ function animate(initialProps, initialParams) {
         });
         if (done) { return; }
         // Then call
-        a.frameId = Utils.requestAnimationFrame(render);
+        a.frameId = requestAnimationFrame(render);
       }
-      a.frameId = Utils.requestAnimationFrame(render);
+      a.frameId = requestAnimationFrame(render);
       return a;
     },
   };
@@ -1886,41 +1862,39 @@ function stop() {
   }
 }
 
-function dom7() {
-  // Utils & Helpers
-  Object.keys(Utils).forEach(function (key) {
-    $[key] = Utils[key];
-  });
 
-  // Methods
-  Object.keys(Methods).forEach(function (key) {
-    Dom7.prototype[key] = Methods[key];
-  });
 
-  // Scroll
-  Object.keys(Scroll).forEach(function (key) {
-    Dom7.prototype[key] = Scroll[key];
-  });
 
-  // Animate
-  Dom7.prototype.animate = animate;
-  Dom7.prototype.stop = stop;
+var Animate = Object.freeze({
+	animate: animate,
+	stop: stop
+});
 
-  // Ajax
-  $.ajax = ajax;
-  $.get = get;
-  $.post = post;
-  $.getJSON = getJSON;
+// Utils & Helpers
+Object.keys(Utils).forEach(function (key) {
+  $$1[key] = Utils[key];
+});
 
-  // Link to prototype
-  $.fn = Dom7.prototype;
+// Methods
+Object.keys(Methods).forEach(function (key) {
+  $$1.fn[key] = Methods[key];
+});
 
-  return $;
-}
-var dom7$1 = dom7();
+// Scroll
+Object.keys(Scroll).forEach(function (key) {
+  $$1.fn[key] = Scroll[key];
+});
 
-return dom7$1;
+// Animate
+Object.keys(Animate).forEach(function (key) {
+  $$1.fn[key] = Animate[key];
+});
+
+// Ajax
+Object.keys(Ajax).forEach(function (key) {
+  $$1[key] = Ajax[key];
+});
+
+return $$1;
 
 })));
-
-//# sourceMappingURL=dom7.js.map

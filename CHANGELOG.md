@@ -1,5 +1,12 @@
 # Change Log
 
+## Dom7 v1.7.0 - Released on August 30, 2017
+  * New `.forEach((element, index))` method
+  * New `.map((index, element))` method
+  * New `.toArray()` method that converts Dom7 collection to simple array
+  * `$.supportTouch` and `$.removeDiacritics` helpers removed
+  * Fixed issue with detaching live event listener without listener function
+
 ## Dom7 v1.6.4 - Released on August 2, 2017
   * Fixed issue with handling events without target (e.g. Cordova "resume" event)
   * Fixed issue with Ajax post method throwing error with "multipart/form-data" content type
