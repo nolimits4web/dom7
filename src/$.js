@@ -1,6 +1,6 @@
 import Dom7 from './dom7-class';
 
-export default function $(selector, context) {
+function $(selector, context) {
   const arr = [];
   let i = 0;
   if (selector && !context) {
@@ -49,4 +49,9 @@ export default function $(selector, context) {
     }
   }
   return new Dom7(arr);
-};
+}
+
+$.fn = Dom7.prototype;
+$.Class = Dom7;
+
+export default $;
