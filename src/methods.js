@@ -1,6 +1,6 @@
 import Dom7 from './dom7-class';
 import $ from './$';
-import Utils from './utils';
+import { toCamelCase, unique } from './utils';
 
 const Methods = {
   // Classes and attributes
@@ -134,7 +134,7 @@ const Methods = {
       for (let i = 0; i < el.attributes.length; i += 1) {
         const attr = el.attributes[i];
         if (attr.name.indexOf('data-') >= 0) {
-          dataset[Utils.toCamelCase(attr.name.split('data-')[1])] = attr.value;
+          dataset[toCamelCase(attr.name.split('data-')[1])] = attr.value;
         }
       }
     }
@@ -735,7 +735,7 @@ const Methods = {
         }
       }
     }
-    return $(Utils.unique(parents));
+    return $(unique(parents));
   },
   parents(selector) {
     const parents = [];
@@ -750,7 +750,7 @@ const Methods = {
         parent = parent.parentNode;
       }
     }
-    return $(Utils.unique(parents));
+    return $(unique(parents));
   },
   closest(selector) {
     let closest = this;
@@ -783,7 +783,7 @@ const Methods = {
         } else if (childNodes[j].nodeType === 1 && $(childNodes[j]).is(selector)) children.push(childNodes[j]);
       }
     }
-    return new Dom7(Utils.unique(children));
+    return new Dom7(unique(children));
   },
   remove() {
     for (let i = 0; i < this.length; i += 1) {

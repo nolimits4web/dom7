@@ -1,5 +1,5 @@
 import $ from './$';
-import Utils from './utils';
+import { requestAnimationFrame, cancelAnimationFrame } from './utils';
 
 function animate(initialProps, initialParams) {
   const els = this;
@@ -30,7 +30,7 @@ function animate(initialProps, initialParams) {
     },
     stop() {
       if (a.frameId) {
-        Utils.cancelAnimationFrame(a.frameId);
+        cancelAnimationFrame(a.frameId);
       }
       a.animating = false;
       a.elements.each((index, el) => {
@@ -146,9 +146,9 @@ function animate(initialProps, initialParams) {
         });
         if (done) return;
         // Then call
-        a.frameId = Utils.requestAnimationFrame(render);
+        a.frameId = requestAnimationFrame(render);
       }
-      a.frameId = Utils.requestAnimationFrame(render);
+      a.frameId = requestAnimationFrame(render);
       return a;
     },
   };

@@ -1,11 +1,14 @@
-import Utils from './utils';
+import { requestAnimationFrame } from './utils';
 
 const Scroll = {
-  scrollTo(left, top, duration, easing = 'swing', callback) {
-    if (arguments.length === 4 && typeof easing === 'function') {
+  scrollTo(...args) {
+    let [left, top, duration, easing, callback] = args;
+    if (args.length === 4 && typeof easing === 'function') {
       callback = easing;
-      easing = undefined;
+      [left, top, duration, callback, easing] = args;
     }
+    if (typeof easing === 'undefined') easing = 'swing';
+
     return this.each(function animate() {
       const el = this;
       let currentTop;
@@ -77,15 +80,16 @@ const Scroll = {
         }
         if (animateTop) el.scrollTop = scrollTop;
         if (animateLeft) el.scrollLeft = scrollLeft;
-        Utils.requestAnimationFrame(render);
+        requestAnimationFrame(render);
       }
-      Utils.requestAnimationFrame(render);
+      requestAnimationFrame(render);
     });
   },
-  scrollTop(top, duration, easing, callback) {
-    if (arguments.length === 3 && typeof easing === 'function') {
-      callback = easing;
-      easing = undefined;
+  // scrollTop(top, duration, easing, callback) {
+  scrollTop(...args) {
+    let [top, duration, easing, callback] = args;
+    if (args.length === 3 && typeof easing === 'function') {
+      [top, duration, callback, easing] = args;
     }
     const dom = this;
     if (typeof top === 'undefined') {
@@ -94,10 +98,10 @@ const Scroll = {
     }
     return dom.scrollTo(undefined, top, duration, easing, callback);
   },
-  scrollLeft(left, duration, easing, callback) {
-    if (arguments.length === 3 && typeof easing === 'function') {
-      callback = easing;
-      easing = undefined;
+  scrollLeft(...args) {
+    let [left, duration, easing, callback] = args;
+    if (args.length === 3 && typeof easing === 'function') {
+      [left, duration, callback, easing] = args;
     }
     const dom = this;
     if (typeof left === 'undefined') {
