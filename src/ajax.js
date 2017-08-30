@@ -1,11 +1,11 @@
 import $ from './$';
-import Utils from './utils';
+import { each, serializeObject } from './utils';
 
 // Global Ajax Setup
 const globalAjaxOptions = {};
-$.ajaxSetup = function ajaxSetup(options) {
+function ajaxSetup(options) {
   if (options.type && !options.method) options.method = options.type;
-  Utils.each(options, (optionName, optionValue) => {
+  each(options, (optionName, optionValue) => {
     globalAjaxOptions[optionName] = optionValue;
   });
 };
@@ -39,7 +39,7 @@ function ajax(options) {
   const globals = globalAjaxOptions;
 
   // Merge global and defaults
-  Utils.each(globals, (globalOptionName, globalOptionValue) => {
+  each(globals, (globalOptionName, globalOptionValue) => {
     if (callbacks.indexOf(globalOptionName) < 0) defaults[globalOptionName] = globalOptionValue;
   });
 
@@ -56,7 +56,7 @@ function ajax(options) {
   }
 
   // Merge options and defaults
-  Utils.each(defaults, (prop, defaultValue) => {
+  each(defaults, (prop, defaultValue) => {
     if (!(prop in options)) options[prop] = defaultValue;
   });
 
@@ -79,7 +79,7 @@ function ajax(options) {
       else stringData = options.data;
     } else {
       // Should be key=value object
-      stringData = Utils.serializeObject(options.data);
+      stringData = serializeObject(options.data);
     }
     if (stringData.length) {
       options.url += paramsPrefix + stringData;
@@ -164,7 +164,7 @@ function ajax(options) {
           xhr.setRequestHeader('Content-Type', options.contentType);
         }
         postData = '';
-        let data = Utils.serializeObject(options.data);
+        let data = serializeObject(options.data);
         if (options.contentType === 'multipart/form-data') {
           data = data.split('&');
           const newData = [];
@@ -183,7 +183,7 @@ function ajax(options) {
 
   // Additional headers
   if (options.headers) {
-    Utils.each(options.headers, (headerName, headerCallback) => {
+    each(options.headers, (headerName, headerCallback) => {
       xhr.setRequestHeader(headerName, headerCallback);
     });
   }
@@ -198,7 +198,7 @@ function ajax(options) {
   }
 
   if (options.xhrFields) {
-    Utils.each(options.xhrFields, (fieldName, fieldValue) => {
+    each(options.xhrFields, (fieldName, fieldValue) => {
       xhr[fieldName] = fieldValue;
     });
   }
@@ -278,7 +278,7 @@ function ajaxShortcut(method, ...args) {
     }
   });
   dataType = dataType || (method === 'getJSON' ? 'json' : undefined);
-  return $.ajax({
+  return ajax({
     url,
     method: method === 'post' ? 'POST' : 'GET',
     data,
@@ -301,4 +301,4 @@ function getJSON(...args) {
   return ajaxShortcut.apply(this, args);
 }
 
-export { ajax, get, post, getJSON };
+export { ajaxSetup, ajax, get, post, getJSON };
