@@ -3,6 +3,4 @@ build
 node_modules
 npm-debug.log
 index.html
-.editorconfig
-.eslintrc.js
-gulpfile.js
+demo
