@@ -351,7 +351,8 @@ const Methods = {
     const dom = this;
     let i;
     function fireCallBack(e) {
-      callback(e);
+      if (e.target !== this) return;
+      callback.call(this, e);
       for (i = 0; i < events.length; i += 1) {
         dom.off(events[i], fireCallBack);
       }
