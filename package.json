@@ -1,6 +1,6 @@
 {
   "name": "dom7",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
   "jsnext:main": "dist/dom7.module.js",
@@ -9,7 +9,7 @@
     "build-dev": "NODE_ENV=development gulp build",
     "build-prod": "NODE_ENV=production gulp build",
     "dev": "NODE_ENV=development gulp build && NODE_ENV=development gulp demo && gulp server",
-    "prod": "NODE_ENV=production gulp demo && gulp server",
+    "prod": "NODE_ENV=production gulp demo && NODE_ENV=production gulp server",
     "test": "npm run build-dev"
   },
   "repository": {

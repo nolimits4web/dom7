@@ -1,5 +1,10 @@
 # Change Log
 
+## Dom7 v1.7.1 - Released on September 2, 2017
+  * Removed `$.getTranslate` method
+  * Imporved logic of `$.extend` method
+  * New `dom7.modular.js` version for custom es imports, e.g. `import { $, Methods, Ajax } from 'dom7.modular.js'`
+
 ## Dom7 v1.7.0 - Released on August 30, 2017
   * New `.forEach((element, index))` method
   * New `.map((index, element))` method

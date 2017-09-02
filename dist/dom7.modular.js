@@ -24,7 +24,7 @@ class Dom7 {
   }
 }
 
-function $$1(selector, context) {
+function $(selector, context) {
   const arr = [];
   let i = 0;
   if (selector && !context) {
@@ -75,18 +75,18 @@ function $$1(selector, context) {
   return new Dom7(arr);
 }
 
-$$1.fn = Dom7.prototype;
-$$1.Class = Dom7;
+$.fn = Dom7.prototype;
+$.Class = Dom7;
 
-$$1.use = function use(...args) {
+$.use = function use(...args) {
   args.forEach((methods) => {
     const isUtils = '__utils' in methods;
     Object.keys(methods).forEach((methodName) => {
       if (methodName === '__utils') return;
       if (isUtils) {
-        $$1[methodName] = methods[methodName];
+        $[methodName] = methods[methodName];
       } else {
-        $$1.fn[methodName] = methods[methodName];
+        $.fn[methodName] = methods[methodName];
       }
     });
   });
@@ -204,7 +204,7 @@ function toCamelCase(string) {
   return string.toLowerCase().replace(/-(.)/g, (match, group1) => group1.toUpperCase());
 }
 function dataset(el) {
-  return $$1(el).dataset();
+  return $(el).dataset();
 }
 function requestAnimationFrame(callback) {
   if (window.requestAnimationFrame) return window.requestAnimationFrame(callback);
@@ -462,11 +462,11 @@ const Methods = {
       if (!target) return;
       const eventData = e.target.dom7EventData || [];
       eventData.unshift(e);
-      if ($$1(target).is(targetSelector)) listener.apply(target, eventData);
+      if ($(target).is(targetSelector)) listener.apply(target, eventData);
       else {
-        const parents = $$1(target).parents();
+        const parents = $(target).parents();
         for (let k = 0; k < parents.length; k += 1) {
-          if ($$1(parents[k]).is(targetSelector)) listener.apply(parents[k], eventData);
+          if ($(parents[k]).is(targetSelector)) listener.apply(parents[k], eventData);
         }
       }
     }
@@ -805,7 +805,7 @@ const Methods = {
       else if (el.webkitMatchesSelector) return el.webkitMatchesSelector(selector);
       else if (el.msMatchesSelector) return el.msMatchesSelector(selector);
 
-      compareWith = $$1(selector);
+      compareWith = $(selector);
       for (i = 0; i < compareWith.length; i += 1) {
         if (compareWith[i] === el) return true;
       }
@@ -877,7 +877,7 @@ const Methods = {
     return this;
   },
   appendTo(parent) {
-    $$1(parent).append(this);
+    $(parent).append(this);
     return this;
   },
   prepend(newChild) {
@@ -901,11 +901,11 @@ const Methods = {
     return this;
   },
   prependTo(parent) {
-    $$1(parent).prepend(this);
+    $(parent).prepend(this);
     return this;
   },
   insertBefore(selector) {
-    const before = $$1(selector);
+    const before = $(selector);
     for (let i = 0; i < this.length; i += 1) {
       if (before.length === 1) {
         before[0].parentNode.insertBefore(this[i], before[0]);
@@ -917,7 +917,7 @@ const Methods = {
     }
   },
   insertAfter(selector) {
-    const after = $$1(selector);
+    const after = $(selector);
     for (let i = 0; i < this.length; i += 1) {
       if (after.length === 1) {
         after[0].parentNode.insertBefore(this[i], after[0].nextSibling);
@@ -931,7 +931,7 @@ const Methods = {
   next(selector) {
     if (this.length > 0) {
       if (selector) {
-        if (this[0].nextElementSibling && $$1(this[0].nextElementSibling).is(selector)) return new Dom7([this[0].nextElementSibling]);
+        if (this[0].nextElementSibling && $(this[0].nextElementSibling).is(selector)) return new Dom7([this[0].nextElementSibling]);
         return new Dom7([]);
       }
 
@@ -947,7 +947,7 @@ const Methods = {
     while (el.nextElementSibling) {
       const next = el.nextElementSibling;
       if (selector) {
-        if ($$1(next).is(selector)) nextEls.push(next);
+        if ($(next).is(selector)) nextEls.push(next);
       } else nextEls.push(next);
       el = next;
     }
@@ -957,7 +957,7 @@ const Methods = {
     if (this.length > 0) {
       const el = this[0];
       if (selector) {
-        if (el.previousElementSibling && $$1(el.previousElementSibling).is(selector)) return new Dom7([el.previousElementSibling]);
+        if (el.previousElementSibling && $(el.previousElementSibling).is(selector)) return new Dom7([el.previousElementSibling]);
         return new Dom7([]);
       }
 
@@ -973,7 +973,7 @@ const Methods = {
     while (el.previousElementSibling) {
       const prev = el.previousElementSibling;
       if (selector) {
-        if ($$1(prev).is(selector)) prevEls.push(prev);
+        if ($(prev).is(selector)) prevEls.push(prev);
       } else prevEls.push(prev);
       el = prev;
     }
@@ -987,13 +987,13 @@ const Methods = {
     for (let i = 0; i < this.length; i += 1) {
       if (this[i].parentNode !== null) {
         if (selector) {
-          if ($$1(this[i].parentNode).is(selector)) parents.push(this[i].parentNode);
+          if ($(this[i].parentNode).is(selector)) parents.push(this[i].parentNode);
         } else {
           parents.push(this[i].parentNode);
         }
       }
     }
-    return $$1(unique(parents));
+    return $(unique(parents));
   },
   parents(selector) {
     const parents = [];
@@ -1001,14 +1001,14 @@ const Methods = {
       let parent = this[i].parentNode;
       while (parent) {
         if (selector) {
-          if ($$1(parent).is(selector)) parents.push(parent);
+          if ($(parent).is(selector)) parents.push(parent);
         } else {
           parents.push(parent);
         }
         parent = parent.parentNode;
       }
     }
-    return $$1(unique(parents));
+    return $(unique(parents));
   },
   closest(selector) {
     let closest = this;
@@ -1038,7 +1038,7 @@ const Methods = {
       for (let j = 0; j < childNodes.length; j += 1) {
         if (!selector) {
           if (childNodes[j].nodeType === 1) children.push(childNodes[j]);
-        } else if (childNodes[j].nodeType === 1 && $$1(childNodes[j]).is(selector)) children.push(childNodes[j]);
+        } else if (childNodes[j].nodeType === 1 && $(childNodes[j]).is(selector)) children.push(childNodes[j]);
       }
     }
     return new Dom7(unique(children));
@@ -1057,7 +1057,7 @@ const Methods = {
     let i;
     let j;
     for (i = 0; i < args.length; i += 1) {
-      const toAdd = $$1(args[i]);
+      const toAdd = $(args[i]);
       for (j = 0; j < toAdd.length; j += 1) {
         dom[dom.length] = toAdd[j];
         dom.length += 1;
@@ -1091,7 +1091,7 @@ function createMethod(name) {
         if (notTrigger.indexOf(name) < 0) {
           if (name in this[i]) this[i][name]();
           else {
-            $$1(this[i]).trigger(name);
+            $(this[i]).trigger(name);
           }
         }
       }
@@ -1219,8 +1219,8 @@ const Scroll = {
 function animate(initialProps, initialParams) {
   const els = this;
   const a = {
-    props: $$1.extend({}, initialProps),
-    params: $$1.extend({
+    props: $.extend({}, initialProps),
+    params: $.extend({
       duration: 300,
       easing: 'swing', // or 'linear'
       /* Callbacks
@@ -1450,7 +1450,7 @@ function ajax(options) {
   // Function to run XHR callbacks and events
   function fireAjaxCallback(eventName, eventData, callbackName) {
     const a = arguments;
-    if (eventName) $$1(document).trigger(eventName, eventData);
+    if (eventName) $(document).trigger(eventName, eventData);
     if (callbackName) {
       // Global callback
       if (callbackName in globals) globals[callbackName](a[3], a[4], a[5], a[6]);
@@ -1714,7 +1714,4 @@ const Ajax = {
   getJSON,
 };
 
-// Utils & Helpers
-$$1.use(Utils, Methods, Scroll, Animate, Ajax);
-
-export default $$1;
+export { $, Utils, Methods, Scroll, Animate, Ajax };
