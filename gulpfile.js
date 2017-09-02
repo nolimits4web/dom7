@@ -70,6 +70,7 @@ function umd(cb) {
 // ES MODULE DIST
 function es(cb) {
   const env = process.env.NODE_ENV || 'development';
+  let cbs = 0;
   rollup({
     entry: './src/dom7.js',
     format: 'es',
@@ -83,7 +84,24 @@ function es(cb) {
   .pipe(rename('dom7.module.js'))
   .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
   .on('end', () => {
-    if (cb) cb();
+    cbs += 1;
+    if (cb && cbs === 2) cb();
+  });
+  rollup({
+    entry: './src/dom7.modular.js',
+    format: 'es',
+    moduleName: 'Dom7',
+    useStrict: true,
+    sourceMap: env === 'development',
+    banner,
+  })
+  .pipe(source('dom7.js', './src'))
+  .pipe(buffer())
+  .pipe(rename('dom7.modular.js'))
+  .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
+  .on('end', () => {
+    cbs += 1;
+    if (cb && cbs === 2) cb();
   });
 }
 

@@ -185,4 +185,10 @@ function stop() {
   }
 }
 
+const Animate = {
+  animate,
+  stop,
+};
+
 export { animate, stop };
+export default Animate;

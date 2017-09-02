@@ -5,8 +5,5 @@ import Scroll from './scroll';
 import Animate from './animate';
 import Ajax from './ajax';
 
-// Utils & Helpers
-$.use(Utils, Methods, Scroll, Animate, Ajax);
-
 // Export
-export default $;
+export { $, Utils, Methods, Scroll, Animate, Ajax };

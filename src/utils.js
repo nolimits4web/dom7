@@ -152,8 +152,8 @@ function extend(...args) {
   }
   return to;
 }
-
 const Utils = {
+  __utils: true,
   parseUrlQuery,
   parseQuery: parseUrlQuery,
   isArray,

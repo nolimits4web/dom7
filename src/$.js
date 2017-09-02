@@ -54,4 +54,18 @@ function $(selector, context) {
 $.fn = Dom7.prototype;
 $.Class = Dom7;
 
+$.use = function use(...args) {
+  args.forEach((methods) => {
+    const isUtils = '__utils' in methods;
+    Object.keys(methods).forEach((methodName) => {
+      if (methodName === '__utils') return;
+      if (isUtils) {
+        $[methodName] = methods[methodName];
+      } else {
+        $.fn[methodName] = methods[methodName];
+      }
+    });
+  });
+};
+
 export default $;

@@ -301,4 +301,14 @@ function getJSON(...args) {
   return ajaxShortcut.apply(this, args);
 }
 
+const Ajax = {
+  __utils: true,
+  ajaxSetup,
+  ajax,
+  get,
+  post,
+  getJSON,
+};
+
 export { ajaxSetup, ajax, get, post, getJSON };
+export default Ajax;
