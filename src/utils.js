@@ -125,6 +125,9 @@ function cancelAnimationFrame(id) {
   else if (window.webkitCancelAnimationFrame) return window.webkitCancelAnimationFrame(id);
   return window.clearTimeout(id);
 }
+function isObject(o) {
+  return typeof o === 'object' && o !== null && o.constructor && o.constructor === Object;
+}
 function extend(...args) {
   const to = Object(args[0]);
   for (let i = 1; i < args.length; i += 1) {
@@ -135,7 +138,10 @@ function extend(...args) {
         const nextKey = keysArray[nextIndex];
         const desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
         if (desc !== undefined && desc.enumerable) {
-          if (typeof to[nextKey] === 'object' && typeof nextSource[nextKey] === 'object') {
+          if (isObject(to[nextKey]) && isObject(nextSource[nextKey])) {
+            extend(to[nextKey], nextSource[nextKey]);
+          } else if (!isObject(to[nextKey]) && isObject(nextSource[nextKey])) {
+            to[nextKey] = {};
             extend(to[nextKey], nextSource[nextKey]);
           } else {
             to[nextKey] = nextSource[nextKey];
