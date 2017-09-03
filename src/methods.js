@@ -432,12 +432,20 @@ const Methods = {
   },
   show() {
     for (let i = 0; i < this.length; i += 1) {
-      this[i].style.display = 'block';
+      const el = this[i];
+      if (el.style.display === 'none') {
+        el.style.display = '';
+      }
+      if (window.getComputedStyle(el, null).getPropertyValue('display') === 'none') {
+        // Still not visible
+        el.style.display = 'block';
+      }
     }
     return this;
   },
   styles() {
     if (this[0]) return window.getComputedStyle(this[0], null);
+    return {};
   },
   css(props, value) {
     let i;
@@ -465,7 +473,7 @@ const Methods = {
   // Dom manipulation
   toArray() {
     const arr = [];
-    for (let i = 0; i < this.length; i+= 1) {
+    for (let i = 0; i < this.length; i += 1) {
       arr.push(this[i]);
     }
     return arr;
