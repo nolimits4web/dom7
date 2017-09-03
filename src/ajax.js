@@ -205,7 +205,7 @@ function ajax(options) {
 
   let xhrTimeout;
   // Handle XHR
-  xhr.onload = function onload(e) {
+  xhr.onload = function onload() {
     if (xhrTimeout) clearTimeout(xhrTimeout);
     if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0) {
       let responseData;
@@ -230,7 +230,7 @@ function ajax(options) {
     fireAjaxCallback('ajaxComplete ajax:complete', { xhr }, 'complete', xhr, xhr.status);
   };
 
-  xhr.onerror = function onerror(e) {
+  xhr.onerror = function onerror() {
     if (xhrTimeout) clearTimeout(xhrTimeout);
     fireAjaxCallback('ajaxError ajax:error', { xhr }, 'error', xhr, xhr.status);
     fireAjaxCallback('ajaxComplete ajax:complete', { xhr, error: true }, 'complete', xhr, 'error');
