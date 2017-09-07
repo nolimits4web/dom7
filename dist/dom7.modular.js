@@ -1,5 +1,5 @@
 /**
- * Dom7 1.7.1
+ * Dom7 1.7.2
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: September 2, 2017
+ * Released on: September 7, 2017
  */
 class Dom7 {
   constructor(arr) {
@@ -689,12 +689,20 @@ const Methods = {
   },
   show() {
     for (let i = 0; i < this.length; i += 1) {
-      this[i].style.display = 'block';
+      const el = this[i];
+      if (el.style.display === 'none') {
+        el.style.display = '';
+      }
+      if (window.getComputedStyle(el, null).getPropertyValue('display') === 'none') {
+        // Still not visible
+        el.style.display = 'block';
+      }
     }
     return this;
   },
   styles() {
     if (this[0]) return window.getComputedStyle(this[0], null);
+    return {};
   },
   css(props, value) {
     let i;
@@ -722,7 +730,7 @@ const Methods = {
   // Dom manipulation
   toArray() {
     const arr = [];
-    for (let i = 0; i < this.length; i+= 1) {
+    for (let i = 0; i < this.length; i += 1) {
       arr.push(this[i]);
     }
     return arr;
@@ -1609,7 +1617,7 @@ function ajax(options) {
 
   let xhrTimeout;
   // Handle XHR
-  xhr.onload = function onload(e) {
+  xhr.onload = function onload() {
     if (xhrTimeout) clearTimeout(xhrTimeout);
     if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0) {
       let responseData;
@@ -1634,7 +1642,7 @@ function ajax(options) {
     fireAjaxCallback('ajaxComplete ajax:complete', { xhr }, 'complete', xhr, xhr.status);
   };
 
-  xhr.onerror = function onerror(e) {
+  xhr.onerror = function onerror() {
     if (xhrTimeout) clearTimeout(xhrTimeout);
     fireAjaxCallback('ajaxError ajax:error', { xhr }, 'error', xhr, xhr.status);
     fireAjaxCallback('ajaxComplete ajax:complete', { xhr, error: true }, 'complete', xhr, 'error');
