@@ -1,5 +1,9 @@
 # Change Log
 
+## Dom7 v2.0.0 - Released on September 11, 2017
+  * Removed XHR (Ajax) functionality
+  * Removed `$.` utilities, including `$.parseUrlQuery`, `$.isArray`, `$.each`, `$.unique`, `$.serializeObject`, `$.dataset`, `$.extend`
+
 ## Dom7 v1.7.2 - Released on September 7, 2017
   * Fixed issue when calling `.show()` always set `display: block` not repsecting actual display property
 

@@ -1,5 +1,5 @@
 /**
- * Dom7 1.7.2
+ * Dom7 2.0.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: September 7, 2017
+ * Released on: September 11, 2017
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -99,58 +99,6 @@ $$1.use = function use() {
   });
 };
 
-function parseUrlQuery(url) {
-  var query = {};
-  var urlToParse = url || window.location.href;
-  var i;
-  var params;
-  var param;
-  var length;
-  if (typeof urlToParse === 'string' && urlToParse.length) {
-    urlToParse = urlToParse.indexOf('?') > -1 ? urlToParse.replace(/\S*\?/, '') : '';
-    params = urlToParse.split('&').filter(function (paramsPart) { return paramsPart !== ''; });
-    length = params.length;
-
-    for (i = 0; i < length; i += 1) {
-      param = params[i].replace(/#\S+/g, '').split('=');
-      query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
-    }
-  }
-  return query;
-}
-function isArray(arr) {
-  return Array.isArray(arr);
-}
-function each(obj, callback) {
-  // Check it's iterable
-  // TODO: Should probably raise a value error here
-  if (typeof obj !== 'object') { return; }
-  // Don't bother continuing without a callback
-  if (!callback) { return; }
-  if (Array.isArray(obj) || obj instanceof Dom7) {
-    // Array
-    for (var i = 0; i < obj.length; i += 1) {
-      // If callback returns false
-      if (callback(i, obj[i]) === false) {
-        // Break out of the loop
-        return;
-      }
-    }
-  } else {
-    // Object
-    for (var prop in obj) {
-      // Check the propertie belongs to the object
-      // not it's prototype
-      if (obj.hasOwnProperty(prop)) {
-        // If the callback returns false
-        if (callback(prop, obj[prop]) === false) {
-          // Break out of the loop;
-          return;
-        }
-      }
-    }
-  }
-}
 function unique(arr) {
   var uniqueArray = [];
   for (var i = 0; i < arr.length; i += 1) {
@@ -158,63 +106,10 @@ function unique(arr) {
   }
   return uniqueArray;
 }
-function serializeObject(obj, parents) {
-  if ( parents === void 0 ) parents = [];
-
-  if (typeof obj === 'string') { return obj; }
-  var resultArray = [];
-  var separator = '&';
-  var newParents;
-  function varName(name) {
-    if (parents.length > 0) {
-      var parentParts = '';
-      for (var j = 0; j < parents.length; j += 1) {
-        if (j === 0) { parentParts += parents[j]; }
-        else { parentParts += "[" + (encodeURIComponent(parents[j])) + "]"; }
-      }
-      return (parentParts + "[" + (encodeURIComponent(name)) + "]");
-    }
-    return encodeURIComponent(name);
-  }
-  function varValue(value) {
-    return encodeURIComponent(value);
-  }
-  Object.keys(obj).forEach(function (prop) {
-    var toPush;
-    if (Array.isArray(obj[prop])) {
-      toPush = [];
-      for (var i = 0; i < obj[prop].length; i += 1) {
-        if (!Array.isArray(obj[prop][i]) && typeof obj[prop][i] === 'object') {
-          newParents = parents.slice();
-          newParents.push(prop);
-          newParents.push(String(i));
-          toPush.push(serializeObject(obj[prop][i], newParents));
-        } else {
-          toPush.push(((varName(prop)) + "[]=" + (varValue(obj[prop][i]))));
-        }
-      }
-      if (toPush.length > 0) { resultArray.push(toPush.join(separator)); }
-    } else if (obj[prop] === null || obj[prop] === '') {
-      resultArray.push(((varName(prop)) + "="));
-    } else if (typeof obj[prop] === 'object') {
-      // Object, convert to named array
-      newParents = parents.slice();
-      newParents.push(prop);
-      toPush = serializeObject(obj[prop], newParents);
-      if (toPush !== '') { resultArray.push(toPush); }
-    } else if (typeof obj[prop] !== 'undefined' && obj[prop] !== '') {
-      // Should be string or plain value
-      resultArray.push(((varName(prop)) + "=" + (varValue(obj[prop]))));
-    } else if (obj[prop] === '') { resultArray.push(varName(prop)); }
-  });
-  return resultArray.join(separator);
-}
 function toCamelCase(string) {
   return string.toLowerCase().replace(/-(.)/g, function (match, group1) { return group1.toUpperCase(); });
 }
-function dataset(el) {
-  return $$1(el).dataset();
-}
+
 function requestAnimationFrame(callback) {
   if (window.requestAnimationFrame) { return window.requestAnimationFrame(callback); }
   else if (window.webkitRequestAnimationFrame) { return window.webkitRequestAnimationFrame(callback); }
@@ -225,51 +120,6 @@ function cancelAnimationFrame(id) {
   else if (window.webkitCancelAnimationFrame) { return window.webkitCancelAnimationFrame(id); }
   return window.clearTimeout(id);
 }
-function isObject(o) {
-  return typeof o === 'object' && o !== null && o.constructor && o.constructor === Object;
-}
-function extend() {
-  var args = [], len$1 = arguments.length;
-  while ( len$1-- ) args[ len$1 ] = arguments[ len$1 ];
-
-  var to = Object(args[0]);
-  for (var i = 1; i < args.length; i += 1) {
-    var nextSource = args[i];
-    if (nextSource !== undefined && nextSource !== null) {
-      var keysArray = Object.keys(Object(nextSource));
-      for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex += 1) {
-        var nextKey = keysArray[nextIndex];
-        var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
-        if (desc !== undefined && desc.enumerable) {
-          if (isObject(to[nextKey]) && isObject(nextSource[nextKey])) {
-            extend(to[nextKey], nextSource[nextKey]);
-          } else if (!isObject(to[nextKey]) && isObject(nextSource[nextKey])) {
-            to[nextKey] = {};
-            extend(to[nextKey], nextSource[nextKey]);
-          } else {
-            to[nextKey] = nextSource[nextKey];
-          }
-        }
-      }
-    }
-  }
-  return to;
-}
-var Utils = {
-  __utils: true,
-  parseUrlQuery: parseUrlQuery,
-  parseQuery: parseUrlQuery,
-  isArray: isArray,
-  each: each,
-  unique: unique,
-  serializeObject: serializeObject,
-  param: serializeObject,
-  toCamelCase: toCamelCase,
-  dataset: dataset,
-  requestAnimationFrame: requestAnimationFrame,
-  cancelAnimationFrame: cancelAnimationFrame,
-  extend: extend,
-};
 
 var Methods = {
   // Classes and attributes
@@ -409,28 +259,28 @@ var Methods = {
       }
     }
   },
-  dataset: function dataset$$1() {
+  dataset: function dataset() {
     var el = this[0];
     if (!el) { return undefined; }
-    var dataset$$1 = {};
+    var dataset = {};
     if (el.dataset) {
       for (var dataKey in el.dataset) {
-        dataset$$1[dataKey] = el.dataset[dataKey];
+        dataset[dataKey] = el.dataset[dataKey];
       }
     } else {
       for (var i = 0; i < el.attributes.length; i += 1) {
         var attr = el.attributes[i];
         if (attr.name.indexOf('data-') >= 0) {
-          dataset$$1[toCamelCase(attr.name.split('data-')[1])] = attr.value;
+          dataset[toCamelCase(attr.name.split('data-')[1])] = attr.value;
         }
       }
     }
-    for (var key in dataset$$1) {
-      if (dataset$$1[key] === 'false') { dataset$$1[key] = false; }
-      else if (dataset$$1[key] === 'true') { dataset$$1[key] = true; }
-      else if (parseFloat(dataset$$1[key]) === dataset$$1[key] * 1) { dataset$$1[key] *= 1; }
+    for (var key in dataset) {
+      if (dataset[key] === 'false') { dataset[key] = false; }
+      else if (dataset[key] === 'true') { dataset[key] = true; }
+      else if (parseFloat(dataset[key]) === dataset[key] * 1) { dataset[key] *= 1; }
     }
-    return dataset$$1;
+    return dataset;
   },
   val: function val(value) {
     var this$1 = this;
@@ -792,7 +642,7 @@ var Methods = {
     return arr;
   },
   // Iterate over the collection passing elements to `callback`
-  each: function each$$1(callback) {
+  each: function each(callback) {
     var this$1 = this;
 
     // Don't bother continuing without a callback
@@ -1341,523 +1191,197 @@ var Scroll = {
   },
 };
 
-function animate(initialProps, initialParams) {
-  var els = this;
-  var a = {
-    props: $$1.extend({}, initialProps),
-    params: $$1.extend({
-      duration: 300,
-      easing: 'swing', // or 'linear'
-      /* Callbacks
-      begin(elements)
-      complete(elements)
-      progress(elements, complete, remaining, start, tweenValue)
-      */
-    }, initialParams),
+var Animate = {
+  animate: function animate(initialProps, initialParams) {
+    var els = this;
+    var a = {
+      props: $$1.extend({}, initialProps),
+      params: $$1.extend({
+        duration: 300,
+        easing: 'swing', // or 'linear'
+        /* Callbacks
+        begin(elements)
+        complete(elements)
+        progress(elements, complete, remaining, start, tweenValue)
+        */
+      }, initialParams),
 
-    elements: els,
-    animating: false,
-    que: [],
+      elements: els,
+      animating: false,
+      que: [],
 
-    easingProgress: function easingProgress(easing, progress) {
-      if (easing === 'swing') {
-        return 0.5 - (Math.cos(progress * Math.PI) / 2);
-      }
-      if (typeof easing === 'function') {
-        return easing(progress);
-      }
-      return progress;
-    },
-    stop: function stop() {
-      if (a.frameId) {
-        cancelAnimationFrame(a.frameId);
-      }
-      a.animating = false;
-      a.elements.each(function (index, el) {
-        var element = el;
-        delete element.dom7AnimateInstance;
-      });
-      a.que = [];
-    },
-    done: function done(complete) {
-      a.animating = false;
-      a.elements.each(function (index, el) {
-        var element = el;
-        delete element.dom7AnimateInstance;
-      });
-      if (complete) { complete(els); }
-      if (a.que.length > 0) {
-        var que = a.que.shift();
-        a.animate(que[0], que[1]);
-      }
-    },
-    animate: function animate(props, params) {
-      if (a.animating) {
-        a.que.push([props, params]);
-        return a;
-      }
-      var elements = [];
-
-      // Define & Cache Initials & Units
-      a.elements.each(function (index, el) {
-        var initialFullValue;
-        var initialValue;
-        var unit;
-        var finalValue;
-        var finalFullValue;
-
-        if (!el.dom7AnimateInstance) { a.elements[index].dom7AnimateInstance = a; }
-
-        elements[index] = {
-          container: el,
-        };
-        Object.keys(props).forEach(function (prop) {
-          initialFullValue = window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
-          initialValue = parseFloat(initialFullValue);
-          unit = initialFullValue.replace(initialValue, '');
-          finalValue = parseFloat(props[prop]);
-          finalFullValue = props[prop] + unit;
-          elements[index][prop] = {
-            initialFullValue: initialFullValue,
-            initialValue: initialValue,
-            unit: unit,
-            finalValue: finalValue,
-            finalFullValue: finalFullValue,
-            currentValue: initialValue,
-          };
+      easingProgress: function easingProgress(easing, progress) {
+        if (easing === 'swing') {
+          return 0.5 - (Math.cos(progress * Math.PI) / 2);
+        }
+        if (typeof easing === 'function') {
+          return easing(progress);
+        }
+        return progress;
+      },
+      stop: function stop() {
+        if (a.frameId) {
+          cancelAnimationFrame(a.frameId);
+        }
+        a.animating = false;
+        a.elements.each(function (index, el) {
+          var element = el;
+          delete element.dom7AnimateInstance;
         });
-      });
-
-      var startTime = null;
-      var time;
-      var elementsDone = 0;
-      var propsDone = 0;
-      var done;
-      var began = false;
-
-      a.animating = true;
-
-      function render() {
-        time = new Date().getTime();
-        var progress;
-        var easeProgress;
-        // let el;
-        if (!began) {
-          began = true;
-          if (params.begin) { params.begin(els); }
+        a.que = [];
+      },
+      done: function done(complete) {
+        a.animating = false;
+        a.elements.each(function (index, el) {
+          var element = el;
+          delete element.dom7AnimateInstance;
+        });
+        if (complete) { complete(els); }
+        if (a.que.length > 0) {
+          var que = a.que.shift();
+          a.animate(que[0], que[1]);
         }
-        if (startTime === null) {
-          startTime = time;
+      },
+      animate: function animate(props, params) {
+        if (a.animating) {
+          a.que.push([props, params]);
+          return a;
         }
-        if (params.progress) {
-          params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), ((startTime + params.duration) - time < 0 ? 0 : (startTime + params.duration) - time), startTime);
-        }
+        var elements = [];
 
-        elements.forEach(function (element) {
-          var el = element;
-          if (done || el.done) { return; }
+        // Define & Cache Initials & Units
+        a.elements.each(function (index, el) {
+          var initialFullValue;
+          var initialValue;
+          var unit;
+          var finalValue;
+          var finalFullValue;
+
+          if (!el.dom7AnimateInstance) { a.elements[index].dom7AnimateInstance = a; }
+
+          elements[index] = {
+            container: el,
+          };
           Object.keys(props).forEach(function (prop) {
-            if (done || el.done) { return; }
-            progress = Math.max(Math.min((time - startTime) / params.duration, 1), 0);
-            easeProgress = a.easingProgress(params.easing, progress);
-            var ref = el[prop];
-            var initialValue = ref.initialValue;
-            var finalValue = ref.finalValue;
-            var unit = ref.unit;
-            el[prop].currentValue = initialValue + (easeProgress * (finalValue - initialValue));
-            var currentValue = el[prop].currentValue;
-
-            if (
-              (finalValue > initialValue && currentValue >= finalValue) ||
-              (finalValue < initialValue && currentValue <= finalValue)) {
-              el.container.style[prop] = finalValue + unit;
-              propsDone += 1;
-              if (propsDone === Object.keys(props).length) {
-                el.done = true;
-                elementsDone += 1;
-              }
-              if (elementsDone === elements.length) {
-                done = true;
-              }
-            }
-            if (done) {
-              a.done(params.complete);
-              return;
-            }
-            el.container.style[prop] = currentValue + unit;
+            initialFullValue = window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
+            initialValue = parseFloat(initialFullValue);
+            unit = initialFullValue.replace(initialValue, '');
+            finalValue = parseFloat(props[prop]);
+            finalFullValue = props[prop] + unit;
+            elements[index][prop] = {
+              initialFullValue: initialFullValue,
+              initialValue: initialValue,
+              unit: unit,
+              finalValue: finalValue,
+              finalFullValue: finalFullValue,
+              currentValue: initialValue,
+            };
           });
         });
-        if (done) { return; }
-        // Then call
-        a.frameId = requestAnimationFrame(render);
-      }
-      a.frameId = requestAnimationFrame(render);
-      return a;
-    },
-  };
 
-  if (a.elements.length === 0) {
-    return els;
-  }
+        var startTime = null;
+        var time;
+        var elementsDone = 0;
+        var propsDone = 0;
+        var done;
+        var began = false;
 
-  var animateInstance;
-  for (var i = 0; i < a.elements.length; i += 1) {
-    if (a.elements[i].dom7AnimateInstance) {
-      animateInstance = a.elements[i].dom7AnimateInstance;
-    } else { a.elements[i].dom7AnimateInstance = a; }
-  }
-  if (!animateInstance) {
-    animateInstance = a;
-  }
+        a.animating = true;
 
-  if (initialProps === 'stop') {
-    animateInstance.stop();
-  } else {
-    animateInstance.animate(a.props, a.params);
-  }
-
-  return els;
-}
-
-function stop() {
-  var els = this;
-  for (var i = 0; i < els.length; i += 1) {
-    if (els[i].dom7AnimateInstance) {
-      els[i].dom7AnimateInstance.stop();
-    }
-  }
-}
-
-var Animate = {
-  animate: animate,
-  stop: stop,
-};
-
-// Global Ajax Setup
-var globalAjaxOptions = {};
-function ajaxSetup(options) {
-  if (options.type && !options.method) { options.method = options.type; }
-  each(options, function (optionName, optionValue) {
-    globalAjaxOptions[optionName] = optionValue;
-  });
-}
-
-// JSONP Requests
-var jsonpRequests = 0;
-
-// Ajax
-function ajax(options) {
-  var defaults = {
-    method: 'GET',
-    data: false,
-    async: true,
-    cache: true,
-    user: '',
-    password: '',
-    headers: {},
-    xhrFields: {},
-    statusCode: {},
-    processData: true,
-    dataType: 'text',
-    contentType: 'application/x-www-form-urlencoded',
-    timeout: 0,
-  };
-  var callbacks = ['beforeSend', 'error', 'complete', 'success', 'statusCode'];
-
-  // For jQuery guys
-  if (options.type) { options.method = options.type; }
-
-  // Global options
-  var globals = globalAjaxOptions;
-
-  // Merge global and defaults
-  each(globals, function (globalOptionName, globalOptionValue) {
-    if (callbacks.indexOf(globalOptionName) < 0) { defaults[globalOptionName] = globalOptionValue; }
-  });
-
-  // Function to run XHR callbacks and events
-  function fireAjaxCallback(eventName, eventData, callbackName) {
-    var a = arguments;
-    if (eventName) { $$1(document).trigger(eventName, eventData); }
-    if (callbackName) {
-      // Global callback
-      if (callbackName in globals) { globals[callbackName](a[3], a[4], a[5], a[6]); }
-      // Options callback
-      if (options[callbackName]) { options[callbackName](a[3], a[4], a[5], a[6]); }
-    }
-  }
-
-  // Merge options and defaults
-  each(defaults, function (prop, defaultValue) {
-    if (!(prop in options)) { options[prop] = defaultValue; }
-  });
-
-  // Default URL
-  if (!options.url) {
-    options.url = window.location.toString();
-  }
-  // Parameters Prefix
-  var paramsPrefix = options.url.indexOf('?') >= 0 ? '&' : '?';
-
-  // UC method
-  var method = options.method.toUpperCase();
-
-  // Data to modify GET URL
-  if ((method === 'GET' || method === 'HEAD' || method === 'OPTIONS' || method === 'DELETE') && options.data) {
-    var stringData;
-    if (typeof options.data === 'string') {
-      // Should be key=value string
-      if (options.data.indexOf('?') >= 0) { stringData = options.data.split('?')[1]; }
-      else { stringData = options.data; }
-    } else {
-      // Should be key=value object
-      stringData = serializeObject(options.data);
-    }
-    if (stringData.length) {
-      options.url += paramsPrefix + stringData;
-      if (paramsPrefix === '?') { paramsPrefix = '&'; }
-    }
-  }
-  // JSONP
-  if (options.dataType === 'json' && options.url.indexOf('callback=') >= 0) {
-    var callbackName = "f7jsonp_" + (Date.now() + ((jsonpRequests += 1)));
-    var abortTimeout;
-    var callbackSplit = options.url.split('callback=');
-    var requestUrl = (callbackSplit[0]) + "callback=" + callbackName;
-    if (callbackSplit[1].indexOf('&') >= 0) {
-      var addVars = callbackSplit[1].split('&').filter(function (el) { return el.indexOf('=') > 0; }).join('&');
-      if (addVars.length > 0) { requestUrl += "&" + addVars; }
-    }
-
-    // Create script
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.onerror = function onerror() {
-      clearTimeout(abortTimeout);
-      fireAjaxCallback(undefined, undefined, 'error', null, 'scripterror');
-      fireAjaxCallback('ajaxComplete ajax:complete', { scripterror: true }, 'complete', null, 'scripterror');
-    };
-    script.src = requestUrl;
-
-    // Handler
-    window[callbackName] = function jsonpCallback(data) {
-      clearTimeout(abortTimeout);
-      fireAjaxCallback(undefined, undefined, 'success', data);
-      script.parentNode.removeChild(script);
-      script = null;
-      delete window[callbackName];
-    };
-    document.querySelector('head').appendChild(script);
-
-    if (options.timeout > 0) {
-      abortTimeout = setTimeout(function () {
-        script.parentNode.removeChild(script);
-        script = null;
-        fireAjaxCallback(undefined, undefined, 'error', null, 'timeout');
-      }, options.timeout);
-    }
-
-    return;
-  }
-
-  // Cache for GET/HEAD requests
-  if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS' || method === 'DELETE') {
-    if (options.cache === false) {
-      options.url += paramsPrefix + "_nocache" + (Date.now());
-    }
-  }
-
-  // Create XHR
-  var xhr = new XMLHttpRequest();
-
-  // Save Request URL
-  xhr.requestUrl = options.url;
-  xhr.requestParameters = options;
-
-  // Open XHR
-  xhr.open(method, options.url, options.async, options.user, options.password);
-
-  // Create POST Data
-  var postData = null;
-
-  if ((method === 'POST' || method === 'PUT' || method === 'PATCH') && options.data) {
-    if (options.processData) {
-      var postDataInstances = [ArrayBuffer, Blob, Document, FormData];
-      // Post Data
-      if (postDataInstances.indexOf(options.data.constructor) >= 0) {
-        postData = options.data;
-      } else {
-        // POST Headers
-        var boundary = "---------------------------" + (Date.now().toString(16));
-
-        if (options.contentType === 'multipart/form-data') {
-          xhr.setRequestHeader('Content-Type', ("multipart/form-data; boundary=" + boundary));
-        } else {
-          xhr.setRequestHeader('Content-Type', options.contentType);
-        }
-        postData = '';
-        var data = serializeObject(options.data);
-        if (options.contentType === 'multipart/form-data') {
-          data = data.split('&');
-          var newData = [];
-          for (var i = 0; i < data.length; i += 1) {
-            newData.push(("Content-Disposition: form-data; name=\"" + (data[i].split('=')[0]) + "\"\r\n\r\n" + (data[i].split('=')[1]) + "\r\n"));
+        function render() {
+          time = new Date().getTime();
+          var progress;
+          var easeProgress;
+          // let el;
+          if (!began) {
+            began = true;
+            if (params.begin) { params.begin(els); }
           }
-          postData = "--" + boundary + "\r\n" + (newData.join(("--" + boundary + "\r\n"))) + "--" + boundary + "--\r\n";
-        } else {
-          postData = data;
+          if (startTime === null) {
+            startTime = time;
+          }
+          if (params.progress) {
+            params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), ((startTime + params.duration) - time < 0 ? 0 : (startTime + params.duration) - time), startTime);
+          }
+
+          elements.forEach(function (element) {
+            var el = element;
+            if (done || el.done) { return; }
+            Object.keys(props).forEach(function (prop) {
+              if (done || el.done) { return; }
+              progress = Math.max(Math.min((time - startTime) / params.duration, 1), 0);
+              easeProgress = a.easingProgress(params.easing, progress);
+              var ref = el[prop];
+              var initialValue = ref.initialValue;
+              var finalValue = ref.finalValue;
+              var unit = ref.unit;
+              el[prop].currentValue = initialValue + (easeProgress * (finalValue - initialValue));
+              var currentValue = el[prop].currentValue;
+
+              if (
+                (finalValue > initialValue && currentValue >= finalValue) ||
+                (finalValue < initialValue && currentValue <= finalValue)) {
+                el.container.style[prop] = finalValue + unit;
+                propsDone += 1;
+                if (propsDone === Object.keys(props).length) {
+                  el.done = true;
+                  elementsDone += 1;
+                }
+                if (elementsDone === elements.length) {
+                  done = true;
+                }
+              }
+              if (done) {
+                a.done(params.complete);
+                return;
+              }
+              el.container.style[prop] = currentValue + unit;
+            });
+          });
+          if (done) { return; }
+          // Then call
+          a.frameId = requestAnimationFrame(render);
         }
-      }
-    } else {
-      postData = options.data;
-    }
-  }
-
-  // Additional headers
-  if (options.headers) {
-    each(options.headers, function (headerName, headerCallback) {
-      xhr.setRequestHeader(headerName, headerCallback);
-    });
-  }
-
-  // Check for crossDomain
-  if (typeof options.crossDomain === 'undefined') {
-    options.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(options.url) && RegExp.$2 !== window.location.host;
-  }
-
-  if (!options.crossDomain) {
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-  }
-
-  if (options.xhrFields) {
-    each(options.xhrFields, function (fieldName, fieldValue) {
-      xhr[fieldName] = fieldValue;
-    });
-  }
-
-  var xhrTimeout;
-  // Handle XHR
-  xhr.onload = function onload() {
-    if (xhrTimeout) { clearTimeout(xhrTimeout); }
-    if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0) {
-      var responseData;
-      if (options.dataType === 'json') {
-        try {
-          responseData = JSON.parse(xhr.responseText);
-          fireAjaxCallback('ajaxSuccess ajax:success', { xhr: xhr }, 'success', responseData, xhr.status, xhr);
-        } catch (err) {
-          fireAjaxCallback('ajaxError ajax:error', { xhr: xhr, parseerror: true }, 'error', xhr, 'parseerror');
-        }
-      } else {
-        responseData = xhr.responseType === 'text' || xhr.responseType === '' ? xhr.responseText : xhr.response;
-        fireAjaxCallback('ajaxSuccess ajax:success', { xhr: xhr }, 'success', responseData, xhr.status, xhr);
-      }
-    } else {
-      fireAjaxCallback('ajaxError ajax:error', { xhr: xhr }, 'error', xhr, xhr.status);
-    }
-    if (options.statusCode) {
-      if (globals.statusCode && globals.statusCode[xhr.status]) { globals.statusCode[xhr.status](xhr); }
-      if (options.statusCode[xhr.status]) { options.statusCode[xhr.status](xhr); }
-    }
-    fireAjaxCallback('ajaxComplete ajax:complete', { xhr: xhr }, 'complete', xhr, xhr.status);
-  };
-
-  xhr.onerror = function onerror() {
-    if (xhrTimeout) { clearTimeout(xhrTimeout); }
-    fireAjaxCallback('ajaxError ajax:error', { xhr: xhr }, 'error', xhr, xhr.status);
-    fireAjaxCallback('ajaxComplete ajax:complete', { xhr: xhr, error: true }, 'complete', xhr, 'error');
-  };
-
-  // Ajax start callback
-  fireAjaxCallback('ajaxStart ajax:start', { xhr: xhr }, 'start', xhr);
-  fireAjaxCallback(undefined, undefined, 'beforeSend', xhr);
-
-  // Timeout
-  if (options.timeout > 0) {
-    xhr.onabort = function onabort() {
-      if (xhrTimeout) { clearTimeout(xhrTimeout); }
+        a.frameId = requestAnimationFrame(render);
+        return a;
+      },
     };
-    xhrTimeout = setTimeout(function () {
-      xhr.abort();
-      fireAjaxCallback('ajaxError ajax:error', { xhr: xhr, timeout: true }, 'error', xhr, 'timeout');
-      fireAjaxCallback('ajaxComplete ajax:complete', { xhr: xhr, timeout: true }, 'complete', xhr, 'timeout');
-    }, options.timeout);
-  }
 
-  // Send XHR
-  xhr.send(postData);
-
-  // Return XHR object
-  return xhr;
-}
-
-function ajaxShortcut(method) {
-  var args = [], len = arguments.length - 1;
-  while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
-
-  var url;
-  var data;
-  var success;
-  var error;
-  var dataType;
-  if (typeof args[1] === 'function') {
-    var assign;
-    (assign = args, url = assign[0], success = assign[1], error = assign[2], dataType = assign[3]);
-  } else {
-    var assign$1;
-    (assign$1 = args, url = assign$1[0], data = assign$1[1], success = assign$1[2], error = assign$1[3], dataType = assign$1[4]);
-  }
-  [success, error].forEach(function (callback) {
-    if (typeof callback === 'string') {
-      dataType = callback;
-      if (callback === success) { success = undefined; }
-      else { error = undefined; }
+    if (a.elements.length === 0) {
+      return els;
     }
-  });
-  dataType = dataType || (method === 'getJSON' ? 'json' : undefined);
-  return ajax({
-    url: url,
-    method: method === 'post' ? 'POST' : 'GET',
-    data: data,
-    success: success,
-    error: error,
-    dataType: dataType,
-  });
-}
 
-function get() {
-  var args = [], len = arguments.length;
-  while ( len-- ) args[ len ] = arguments[ len ];
+    var animateInstance;
+    for (var i = 0; i < a.elements.length; i += 1) {
+      if (a.elements[i].dom7AnimateInstance) {
+        animateInstance = a.elements[i].dom7AnimateInstance;
+      } else { a.elements[i].dom7AnimateInstance = a; }
+    }
+    if (!animateInstance) {
+      animateInstance = a;
+    }
 
-  args.unshift('get');
-  return ajaxShortcut.apply(this, args);
-}
-function post() {
-  var args = [], len = arguments.length;
-  while ( len-- ) args[ len ] = arguments[ len ];
+    if (initialProps === 'stop') {
+      animateInstance.stop();
+    } else {
+      animateInstance.animate(a.props, a.params);
+    }
 
-  args.unshift('post');
-  return ajaxShortcut.apply(this, args);
-}
-function getJSON() {
-  var args = [], len = arguments.length;
-  while ( len-- ) args[ len ] = arguments[ len ];
+    return els;
+  },
 
-  args.unshift('getJSON');
-  return ajaxShortcut.apply(this, args);
-}
-
-var Ajax = {
-  __utils: true,
-  ajaxSetup: ajaxSetup,
-  ajax: ajax,
-  get: get,
-  post: post,
-  getJSON: getJSON,
+  stop: function stop() {
+    var els = this;
+    for (var i = 0; i < els.length; i += 1) {
+      if (els[i].dom7AnimateInstance) {
+        els[i].dom7AnimateInstance.stop();
+      }
+    }
+  },
 };
 
-// Utils & Helpers
-$$1.use(Utils, Methods, Scroll, Animate, Ajax);
+// Install methods
+$$1.use(Methods, Scroll, Animate);
 
 return $$1;
 

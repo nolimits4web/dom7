@@ -1,5 +1,5 @@
 /**
- * Dom7 1.7.2
+ * Dom7 2.0.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: September 7, 2017
+ * Released on: September 11, 2017
  */
 class Dom7 {
   constructor(arr) {
@@ -92,58 +92,6 @@ $.use = function use(...args) {
   });
 };
 
-function parseUrlQuery(url) {
-  const query = {};
-  let urlToParse = url || window.location.href;
-  let i;
-  let params;
-  let param;
-  let length;
-  if (typeof urlToParse === 'string' && urlToParse.length) {
-    urlToParse = urlToParse.indexOf('?') > -1 ? urlToParse.replace(/\S*\?/, '') : '';
-    params = urlToParse.split('&').filter(paramsPart => paramsPart !== '');
-    length = params.length;
-
-    for (i = 0; i < length; i += 1) {
-      param = params[i].replace(/#\S+/g, '').split('=');
-      query[decodeURIComponent(param[0])] = typeof param[1] === 'undefined' ? undefined : decodeURIComponent(param[1]) || '';
-    }
-  }
-  return query;
-}
-function isArray(arr) {
-  return Array.isArray(arr);
-}
-function each(obj, callback) {
-  // Check it's iterable
-  // TODO: Should probably raise a value error here
-  if (typeof obj !== 'object') return;
-  // Don't bother continuing without a callback
-  if (!callback) return;
-  if (Array.isArray(obj) || obj instanceof Dom7) {
-    // Array
-    for (let i = 0; i < obj.length; i += 1) {
-      // If callback returns false
-      if (callback(i, obj[i]) === false) {
-        // Break out of the loop
-        return;
-      }
-    }
-  } else {
-    // Object
-    for (let prop in obj) {
-      // Check the propertie belongs to the object
-      // not it's prototype
-      if (obj.hasOwnProperty(prop)) {
-        // If the callback returns false
-        if (callback(prop, obj[prop]) === false) {
-          // Break out of the loop;
-          return;
-        }
-      }
-    }
-  }
-}
 function unique(arr) {
   const uniqueArray = [];
   for (let i = 0; i < arr.length; i += 1) {
@@ -151,61 +99,10 @@ function unique(arr) {
   }
   return uniqueArray;
 }
-function serializeObject(obj, parents = []) {
-  if (typeof obj === 'string') return obj;
-  const resultArray = [];
-  const separator = '&';
-  let newParents;
-  function varName(name) {
-    if (parents.length > 0) {
-      let parentParts = '';
-      for (let j = 0; j < parents.length; j += 1) {
-        if (j === 0) parentParts += parents[j];
-        else parentParts += `[${encodeURIComponent(parents[j])}]`;
-      }
-      return `${parentParts}[${encodeURIComponent(name)}]`;
-    }
-    return encodeURIComponent(name);
-  }
-  function varValue(value) {
-    return encodeURIComponent(value);
-  }
-  Object.keys(obj).forEach((prop) => {
-    let toPush;
-    if (Array.isArray(obj[prop])) {
-      toPush = [];
-      for (let i = 0; i < obj[prop].length; i += 1) {
-        if (!Array.isArray(obj[prop][i]) && typeof obj[prop][i] === 'object') {
-          newParents = parents.slice();
-          newParents.push(prop);
-          newParents.push(String(i));
-          toPush.push(serializeObject(obj[prop][i], newParents));
-        } else {
-          toPush.push(`${varName(prop)}[]=${varValue(obj[prop][i])}`);
-        }
-      }
-      if (toPush.length > 0) resultArray.push(toPush.join(separator));
-    } else if (obj[prop] === null || obj[prop] === '') {
-      resultArray.push(`${varName(prop)}=`);
-    } else if (typeof obj[prop] === 'object') {
-      // Object, convert to named array
-      newParents = parents.slice();
-      newParents.push(prop);
-      toPush = serializeObject(obj[prop], newParents);
-      if (toPush !== '') resultArray.push(toPush);
-    } else if (typeof obj[prop] !== 'undefined' && obj[prop] !== '') {
-      // Should be string or plain value
-      resultArray.push(`${varName(prop)}=${varValue(obj[prop])}`);
-    } else if (obj[prop] === '') resultArray.push(varName(prop));
-  });
-  return resultArray.join(separator);
-}
 function toCamelCase(string) {
   return string.toLowerCase().replace(/-(.)/g, (match, group1) => group1.toUpperCase());
 }
-function dataset(el) {
-  return $(el).dataset();
-}
+
 function requestAnimationFrame(callback) {
   if (window.requestAnimationFrame) return window.requestAnimationFrame(callback);
   else if (window.webkitRequestAnimationFrame) return window.webkitRequestAnimationFrame(callback);
@@ -216,48 +113,6 @@ function cancelAnimationFrame(id) {
   else if (window.webkitCancelAnimationFrame) return window.webkitCancelAnimationFrame(id);
   return window.clearTimeout(id);
 }
-function isObject(o) {
-  return typeof o === 'object' && o !== null && o.constructor && o.constructor === Object;
-}
-function extend(...args) {
-  const to = Object(args[0]);
-  for (let i = 1; i < args.length; i += 1) {
-    const nextSource = args[i];
-    if (nextSource !== undefined && nextSource !== null) {
-      const keysArray = Object.keys(Object(nextSource));
-      for (let nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex += 1) {
-        const nextKey = keysArray[nextIndex];
-        const desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
-        if (desc !== undefined && desc.enumerable) {
-          if (isObject(to[nextKey]) && isObject(nextSource[nextKey])) {
-            extend(to[nextKey], nextSource[nextKey]);
-          } else if (!isObject(to[nextKey]) && isObject(nextSource[nextKey])) {
-            to[nextKey] = {};
-            extend(to[nextKey], nextSource[nextKey]);
-          } else {
-            to[nextKey] = nextSource[nextKey];
-          }
-        }
-      }
-    }
-  }
-  return to;
-}
-const Utils = {
-  __utils: true,
-  parseUrlQuery,
-  parseQuery: parseUrlQuery,
-  isArray,
-  each,
-  unique,
-  serializeObject,
-  param: serializeObject,
-  toCamelCase,
-  dataset,
-  requestAnimationFrame,
-  cancelAnimationFrame,
-  extend,
-};
 
 const Methods = {
   // Classes and attributes
@@ -382,25 +237,25 @@ const Methods = {
   dataset() {
     const el = this[0];
     if (!el) return undefined;
-    const dataset$$1 = {};
+    const dataset = {};
     if (el.dataset) {
       for (const dataKey in el.dataset) {
-        dataset$$1[dataKey] = el.dataset[dataKey];
+        dataset[dataKey] = el.dataset[dataKey];
       }
     } else {
       for (let i = 0; i < el.attributes.length; i += 1) {
         const attr = el.attributes[i];
         if (attr.name.indexOf('data-') >= 0) {
-          dataset$$1[toCamelCase(attr.name.split('data-')[1])] = attr.value;
+          dataset[toCamelCase(attr.name.split('data-')[1])] = attr.value;
         }
       }
     }
-    for (const key in dataset$$1) {
-      if (dataset$$1[key] === 'false') dataset$$1[key] = false;
-      else if (dataset$$1[key] === 'true') dataset$$1[key] = true;
-      else if (parseFloat(dataset$$1[key]) === dataset$$1[key] * 1) dataset$$1[key] *= 1;
+    for (const key in dataset) {
+      if (dataset[key] === 'false') dataset[key] = false;
+      else if (dataset[key] === 'true') dataset[key] = true;
+      else if (parseFloat(dataset[key]) === dataset[key] * 1) dataset[key] *= 1;
     }
-    return dataset$$1;
+    return dataset;
   },
   val(value) {
     if (typeof value === 'undefined') {
@@ -1224,502 +1079,190 @@ const Scroll = {
   },
 };
 
-function animate(initialProps, initialParams) {
-  const els = this;
-  const a = {
-    props: $.extend({}, initialProps),
-    params: $.extend({
-      duration: 300,
-      easing: 'swing', // or 'linear'
-      /* Callbacks
-      begin(elements)
-      complete(elements)
-      progress(elements, complete, remaining, start, tweenValue)
-      */
-    }, initialParams),
+const Animate = {
+  animate(initialProps, initialParams) {
+    const els = this;
+    const a = {
+      props: $.extend({}, initialProps),
+      params: $.extend({
+        duration: 300,
+        easing: 'swing', // or 'linear'
+        /* Callbacks
+        begin(elements)
+        complete(elements)
+        progress(elements, complete, remaining, start, tweenValue)
+        */
+      }, initialParams),
 
-    elements: els,
-    animating: false,
-    que: [],
+      elements: els,
+      animating: false,
+      que: [],
 
-    easingProgress(easing, progress) {
-      if (easing === 'swing') {
-        return 0.5 - (Math.cos(progress * Math.PI) / 2);
-      }
-      if (typeof easing === 'function') {
-        return easing(progress);
-      }
-      return progress;
-    },
-    stop() {
-      if (a.frameId) {
-        cancelAnimationFrame(a.frameId);
-      }
-      a.animating = false;
-      a.elements.each((index, el) => {
-        const element = el;
-        delete element.dom7AnimateInstance;
-      });
-      a.que = [];
-    },
-    done(complete) {
-      a.animating = false;
-      a.elements.each((index, el) => {
-        const element = el;
-        delete element.dom7AnimateInstance;
-      });
-      if (complete) complete(els);
-      if (a.que.length > 0) {
-        const que = a.que.shift();
-        a.animate(que[0], que[1]);
-      }
-    },
-    animate(props, params) {
-      if (a.animating) {
-        a.que.push([props, params]);
-        return a;
-      }
-      const elements = [];
-
-      // Define & Cache Initials & Units
-      a.elements.each((index, el) => {
-        let initialFullValue;
-        let initialValue;
-        let unit;
-        let finalValue;
-        let finalFullValue;
-
-        if (!el.dom7AnimateInstance) a.elements[index].dom7AnimateInstance = a;
-
-        elements[index] = {
-          container: el,
-        };
-        Object.keys(props).forEach((prop) => {
-          initialFullValue = window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
-          initialValue = parseFloat(initialFullValue);
-          unit = initialFullValue.replace(initialValue, '');
-          finalValue = parseFloat(props[prop]);
-          finalFullValue = props[prop] + unit;
-          elements[index][prop] = {
-            initialFullValue,
-            initialValue,
-            unit,
-            finalValue,
-            finalFullValue,
-            currentValue: initialValue,
-          };
+      easingProgress(easing, progress) {
+        if (easing === 'swing') {
+          return 0.5 - (Math.cos(progress * Math.PI) / 2);
+        }
+        if (typeof easing === 'function') {
+          return easing(progress);
+        }
+        return progress;
+      },
+      stop() {
+        if (a.frameId) {
+          cancelAnimationFrame(a.frameId);
+        }
+        a.animating = false;
+        a.elements.each((index, el) => {
+          const element = el;
+          delete element.dom7AnimateInstance;
         });
-      });
-
-      let startTime = null;
-      let time;
-      let elementsDone = 0;
-      let propsDone = 0;
-      let done;
-      let began = false;
-
-      a.animating = true;
-
-      function render() {
-        time = new Date().getTime();
-        let progress;
-        let easeProgress;
-        // let el;
-        if (!began) {
-          began = true;
-          if (params.begin) params.begin(els);
+        a.que = [];
+      },
+      done(complete) {
+        a.animating = false;
+        a.elements.each((index, el) => {
+          const element = el;
+          delete element.dom7AnimateInstance;
+        });
+        if (complete) complete(els);
+        if (a.que.length > 0) {
+          const que = a.que.shift();
+          a.animate(que[0], que[1]);
         }
-        if (startTime === null) {
-          startTime = time;
+      },
+      animate(props, params) {
+        if (a.animating) {
+          a.que.push([props, params]);
+          return a;
         }
-        if (params.progress) {
-          params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), ((startTime + params.duration) - time < 0 ? 0 : (startTime + params.duration) - time), startTime);
-        }
+        const elements = [];
 
-        elements.forEach((element) => {
-          const el = element;
-          if (done || el.done) return;
+        // Define & Cache Initials & Units
+        a.elements.each((index, el) => {
+          let initialFullValue;
+          let initialValue;
+          let unit;
+          let finalValue;
+          let finalFullValue;
+
+          if (!el.dom7AnimateInstance) a.elements[index].dom7AnimateInstance = a;
+
+          elements[index] = {
+            container: el,
+          };
           Object.keys(props).forEach((prop) => {
-            if (done || el.done) return;
-            progress = Math.max(Math.min((time - startTime) / params.duration, 1), 0);
-            easeProgress = a.easingProgress(params.easing, progress);
-            const { initialValue, finalValue, unit } = el[prop];
-            el[prop].currentValue = initialValue + (easeProgress * (finalValue - initialValue));
-            const currentValue = el[prop].currentValue;
-
-            if (
-              (finalValue > initialValue && currentValue >= finalValue) ||
-              (finalValue < initialValue && currentValue <= finalValue)) {
-              el.container.style[prop] = finalValue + unit;
-              propsDone += 1;
-              if (propsDone === Object.keys(props).length) {
-                el.done = true;
-                elementsDone += 1;
-              }
-              if (elementsDone === elements.length) {
-                done = true;
-              }
-            }
-            if (done) {
-              a.done(params.complete);
-              return;
-            }
-            el.container.style[prop] = currentValue + unit;
+            initialFullValue = window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
+            initialValue = parseFloat(initialFullValue);
+            unit = initialFullValue.replace(initialValue, '');
+            finalValue = parseFloat(props[prop]);
+            finalFullValue = props[prop] + unit;
+            elements[index][prop] = {
+              initialFullValue,
+              initialValue,
+              unit,
+              finalValue,
+              finalFullValue,
+              currentValue: initialValue,
+            };
           });
         });
-        if (done) return;
-        // Then call
-        a.frameId = requestAnimationFrame(render);
-      }
-      a.frameId = requestAnimationFrame(render);
-      return a;
-    },
-  };
 
-  if (a.elements.length === 0) {
-    return els;
-  }
+        let startTime = null;
+        let time;
+        let elementsDone = 0;
+        let propsDone = 0;
+        let done;
+        let began = false;
 
-  let animateInstance;
-  for (let i = 0; i < a.elements.length; i += 1) {
-    if (a.elements[i].dom7AnimateInstance) {
-      animateInstance = a.elements[i].dom7AnimateInstance;
-    } else a.elements[i].dom7AnimateInstance = a;
-  }
-  if (!animateInstance) {
-    animateInstance = a;
-  }
+        a.animating = true;
 
-  if (initialProps === 'stop') {
-    animateInstance.stop();
-  } else {
-    animateInstance.animate(a.props, a.params);
-  }
-
-  return els;
-}
-
-function stop() {
-  const els = this;
-  for (let i = 0; i < els.length; i += 1) {
-    if (els[i].dom7AnimateInstance) {
-      els[i].dom7AnimateInstance.stop();
-    }
-  }
-}
-
-const Animate = {
-  animate,
-  stop,
-};
-
-// Global Ajax Setup
-const globalAjaxOptions = {};
-function ajaxSetup(options) {
-  if (options.type && !options.method) options.method = options.type;
-  each(options, (optionName, optionValue) => {
-    globalAjaxOptions[optionName] = optionValue;
-  });
-}
-
-// JSONP Requests
-let jsonpRequests = 0;
-
-// Ajax
-function ajax(options) {
-  const defaults = {
-    method: 'GET',
-    data: false,
-    async: true,
-    cache: true,
-    user: '',
-    password: '',
-    headers: {},
-    xhrFields: {},
-    statusCode: {},
-    processData: true,
-    dataType: 'text',
-    contentType: 'application/x-www-form-urlencoded',
-    timeout: 0,
-  };
-  const callbacks = ['beforeSend', 'error', 'complete', 'success', 'statusCode'];
-
-  // For jQuery guys
-  if (options.type) options.method = options.type;
-
-  // Global options
-  const globals = globalAjaxOptions;
-
-  // Merge global and defaults
-  each(globals, (globalOptionName, globalOptionValue) => {
-    if (callbacks.indexOf(globalOptionName) < 0) defaults[globalOptionName] = globalOptionValue;
-  });
-
-  // Function to run XHR callbacks and events
-  function fireAjaxCallback(eventName, eventData, callbackName) {
-    const a = arguments;
-    if (eventName) $(document).trigger(eventName, eventData);
-    if (callbackName) {
-      // Global callback
-      if (callbackName in globals) globals[callbackName](a[3], a[4], a[5], a[6]);
-      // Options callback
-      if (options[callbackName]) options[callbackName](a[3], a[4], a[5], a[6]);
-    }
-  }
-
-  // Merge options and defaults
-  each(defaults, (prop, defaultValue) => {
-    if (!(prop in options)) options[prop] = defaultValue;
-  });
-
-  // Default URL
-  if (!options.url) {
-    options.url = window.location.toString();
-  }
-  // Parameters Prefix
-  let paramsPrefix = options.url.indexOf('?') >= 0 ? '&' : '?';
-
-  // UC method
-  const method = options.method.toUpperCase();
-
-  // Data to modify GET URL
-  if ((method === 'GET' || method === 'HEAD' || method === 'OPTIONS' || method === 'DELETE') && options.data) {
-    let stringData;
-    if (typeof options.data === 'string') {
-      // Should be key=value string
-      if (options.data.indexOf('?') >= 0) stringData = options.data.split('?')[1];
-      else stringData = options.data;
-    } else {
-      // Should be key=value object
-      stringData = serializeObject(options.data);
-    }
-    if (stringData.length) {
-      options.url += paramsPrefix + stringData;
-      if (paramsPrefix === '?') paramsPrefix = '&';
-    }
-  }
-  // JSONP
-  if (options.dataType === 'json' && options.url.indexOf('callback=') >= 0) {
-    const callbackName = `f7jsonp_${Date.now() + ((jsonpRequests += 1))}`;
-    let abortTimeout;
-    const callbackSplit = options.url.split('callback=');
-    let requestUrl = `${callbackSplit[0]}callback=${callbackName}`;
-    if (callbackSplit[1].indexOf('&') >= 0) {
-      const addVars = callbackSplit[1].split('&').filter((el) => el.indexOf('=') > 0).join('&');
-      if (addVars.length > 0) requestUrl += `&${addVars}`;
-    }
-
-    // Create script
-    let script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.onerror = function onerror() {
-      clearTimeout(abortTimeout);
-      fireAjaxCallback(undefined, undefined, 'error', null, 'scripterror');
-      fireAjaxCallback('ajaxComplete ajax:complete', { scripterror: true }, 'complete', null, 'scripterror');
-    };
-    script.src = requestUrl;
-
-    // Handler
-    window[callbackName] = function jsonpCallback(data) {
-      clearTimeout(abortTimeout);
-      fireAjaxCallback(undefined, undefined, 'success', data);
-      script.parentNode.removeChild(script);
-      script = null;
-      delete window[callbackName];
-    };
-    document.querySelector('head').appendChild(script);
-
-    if (options.timeout > 0) {
-      abortTimeout = setTimeout(() => {
-        script.parentNode.removeChild(script);
-        script = null;
-        fireAjaxCallback(undefined, undefined, 'error', null, 'timeout');
-      }, options.timeout);
-    }
-
-    return;
-  }
-
-  // Cache for GET/HEAD requests
-  if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS' || method === 'DELETE') {
-    if (options.cache === false) {
-      options.url += `${paramsPrefix}_nocache${Date.now()}`;
-    }
-  }
-
-  // Create XHR
-  const xhr = new XMLHttpRequest();
-
-  // Save Request URL
-  xhr.requestUrl = options.url;
-  xhr.requestParameters = options;
-
-  // Open XHR
-  xhr.open(method, options.url, options.async, options.user, options.password);
-
-  // Create POST Data
-  let postData = null;
-
-  if ((method === 'POST' || method === 'PUT' || method === 'PATCH') && options.data) {
-    if (options.processData) {
-      const postDataInstances = [ArrayBuffer, Blob, Document, FormData];
-      // Post Data
-      if (postDataInstances.indexOf(options.data.constructor) >= 0) {
-        postData = options.data;
-      } else {
-        // POST Headers
-        let boundary = `---------------------------${Date.now().toString(16)}`;
-
-        if (options.contentType === 'multipart/form-data') {
-          xhr.setRequestHeader('Content-Type', `multipart/form-data; boundary=${boundary}`);
-        } else {
-          xhr.setRequestHeader('Content-Type', options.contentType);
-        }
-        postData = '';
-        let data = serializeObject(options.data);
-        if (options.contentType === 'multipart/form-data') {
-          data = data.split('&');
-          const newData = [];
-          for (let i = 0; i < data.length; i += 1) {
-            newData.push(`Content-Disposition: form-data; name="${data[i].split('=')[0]}"\r\n\r\n${data[i].split('=')[1]}\r\n`);
+        function render() {
+          time = new Date().getTime();
+          let progress;
+          let easeProgress;
+          // let el;
+          if (!began) {
+            began = true;
+            if (params.begin) params.begin(els);
           }
-          postData = `--${boundary}\r\n${newData.join(`--${boundary}\r\n`)}--${boundary}--\r\n`;
-        } else {
-          postData = data;
+          if (startTime === null) {
+            startTime = time;
+          }
+          if (params.progress) {
+            params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), ((startTime + params.duration) - time < 0 ? 0 : (startTime + params.duration) - time), startTime);
+          }
+
+          elements.forEach((element) => {
+            const el = element;
+            if (done || el.done) return;
+            Object.keys(props).forEach((prop) => {
+              if (done || el.done) return;
+              progress = Math.max(Math.min((time - startTime) / params.duration, 1), 0);
+              easeProgress = a.easingProgress(params.easing, progress);
+              const { initialValue, finalValue, unit } = el[prop];
+              el[prop].currentValue = initialValue + (easeProgress * (finalValue - initialValue));
+              const currentValue = el[prop].currentValue;
+
+              if (
+                (finalValue > initialValue && currentValue >= finalValue) ||
+                (finalValue < initialValue && currentValue <= finalValue)) {
+                el.container.style[prop] = finalValue + unit;
+                propsDone += 1;
+                if (propsDone === Object.keys(props).length) {
+                  el.done = true;
+                  elementsDone += 1;
+                }
+                if (elementsDone === elements.length) {
+                  done = true;
+                }
+              }
+              if (done) {
+                a.done(params.complete);
+                return;
+              }
+              el.container.style[prop] = currentValue + unit;
+            });
+          });
+          if (done) return;
+          // Then call
+          a.frameId = requestAnimationFrame(render);
         }
-      }
-    } else {
-      postData = options.data;
-    }
-  }
-
-  // Additional headers
-  if (options.headers) {
-    each(options.headers, (headerName, headerCallback) => {
-      xhr.setRequestHeader(headerName, headerCallback);
-    });
-  }
-
-  // Check for crossDomain
-  if (typeof options.crossDomain === 'undefined') {
-    options.crossDomain = /^([\w-]+:)?\/\/([^\/]+)/.test(options.url) && RegExp.$2 !== window.location.host;
-  }
-
-  if (!options.crossDomain) {
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-  }
-
-  if (options.xhrFields) {
-    each(options.xhrFields, (fieldName, fieldValue) => {
-      xhr[fieldName] = fieldValue;
-    });
-  }
-
-  let xhrTimeout;
-  // Handle XHR
-  xhr.onload = function onload() {
-    if (xhrTimeout) clearTimeout(xhrTimeout);
-    if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0) {
-      let responseData;
-      if (options.dataType === 'json') {
-        try {
-          responseData = JSON.parse(xhr.responseText);
-          fireAjaxCallback('ajaxSuccess ajax:success', { xhr }, 'success', responseData, xhr.status, xhr);
-        } catch (err) {
-          fireAjaxCallback('ajaxError ajax:error', { xhr, parseerror: true }, 'error', xhr, 'parseerror');
-        }
-      } else {
-        responseData = xhr.responseType === 'text' || xhr.responseType === '' ? xhr.responseText : xhr.response;
-        fireAjaxCallback('ajaxSuccess ajax:success', { xhr }, 'success', responseData, xhr.status, xhr);
-      }
-    } else {
-      fireAjaxCallback('ajaxError ajax:error', { xhr }, 'error', xhr, xhr.status);
-    }
-    if (options.statusCode) {
-      if (globals.statusCode && globals.statusCode[xhr.status]) globals.statusCode[xhr.status](xhr);
-      if (options.statusCode[xhr.status]) options.statusCode[xhr.status](xhr);
-    }
-    fireAjaxCallback('ajaxComplete ajax:complete', { xhr }, 'complete', xhr, xhr.status);
-  };
-
-  xhr.onerror = function onerror() {
-    if (xhrTimeout) clearTimeout(xhrTimeout);
-    fireAjaxCallback('ajaxError ajax:error', { xhr }, 'error', xhr, xhr.status);
-    fireAjaxCallback('ajaxComplete ajax:complete', { xhr, error: true }, 'complete', xhr, 'error');
-  };
-
-  // Ajax start callback
-  fireAjaxCallback('ajaxStart ajax:start', { xhr }, 'start', xhr);
-  fireAjaxCallback(undefined, undefined, 'beforeSend', xhr);
-
-  // Timeout
-  if (options.timeout > 0) {
-    xhr.onabort = function onabort() {
-      if (xhrTimeout) clearTimeout(xhrTimeout);
+        a.frameId = requestAnimationFrame(render);
+        return a;
+      },
     };
-    xhrTimeout = setTimeout(() => {
-      xhr.abort();
-      fireAjaxCallback('ajaxError ajax:error', { xhr, timeout: true }, 'error', xhr, 'timeout');
-      fireAjaxCallback('ajaxComplete ajax:complete', { xhr, timeout: true }, 'complete', xhr, 'timeout');
-    }, options.timeout);
-  }
 
-  // Send XHR
-  xhr.send(postData);
-
-  // Return XHR object
-  return xhr;
-}
-
-function ajaxShortcut(method, ...args) {
-  let url;
-  let data;
-  let success;
-  let error;
-  let dataType;
-  if (typeof args[1] === 'function') {
-    [url, success, error, dataType] = args;
-  } else {
-    [url, data, success, error, dataType] = args;
-  }
-  [success, error].forEach((callback) => {
-    if (typeof callback === 'string') {
-      dataType = callback;
-      if (callback === success) success = undefined;
-      else error = undefined;
+    if (a.elements.length === 0) {
+      return els;
     }
-  });
-  dataType = dataType || (method === 'getJSON' ? 'json' : undefined);
-  return ajax({
-    url,
-    method: method === 'post' ? 'POST' : 'GET',
-    data,
-    success,
-    error,
-    dataType,
-  });
-}
 
-function get(...args) {
-  args.unshift('get');
-  return ajaxShortcut.apply(this, args);
-}
-function post(...args) {
-  args.unshift('post');
-  return ajaxShortcut.apply(this, args);
-}
-function getJSON(...args) {
-  args.unshift('getJSON');
-  return ajaxShortcut.apply(this, args);
-}
+    let animateInstance;
+    for (let i = 0; i < a.elements.length; i += 1) {
+      if (a.elements[i].dom7AnimateInstance) {
+        animateInstance = a.elements[i].dom7AnimateInstance;
+      } else a.elements[i].dom7AnimateInstance = a;
+    }
+    if (!animateInstance) {
+      animateInstance = a;
+    }
 
-const Ajax = {
-  __utils: true,
-  ajaxSetup,
-  ajax,
-  get,
-  post,
-  getJSON,
+    if (initialProps === 'stop') {
+      animateInstance.stop();
+    } else {
+      animateInstance.animate(a.props, a.params);
+    }
+
+    return els;
+  },
+
+  stop() {
+    const els = this;
+    for (let i = 0; i < els.length; i += 1) {
+      if (els[i].dom7AnimateInstance) {
+        els[i].dom7AnimateInstance.stop();
+      }
+    }
+  },
 };
 
-export { $, Utils, Methods, Scroll, Animate, Ajax };
+export { $, Methods, Scroll, Animate };
