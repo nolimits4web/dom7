@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.0.1 - Released on October 2, 2017
+  * Modular version `dom7.modular.js` is more modular now and exports every method separately.
+
 ## Dom7 v2.0.0 - Released on September 11, 2017
   * Removed XHR (Ajax) functionality
   * Removed `$.` utilities, including `$.parseUrlQuery`, `$.isArray`, `$.each`, `$.unique`, `$.serializeObject`, `$.dataset`, `$.extend`
