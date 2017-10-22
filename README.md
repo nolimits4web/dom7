@@ -1,5 +1,5 @@
 <a href="https://www.patreon.com/vladimirkharlampidi"><img src="https://cdn.framework7.io/i/support-badge.png" height="20"></a>
-[![devDependency Status](https://david-dm.org/nolimits4web/dom7/dev-status.svg)](https://david-dm.org/nolimits4web/dom7#info=devDependencies)
+[![devDependency Status](https://david-dm.org/Ahmet-Kaplan/Dom7/dev-status.svg)](https://david-dm.org/Ahmet-Kaplan/Dom7#info=devDependencies)
 
 # Dom7
 
