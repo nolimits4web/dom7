@@ -39,70 +39,70 @@ const banner = `
 function umd(cb) {
   const env = process.env.NODE_ENV || 'development';
   rollup({
-    entry: './src/dom7.js',
+    input: './src/dom7.js',
     plugins: [buble()],
     format: 'umd',
-    moduleName: 'Dom7',
-    useStrict: true,
-    sourceMap: env === 'development',
+    name: 'Dom7',
+    strict: true,
+    sourcemap: env === 'development',
     banner,
   })
-  .pipe(source('dom7.js', './src'))
-  .pipe(buffer())
-  .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
-  .on('end', () => {
-    if (env === 'development') {
-      if (cb) cb();
-      return;
-    }
-    gulp.src('./dist/dom7.js')
-    .pipe(sourcemaps.init())
-    .pipe(uglify())
-    .pipe(header(banner))
-    .pipe(rename('dom7.min.js'))
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./dist/'))
+    .pipe(source('dom7.js', './src'))
+    .pipe(buffer())
+    .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
     .on('end', () => {
-      if (cb) cb();
+      if (env === 'development') {
+        if (cb) cb();
+        return;
+      }
+      gulp.src('./dist/dom7.js')
+        .pipe(sourcemaps.init())
+        .pipe(uglify())
+        .pipe(header(banner))
+        .pipe(rename('dom7.min.js'))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest('./dist/'))
+        .on('end', () => {
+          if (cb) cb();
+        });
     });
-  });
 }
 // ES MODULE DIST
 function es(cb) {
   const env = process.env.NODE_ENV || 'development';
   let cbs = 0;
   rollup({
-    entry: './src/dom7.js',
+    input: './src/dom7.js',
     format: 'es',
-    moduleName: 'Dom7',
-    useStrict: true,
-    sourceMap: env === 'development',
+    name: 'Dom7',
+    strict: true,
+    sourcemap: env === 'development',
     banner,
   })
-  .pipe(source('dom7.js', './src'))
-  .pipe(buffer())
-  .pipe(rename('dom7.module.js'))
-  .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
-  .on('end', () => {
-    cbs += 1;
-    if (cb && cbs === 2) cb();
-  });
+    .pipe(source('dom7.js', './src'))
+    .pipe(buffer())
+    .pipe(rename('dom7.module.js'))
+    .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
+    .on('end', () => {
+      cbs += 1;
+      if (cb && cbs === 2) cb();
+    });
   rollup({
-    entry: './src/dom7.modular.js',
+    input: './src/dom7.modular.js',
     format: 'es',
-    moduleName: 'Dom7',
-    useStrict: true,
-    sourceMap: env === 'development',
+    name: 'Dom7',
+    strict: true,
+    sourcemap: env === 'development',
     banner,
   })
-  .pipe(source('dom7.js', './src'))
-  .pipe(buffer())
-  .pipe(rename('dom7.modular.js'))
-  .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
-  .on('end', () => {
-    cbs += 1;
-    if (cb && cbs === 2) cb();
-  });
+    .pipe(source('dom7.js', './src'))
+    .pipe(buffer())
+    .pipe(rename('dom7.modular.js'))
+    .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
+    .on('end', () => {
+      cbs += 1;
+      if (cb && cbs === 2) cb();
+    });
 }
 
 gulp.task('build', (cb) => {
