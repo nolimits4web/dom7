@@ -3,6 +3,8 @@
 
 # Dom7
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/nolimits4web/Dom7.svg)](https://greenkeeper.io/)
+
 ## Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
 
 Dom7 - is the default DOM manipulation library built-in [Framework7](http://framework7.io). It utilizes most edge and high-performance methods for DOM manipulation. You don’t need to learn something new, its usage is very simple because it has the same syntax as well known jQuery library with support of the most popular and widely used methods and jQuery-like chaining.
