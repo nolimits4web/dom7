@@ -1,3 +1,4 @@
+import { window, document } from 'ssr-window';
 import Dom7 from './dom7-class';
 
 function $(selector, context) {

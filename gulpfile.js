@@ -5,6 +5,7 @@ const header = require('gulp-header');
 const uglify = require('gulp-uglify');
 const sourcemaps = require('gulp-sourcemaps');
 const rollup = require('rollup-stream');
+const resolve = require('rollup-plugin-node-resolve');
 const buble = require('rollup-plugin-buble');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
@@ -39,12 +40,12 @@ const banner = `
 function umd(cb) {
   const env = process.env.NODE_ENV || 'development';
   rollup({
-    entry: './src/dom7.js',
-    plugins: [buble()],
+    input: './src/dom7.js',
+    plugins: [resolve(), buble()],
     format: 'umd',
-    moduleName: 'Dom7',
-    useStrict: true,
-    sourceMap: env === 'development',
+    name: 'Dom7',
+    strict: true,
+    sourcemap: env === 'development',
     banner,
   })
   .pipe(source('dom7.js', './src'))
@@ -72,11 +73,12 @@ function es(cb) {
   const env = process.env.NODE_ENV || 'development';
   let cbs = 0;
   rollup({
-    entry: './src/dom7.js',
+    input: './src/dom7.js',
     format: 'es',
-    moduleName: 'Dom7',
-    useStrict: true,
-    sourceMap: env === 'development',
+    name: 'Dom7',
+    strict: true,
+    external: ['ssr-window'],
+    sourcemap: env === 'development',
     banner,
   })
   .pipe(source('dom7.js', './src'))
@@ -88,11 +90,12 @@ function es(cb) {
     if (cb && cbs === 2) cb();
   });
   rollup({
-    entry: './src/dom7.modular.js',
+    input: './src/dom7.modular.js',
     format: 'es',
-    moduleName: 'Dom7',
-    useStrict: true,
-    sourceMap: env === 'development',
+    name: 'Dom7',
+    strict: true,
+    external: ['ssr-window'],
+    sourcemap: env === 'development',
     banner,
   })
   .pipe(source('dom7.js', './src'))

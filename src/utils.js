@@ -1,3 +1,5 @@
+import { window } from 'ssr-window';
+
 function unique(arr) {
   const uniqueArray = [];
   for (let i = 0; i < arr.length; i += 1) {

@@ -1,21 +1,110 @@
 /**
- * Dom7 2.0.1
+ * Dom7 2.0.2
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
- * Copyright 2017, Vladimir Kharlampidi
+ * Copyright 2018, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  *
  * Licensed under MIT
  *
- * Released on: October 2, 2017
+ * Released on: February 10, 2018
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
 	(global.Dom7 = factory());
 }(this, (function () { 'use strict';
+
+/**
+ * SSR Window 1.0.0
+ * Better handling for window object in SSR environment
+ * https://github.com/nolimits4web/ssr-window
+ *
+ * Copyright 2018, Vladimir Kharlampidi
+ *
+ * Licensed under MIT
+ *
+ * Released on: February 10, 2018
+ */
+var d;
+if (typeof document === 'undefined') {
+  d = {
+    body: {},
+    addEventListener: function addEventListener() {},
+    removeEventListener: function removeEventListener() {},
+    activeElement: {
+      blur: function blur() {},
+      nodeName: '',
+    },
+    querySelector: function querySelector() {
+      return null;
+    },
+    querySelectorAll: function querySelectorAll() {
+      return [];
+    },
+    getElementById: function getElementById() {
+      return null;
+    },
+    createEvent: function createEvent() {
+      return {
+        initEvent: function initEvent() {},
+      };
+    },
+    createElement: function createElement() {
+      return {
+        children: [],
+        childNodes: [],
+        style: {},
+        setAttribute: function setAttribute() {},
+        getElementsByTagName: function getElementsByTagName() {
+          return [];
+        },
+      };
+    },
+    location: { hash: '' },
+  };
+} else {
+  // eslint-disable-next-line
+  d = document;
+}
+
+var doc = d;
+
+var w;
+if (typeof window === 'undefined') {
+  w = {
+    document: doc,
+    navigator: {
+      userAgent: '',
+    },
+    location: {},
+    history: {},
+    CustomEvent: function CustomEvent() {
+      return this;
+    },
+    addEventListener: function addEventListener() {},
+    removeEventListener: function removeEventListener() {},
+    getComputedStyle: function getComputedStyle() {
+      return {
+        getPropertyValue: function getPropertyValue() {
+          return '';
+        },
+      };
+    },
+    Image: function Image() {},
+    Date: function Date() {},
+    screen: {},
+    setTimeout: function setTimeout() {},
+    clearTimeout: function clearTimeout() {},
+  };
+} else {
+  // eslint-disable-next-line
+  w = window;
+}
+
+var win = w;
 
 var Dom7 = function Dom7(arr) {
   var self = this;
@@ -49,7 +138,7 @@ function $$1(selector, context) {
         if (html.indexOf('<td') === 0 || html.indexOf('<th') === 0) { toCreate = 'tr'; }
         if (html.indexOf('<tbody') === 0) { toCreate = 'table'; }
         if (html.indexOf('<option') === 0) { toCreate = 'select'; }
-        tempParent = document.createElement(toCreate);
+        tempParent = doc.createElement(toCreate);
         tempParent.innerHTML = html;
         for (i = 0; i < tempParent.childNodes.length; i += 1) {
           arr.push(tempParent.childNodes[i]);
@@ -57,16 +146,16 @@ function $$1(selector, context) {
       } else {
         if (!context && selector[0] === '#' && !selector.match(/[ .<>:~]/)) {
           // Pure ID selector
-          els = [document.getElementById(selector.trim().split('#')[1])];
+          els = [doc.getElementById(selector.trim().split('#')[1])];
         } else {
           // Other selectors
-          els = (context || document).querySelectorAll(selector.trim());
+          els = (context || doc).querySelectorAll(selector.trim());
         }
         for (i = 0; i < els.length; i += 1) {
           if (els[i]) { arr.push(els[i]); }
         }
       }
-    } else if (selector.nodeType || selector === window || selector === document) {
+    } else if (selector.nodeType || selector === win || selector === doc) {
       // Node/element
       arr.push(selector);
     } else if (selector.length > 0 && selector[0].nodeType) {
@@ -95,14 +184,14 @@ function toCamelCase(string) {
 }
 
 function requestAnimationFrame(callback) {
-  if (window.requestAnimationFrame) { return window.requestAnimationFrame(callback); }
-  else if (window.webkitRequestAnimationFrame) { return window.webkitRequestAnimationFrame(callback); }
-  return window.setTimeout(callback, 1000 / 60);
+  if (win.requestAnimationFrame) { return win.requestAnimationFrame(callback); }
+  else if (win.webkitRequestAnimationFrame) { return win.webkitRequestAnimationFrame(callback); }
+  return win.setTimeout(callback, 1000 / 60);
 }
 function cancelAnimationFrame(id) {
-  if (window.cancelAnimationFrame) { return window.cancelAnimationFrame(id); }
-  else if (window.webkitCancelAnimationFrame) { return window.webkitCancelAnimationFrame(id); }
-  return window.clearTimeout(id);
+  if (win.cancelAnimationFrame) { return win.cancelAnimationFrame(id); }
+  else if (win.webkitCancelAnimationFrame) { return win.webkitCancelAnimationFrame(id); }
+  return win.clearTimeout(id);
 }
 
 // Classes and attributes
@@ -322,15 +411,15 @@ function transition(duration) {
 // Events
 function on() {
   var this$1 = this;
+  var assign;
+
   var args = [], len = arguments.length;
   while ( len-- ) args[ len ] = arguments[ len ];
-
   var eventType = args[0];
   var targetSelector = args[1];
   var listener = args[2];
   var capture = args[3];
   if (typeof args[1] === 'function') {
-    var assign;
     (assign = args, eventType = assign[0], listener = assign[1], capture = assign[2]);
     targetSelector = undefined;
   }
@@ -385,15 +474,15 @@ function on() {
 }
 function off() {
   var this$1 = this;
+  var assign;
+
   var args = [], len = arguments.length;
   while ( len-- ) args[ len ] = arguments[ len ];
-
   var eventType = args[0];
   var targetSelector = args[1];
   var listener = args[2];
   var capture = args[3];
   if (typeof args[1] === 'function') {
-    var assign;
     (assign = args, eventType = assign[0], listener = assign[1], capture = assign[2]);
     targetSelector = undefined;
   }
@@ -431,16 +520,16 @@ function off() {
   return this;
 }
 function once() {
+  var assign;
+
   var args = [], len = arguments.length;
   while ( len-- ) args[ len ] = arguments[ len ];
-
   var dom = this;
   var eventName = args[0];
   var targetSelector = args[1];
   var listener = args[2];
   var capture = args[3];
   if (typeof args[1] === 'function') {
-    var assign;
     (assign = args, eventName = assign[0], listener = assign[1], capture = assign[2]);
     targetSelector = undefined;
   }
@@ -462,13 +551,13 @@ function trigger() {
     for (var j = 0; j < this.length; j += 1) {
       var evt = (void 0);
       try {
-        evt = new window.CustomEvent(events[i], {
+        evt = new win.CustomEvent(events[i], {
           detail: eventData,
           bubbles: true,
           cancelable: true,
         });
       } catch (e) {
-        evt = document.createEvent('Event');
+        evt = doc.createEvent('Event');
         evt.initEvent(events[i], true, true);
         evt.detail = eventData;
       }
@@ -520,8 +609,8 @@ function animationEnd(callback) {
 }
 // Sizing/Styles
 function width() {
-  if (this[0] === window) {
-    return window.innerWidth;
+  if (this[0] === win) {
+    return win.innerWidth;
   }
 
   if (this.length > 0) {
@@ -542,8 +631,8 @@ function outerWidth(includeMargins) {
   return null;
 }
 function height() {
-  if (this[0] === window) {
-    return window.innerHeight;
+  if (this[0] === win) {
+    return win.innerHeight;
   }
 
   if (this.length > 0) {
@@ -567,11 +656,11 @@ function offset() {
   if (this.length > 0) {
     var el = this[0];
     var box = el.getBoundingClientRect();
-    var body = document.body;
+    var body = doc.body;
     var clientTop = el.clientTop || body.clientTop || 0;
     var clientLeft = el.clientLeft || body.clientLeft || 0;
-    var scrollTop = el === window ? window.scrollY : el.scrollTop;
-    var scrollLeft = el === window ? window.scrollX : el.scrollLeft;
+    var scrollTop = el === win ? win.scrollY : el.scrollTop;
+    var scrollLeft = el === win ? win.scrollX : el.scrollLeft;
     return {
       top: (box.top + scrollTop) - clientTop,
       left: (box.left + scrollLeft) - clientLeft,
@@ -596,7 +685,7 @@ function show() {
     if (el.style.display === 'none') {
       el.style.display = '';
     }
-    if (window.getComputedStyle(el, null).getPropertyValue('display') === 'none') {
+    if (win.getComputedStyle(el, null).getPropertyValue('display') === 'none') {
       // Still not visible
       el.style.display = 'block';
     }
@@ -604,7 +693,7 @@ function show() {
   return this;
 }
 function styles() {
-  if (this[0]) { return window.getComputedStyle(this[0], null); }
+  if (this[0]) { return win.getComputedStyle(this[0], null); }
   return {};
 }
 function css(props, value) {
@@ -613,7 +702,7 @@ function css(props, value) {
   var i;
   if (arguments.length === 1) {
     if (typeof props === 'string') {
-      if (this[0]) { return window.getComputedStyle(this[0], null).getPropertyValue(props); }
+      if (this[0]) { return win.getComputedStyle(this[0], null).getPropertyValue(props); }
     } else {
       for (i = 0; i < this.length; i += 1) {
         // eslint-disable-next-line
@@ -736,8 +825,8 @@ function is(selector) {
       if (compareWith[i] === el) { return true; }
     }
     return false;
-  } else if (selector === document) { return el === document; }
-  else if (selector === window) { return el === window; }
+  } else if (selector === doc) { return el === doc; }
+  else if (selector === win) { return el === win; }
 
   if (selector.nodeType || selector instanceof Dom7) {
     compareWith = selector.nodeType ? [selector] : selector;
@@ -795,7 +884,7 @@ function append() {
     newChild = args[k];
     for (var i = 0; i < this.length; i += 1) {
       if (typeof newChild === 'string') {
-        var tempDiv = document.createElement('div');
+        var tempDiv = doc.createElement('div');
         tempDiv.innerHTML = newChild;
         while (tempDiv.firstChild) {
           this$1[i].appendChild(tempDiv.firstChild);
@@ -824,7 +913,7 @@ function prepend(newChild) {
   var j;
   for (i = 0; i < this.length; i += 1) {
     if (typeof newChild === 'string') {
-      var tempDiv = document.createElement('div');
+      var tempDiv = doc.createElement('div');
       tempDiv.innerHTML = newChild;
       for (j = tempDiv.childNodes.length - 1; j >= 0; j -= 1) {
         this$1[i].insertBefore(tempDiv.childNodes[j], this$1[i].childNodes[0]);
@@ -1111,9 +1200,10 @@ var Methods = Object.freeze({
 });
 
 function scrollTo() {
+  var assign;
+
   var args = [], len = arguments.length;
   while ( len-- ) args[ len ] = arguments[ len ];
-
   var left = args[0];
   var top = args[1];
   var duration = args[2];
@@ -1121,7 +1211,6 @@ function scrollTo() {
   var callback = args[4];
   if (args.length === 4 && typeof easing === 'function') {
     callback = easing;
-    var assign;
     (assign = args, left = assign[0], top = assign[1], duration = assign[2], callback = assign[3], easing = assign[4]);
   }
   if (typeof easing === 'undefined') { easing = 'swing'; }
@@ -1206,15 +1295,15 @@ function scrollTo() {
 }
 // scrollTop(top, duration, easing, callback) {
 function scrollTop() {
+  var assign;
+
   var args = [], len = arguments.length;
   while ( len-- ) args[ len ] = arguments[ len ];
-
   var top = args[0];
   var duration = args[1];
   var easing = args[2];
   var callback = args[3];
   if (args.length === 3 && typeof easing === 'function') {
-    var assign;
     (assign = args, top = assign[0], duration = assign[1], callback = assign[2], easing = assign[3]);
   }
   var dom = this;
@@ -1225,15 +1314,15 @@ function scrollTop() {
   return dom.scrollTo(undefined, top, duration, easing, callback);
 }
 function scrollLeft() {
+  var assign;
+
   var args = [], len = arguments.length;
   while ( len-- ) args[ len ] = arguments[ len ];
-
   var left = args[0];
   var duration = args[1];
   var easing = args[2];
   var callback = args[3];
   if (args.length === 3 && typeof easing === 'function') {
-    var assign;
     (assign = args, left = assign[0], duration = assign[1], callback = assign[2], easing = assign[3]);
   }
   var dom = this;
@@ -1324,7 +1413,7 @@ function animate(initialProps, initialParams) {
           container: el,
         };
         Object.keys(props).forEach(function (prop) {
-          initialFullValue = window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
+          initialFullValue = win.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
           initialValue = parseFloat(initialFullValue);
           unit = initialFullValue.replace(initialValue, '');
           finalValue = parseFloat(props[prop]);
@@ -1452,9 +1541,10 @@ var Animate = Object.freeze({
 var noTrigger = ('resize scroll').split(' ');
 function eventShortcut(name) {
   var this$1 = this;
+  var ref;
+
   var args = [], len = arguments.length - 1;
   while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
-
   if (typeof args[0] === 'undefined') {
     for (var i = 0; i < this.length; i += 1) {
       if (noTrigger.indexOf(name) < 0) {
@@ -1467,7 +1557,6 @@ function eventShortcut(name) {
     return this;
   }
   return (ref = this).on.apply(ref, [ name ].concat( args ));
-  var ref;
 }
 
 function click() {

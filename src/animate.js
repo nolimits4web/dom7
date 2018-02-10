@@ -1,3 +1,4 @@
+import { window } from 'ssr-window';
 import $ from './$';
 import { requestAnimationFrame, cancelAnimationFrame } from './utils';
 

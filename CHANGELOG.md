@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.0.2 - Released on February 10, 2018
+  * Added `ssr-window` dependency to throw less errors in SSR environment
+
 ## Dom7 v2.0.1 - Released on October 2, 2017
   * Modular version `dom7.modular.js` is more modular now and exports every method separately.
 

@@ -1,16 +1,18 @@
 /**
- * Dom7 2.0.1
+ * Dom7 2.0.2
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
- * Copyright 2017, Vladimir Kharlampidi
+ * Copyright 2018, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  *
  * Licensed under MIT
  *
- * Released on: October 2, 2017
+ * Released on: February 10, 2018
  */
+import { document, window } from 'ssr-window';
+
 class Dom7 {
   constructor(arr) {
     const self = this;
