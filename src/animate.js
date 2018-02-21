@@ -1,12 +1,11 @@
 import { window } from 'ssr-window';
-import $ from './$';
 import { requestAnimationFrame, cancelAnimationFrame } from './utils';
 
 function animate(initialProps, initialParams) {
   const els = this;
   const a = {
-    props: $.extend({}, initialProps),
-    params: $.extend({
+    props: Object.assign({}, initialProps),
+    params: Object.assign({
       duration: 300,
       easing: 'swing', // or 'linear'
       /* Callbacks
