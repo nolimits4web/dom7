@@ -1,5 +1,5 @@
 /**
- * Dom7 2.0.2
+ * Dom7 2.0.3
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: February 10, 2018
+ * Released on: February 21, 2018
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1345,8 +1345,8 @@ var Scroll = Object.freeze({
 function animate(initialProps, initialParams) {
   var els = this;
   var a = {
-    props: $$1.extend({}, initialProps),
-    params: $$1.extend({
+    props: Object.assign({}, initialProps),
+    params: Object.assign({
       duration: 300,
       easing: 'swing', // or 'linear'
       /* Callbacks

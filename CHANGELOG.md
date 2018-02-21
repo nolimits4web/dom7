@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.0.3 - Released on February 21, 2018
+  * Fixed issue with not found `$.extend` in `.animate`
+
 ## Dom7 v2.0.2 - Released on February 10, 2018
   * Added `ssr-window` dependency to throw less errors in SSR environment
 
