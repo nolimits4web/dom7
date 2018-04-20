@@ -1,6 +1,6 @@
 {
   "name": "dom7",
-  "version": "2.0.3",
+  "version": "2.0.5",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
   "jsnext:main": "dist/dom7.module.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nolimits4web/Dom7.git"
+    "url": "git+https://github.com/nolimits4web/dom7.git"
   },
   "keywords": [
     "dom",
@@ -26,7 +26,7 @@
   "author": "Vladimir Kharlampidi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nolimits4web/Dom7/issues"
+    "url": "https://github.com/nolimits4web/dom7/issues"
   },
   "homepage": "http://framework7.io/docs/dom.html",
   "devDependencies": {

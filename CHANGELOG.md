@@ -1,5 +1,9 @@
 # Change Log
 
+## Dom7 v2.0.5 - Released on April 20, 2018
+  * Support for setting array value on multiple select
+  * Imporved internal events proxies logic for better memory management
+
 ## Dom7 v2.0.3 - Released on February 21, 2018
   * Fixed issue with not found `$.extend` in `.animate`
 

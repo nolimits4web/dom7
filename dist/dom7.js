@@ -1,5 +1,5 @@
 /**
- * Dom7 2.0.3
+ * Dom7 2.0.5
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: February 21, 2018
+ * Released on: April 20, 2018
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -362,26 +362,32 @@ function dataset() {
   return dataset;
 }
 function val(value) {
-  var this$1 = this;
-
+  var dom = this;
   if (typeof value === 'undefined') {
-    if (this[0]) {
-      if (this[0].multiple && this[0].nodeName.toLowerCase() === 'select') {
+    if (dom[0]) {
+      if (dom[0].multiple && dom[0].nodeName.toLowerCase() === 'select') {
         var values = [];
-        for (var i = 0; i < this[0].selectedOptions.length; i += 1) {
-          values.push(this$1[0].selectedOptions[i].value);
+        for (var i = 0; i < dom[0].selectedOptions.length; i += 1) {
+          values.push(dom[0].selectedOptions[i].value);
         }
         return values;
       }
-      return this[0].value;
+      return dom[0].value;
     }
     return undefined;
   }
 
-  for (var i$1 = 0; i$1 < this.length; i$1 += 1) {
-    this$1[i$1].value = value;
+  for (var i$1 = 0; i$1 < dom.length; i$1 += 1) {
+    var el = dom[i$1];
+    if (Array.isArray(value) && el.multiple && el.nodeName.toLowerCase() === 'select') {
+      for (var j = 0; j < el.options.length; j += 1) {
+        el.options[j].selected = value.indexOf(el.options[j].value) >= 0;
+      }
+    } else {
+      el.value = value;
+    }
   }
-  return this;
+  return dom;
 }
 // Transforms
 // eslint-disable-next-line
@@ -429,7 +435,9 @@ function on() {
     var target = e.target;
     if (!target) { return; }
     var eventData = e.target.dom7EventData || [];
-    eventData.unshift(e);
+    if (eventData.indexOf(e) < 0) {
+      eventData.unshift(e);
+    }
     if ($$1(target).is(targetSelector)) { listener.apply(target, eventData); }
     else {
       var parents = $$1(target).parents(); // eslint-disable-line
@@ -440,7 +448,9 @@ function on() {
   }
   function handleEvent(e) {
     var eventData = e && e.target ? e.target.dom7EventData || [] : [];
-    eventData.unshift(e);
+    if (eventData.indexOf(e) < 0) {
+      eventData.unshift(e);
+    }
     listener.apply(this, eventData);
   }
   var events = eventType.split(' ');
@@ -449,24 +459,26 @@ function on() {
     var el = this$1[i];
     if (!targetSelector) {
       for (j = 0; j < events.length; j += 1) {
-        if (!el.dom7Listeners) { el.dom7Listeners = []; }
-        el.dom7Listeners.push({
-          type: eventType,
+        var event = events[j];
+        if (!el.dom7Listeners) { el.dom7Listeners = {}; }
+        if (!el.dom7Listeners[event]) { el.dom7Listeners[event] = []; }
+        el.dom7Listeners[event].push({
           listener: listener,
           proxyListener: handleEvent,
         });
-        el.addEventListener(events[j], handleEvent, capture);
+        el.addEventListener(event, handleEvent, capture);
       }
     } else {
       // Live events
       for (j = 0; j < events.length; j += 1) {
-        if (!el.dom7LiveListeners) { el.dom7LiveListeners = []; }
-        el.dom7LiveListeners.push({
-          type: eventType,
+        var event$1 = events[j];
+        if (!el.dom7LiveListeners) { el.dom7LiveListeners = {}; }
+        if (!el.dom7LiveListeners[event$1]) { el.dom7LiveListeners[event$1] = []; }
+        el.dom7LiveListeners[event$1].push({
           listener: listener,
           proxyListener: handleLiveEvent,
         });
-        el.addEventListener(events[j], handleLiveEvent, capture);
+        el.addEventListener(event$1, handleLiveEvent, capture);
       }
     }
   }
@@ -490,29 +502,23 @@ function off() {
 
   var events = eventType.split(' ');
   for (var i = 0; i < events.length; i += 1) {
+    var event = events[i];
     for (var j = 0; j < this.length; j += 1) {
       var el = this$1[j];
-      if (!targetSelector) {
-        if (el.dom7Listeners) {
-          for (var k = 0; k < el.dom7Listeners.length; k += 1) {
-            if (listener) {
-              if (el.dom7Listeners[k].listener === listener) {
-                el.removeEventListener(events[i], el.dom7Listeners[k].proxyListener, capture);
-              }
-            } else if (el.dom7Listeners[k].type === events[i]) {
-              el.removeEventListener(events[i], el.dom7Listeners[k].proxyListener, capture);
-            }
-          }
-        }
-      } else if (el.dom7LiveListeners) {
-        for (var k$1 = 0; k$1 < el.dom7LiveListeners.length; k$1 += 1) {
-          if (listener) {
-            if (el.dom7LiveListeners[k$1].listener === listener) {
-              el.removeEventListener(events[i], el.dom7LiveListeners[k$1].proxyListener, capture);
-            }
-          } else if (el.dom7LiveListeners[k$1].type === events[i]) {
-            el.removeEventListener(events[i], el.dom7LiveListeners[k$1].proxyListener, capture);
-          }
+      var handlers = (void 0);
+      if (!targetSelector && el.dom7Listeners) {
+        handlers = el.dom7Listeners[event];
+      } else if (targetSelector && el.dom7LiveListeners) {
+        handlers = el.dom7LiveListeners[event];
+      }
+      for (var k = handlers.length - 1; k >= 0; k -= 1) {
+        var handler = handlers[k];
+        if (listener && handler.listener === listener) {
+          el.removeEventListener(event, handler.proxyListener, capture);
+          handlers.splice(k, 1);
+        } else if (!listener) {
+          el.removeEventListener(event, handler.proxyListener, capture);
+          handlers.splice(k, 1);
         }
       }
     }
@@ -533,9 +539,11 @@ function once() {
     (assign = args, eventName = assign[0], listener = assign[1], capture = assign[2]);
     targetSelector = undefined;
   }
-  function proxy(e) {
-    var eventData = e.target.dom7EventData || [];
-    listener.apply(this, eventData);
+  function proxy() {
+    var eventArgs = [], len = arguments.length;
+    while ( len-- ) eventArgs[ len ] = arguments[ len ];
+
+    listener.apply(this, eventArgs);
     dom.off(eventName, targetSelector, proxy, capture);
   }
   return dom.on(eventName, targetSelector, proxy, capture);
@@ -548,24 +556,26 @@ function trigger() {
   var events = args[0].split(' ');
   var eventData = args[1];
   for (var i = 0; i < events.length; i += 1) {
+    var event = events[i];
     for (var j = 0; j < this.length; j += 1) {
+      var el = this$1[j];
       var evt = (void 0);
       try {
-        evt = new win.CustomEvent(events[i], {
+        evt = new win.CustomEvent(event, {
           detail: eventData,
           bubbles: true,
           cancelable: true,
         });
       } catch (e) {
         evt = doc.createEvent('Event');
-        evt.initEvent(events[i], true, true);
+        evt.initEvent(event, true, true);
         evt.detail = eventData;
       }
       // eslint-disable-next-line
-      this$1[j].dom7EventData = args.filter(function (data, dataIndex) { return dataIndex > 0; });
-      this$1[j].dispatchEvent(evt);
-      this$1[j].dom7EventData = [];
-      delete this$1[j].dom7EventData;
+      el.dom7EventData = args.filter(function (data, dataIndex) { return dataIndex > 0; });
+      el.dispatchEvent(evt);
+      el.dom7EventData = [];
+      delete el.dom7EventData;
     }
   }
   return this;
