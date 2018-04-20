@@ -153,24 +153,32 @@ function dataset() {
   return dataset;
 }
 function val(value) {
+  const dom = this;
   if (typeof value === 'undefined') {
-    if (this[0]) {
-      if (this[0].multiple && this[0].nodeName.toLowerCase() === 'select') {
+    if (dom[0]) {
+      if (dom[0].multiple && dom[0].nodeName.toLowerCase() === 'select') {
         const values = [];
-        for (let i = 0; i < this[0].selectedOptions.length; i += 1) {
-          values.push(this[0].selectedOptions[i].value);
+        for (let i = 0; i < dom[0].selectedOptions.length; i += 1) {
+          values.push(dom[0].selectedOptions[i].value);
         }
         return values;
       }
-      return this[0].value;
+      return dom[0].value;
     }
     return undefined;
   }
 
-  for (let i = 0; i < this.length; i += 1) {
-    this[i].value = value;
+  for (let i = 0; i < dom.length; i += 1) {
+    const el = dom[i];
+    if (Array.isArray(value) && el.multiple && el.nodeName.toLowerCase() === 'select') {
+      for (let j = 0; j < el.options.length; j += 1) {
+        el.options[j].selected = value.indexOf(el.options[j].value) >= 0;
+      }
+    } else {
+      el.value = value;
+    }
   }
-  return this;
+  return dom;
 }
 // Transforms
 // eslint-disable-next-line
