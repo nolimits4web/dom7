@@ -206,7 +206,9 @@ function on(...args) {
     const target = e.target;
     if (!target) return;
     const eventData = e.target.dom7EventData || [];
-    eventData.unshift(e);
+    if (eventData.indexOf(e) < 0) {
+      eventData.unshift(e);
+    }
     if ($(target).is(targetSelector)) listener.apply(target, eventData);
     else {
       const parents = $(target).parents(); // eslint-disable-line
@@ -217,7 +219,9 @@ function on(...args) {
   }
   function handleEvent(e) {
     const eventData = e && e.target ? e.target.dom7EventData || [] : [];
-    eventData.unshift(e);
+    if (eventData.indexOf(e) < 0) {
+      eventData.unshift(e);
+    }
     listener.apply(this, eventData);
   }
   const events = eventType.split(' ');
@@ -226,24 +230,26 @@ function on(...args) {
     const el = this[i];
     if (!targetSelector) {
       for (j = 0; j < events.length; j += 1) {
-        if (!el.dom7Listeners) el.dom7Listeners = [];
-        el.dom7Listeners.push({
-          type: eventType,
+        const event = events[j];
+        if (!el.dom7Listeners) el.dom7Listeners = {};
+        if (!el.dom7Listeners[event]) el.dom7Listeners[event] = [];
+        el.dom7Listeners[event].push({
           listener,
           proxyListener: handleEvent,
         });
-        el.addEventListener(events[j], handleEvent, capture);
+        el.addEventListener(event, handleEvent, capture);
       }
     } else {
       // Live events
       for (j = 0; j < events.length; j += 1) {
-        if (!el.dom7LiveListeners) el.dom7LiveListeners = [];
-        el.dom7LiveListeners.push({
-          type: eventType,
+        const event = events[j];
+        if (!el.dom7LiveListeners) el.dom7LiveListeners = {};
+        if (!el.dom7LiveListeners[event]) el.dom7LiveListeners[event] = [];
+        el.dom7LiveListeners[event].push({
           listener,
           proxyListener: handleLiveEvent,
         });
-        el.addEventListener(events[j], handleLiveEvent, capture);
+        el.addEventListener(event, handleLiveEvent, capture);
       }
     }
   }
@@ -259,29 +265,23 @@ function off(...args) {
 
   const events = eventType.split(' ');
   for (let i = 0; i < events.length; i += 1) {
+    const event = events[i];
     for (let j = 0; j < this.length; j += 1) {
       const el = this[j];
-      if (!targetSelector) {
-        if (el.dom7Listeners) {
-          for (let k = 0; k < el.dom7Listeners.length; k += 1) {
-            if (listener) {
-              if (el.dom7Listeners[k].listener === listener) {
-                el.removeEventListener(events[i], el.dom7Listeners[k].proxyListener, capture);
-              }
-            } else if (el.dom7Listeners[k].type === events[i]) {
-              el.removeEventListener(events[i], el.dom7Listeners[k].proxyListener, capture);
-            }
-          }
-        }
-      } else if (el.dom7LiveListeners) {
-        for (let k = 0; k < el.dom7LiveListeners.length; k += 1) {
-          if (listener) {
-            if (el.dom7LiveListeners[k].listener === listener) {
-              el.removeEventListener(events[i], el.dom7LiveListeners[k].proxyListener, capture);
-            }
-          } else if (el.dom7LiveListeners[k].type === events[i]) {
-            el.removeEventListener(events[i], el.dom7LiveListeners[k].proxyListener, capture);
-          }
+      let handlers;
+      if (!targetSelector && el.dom7Listeners) {
+        handlers = el.dom7Listeners[event];
+      } else if (targetSelector && el.dom7LiveListeners) {
+        handlers = el.dom7LiveListeners[event];
+      }
+      for (let k = handlers.length - 1; k >= 0; k -= 1) {
+        const handler = handlers[k];
+        if (listener && handler.listener === listener) {
+          el.removeEventListener(event, handler.proxyListener, capture);
+          handlers.splice(k, 1);
+        } else if (!listener) {
+          el.removeEventListener(event, handler.proxyListener, capture);
+          handlers.splice(k, 1);
         }
       }
     }
@@ -295,9 +295,8 @@ function once(...args) {
     [eventName, listener, capture] = args;
     targetSelector = undefined;
   }
-  function proxy(e) {
-    const eventData = e.target.dom7EventData || [];
-    listener.apply(this, eventData);
+  function proxy(...eventArgs) {
+    listener.apply(this, eventArgs);
     dom.off(eventName, targetSelector, proxy, capture);
   }
   return dom.on(eventName, targetSelector, proxy, capture);
@@ -306,24 +305,26 @@ function trigger(...args) {
   const events = args[0].split(' ');
   const eventData = args[1];
   for (let i = 0; i < events.length; i += 1) {
+    const event = events[i];
     for (let j = 0; j < this.length; j += 1) {
+      const el = this[j];
       let evt;
       try {
-        evt = new window.CustomEvent(events[i], {
+        evt = new window.CustomEvent(event, {
           detail: eventData,
           bubbles: true,
           cancelable: true,
         });
       } catch (e) {
         evt = document.createEvent('Event');
-        evt.initEvent(events[i], true, true);
+        evt.initEvent(event, true, true);
         evt.detail = eventData;
       }
       // eslint-disable-next-line
-      this[j].dom7EventData = args.filter((data, dataIndex) => dataIndex > 0);
-      this[j].dispatchEvent(evt);
-      this[j].dom7EventData = [];
-      delete this[j].dom7EventData;
+      el.dom7EventData = args.filter((data, dataIndex) => dataIndex > 0);
+      el.dispatchEvent(evt);
+      el.dom7EventData = [];
+      delete el.dom7EventData;
     }
   }
   return this;
