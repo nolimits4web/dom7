@@ -282,14 +282,16 @@ function off(...args) {
       } else if (targetSelector && el.dom7LiveListeners) {
         handlers = el.dom7LiveListeners[event];
       }
-      for (let k = handlers.length - 1; k >= 0; k -= 1) {
-        const handler = handlers[k];
-        if (listener && handler.listener === listener) {
-          el.removeEventListener(event, handler.proxyListener, capture);
-          handlers.splice(k, 1);
-        } else if (!listener) {
-          el.removeEventListener(event, handler.proxyListener, capture);
-          handlers.splice(k, 1);
+      if (handlers && handlers.length) {
+        for (let k = handlers.length - 1; k >= 0; k -= 1) {
+          const handler = handlers[k];
+          if (listener && handler.listener === listener) {
+            el.removeEventListener(event, handler.proxyListener, capture);
+            handlers.splice(k, 1);
+          } else if (!listener) {
+            el.removeEventListener(event, handler.proxyListener, capture);
+            handlers.splice(k, 1);
+          }
         }
       }
     }
