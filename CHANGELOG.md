@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.0.6 - Released on May 27, 2018
+  * Fixed issue with remove event listeners when they was not added
+
 ## Dom7 v2.0.5 - Released on April 20, 2018
   * Support for setting array value on multiple select
   * Imporved internal events proxies logic for better memory management

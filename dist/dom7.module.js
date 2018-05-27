@@ -1,5 +1,5 @@
 /**
- * Dom7 2.0.5
+ * Dom7 2.0.6
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: April 20, 2018
+ * Released on: May 27, 2018
  */
 import { document, window } from 'ssr-window';
 
@@ -382,14 +382,16 @@ function off(...args) {
       } else if (targetSelector && el.dom7LiveListeners) {
         handlers = el.dom7LiveListeners[event];
       }
-      for (let k = handlers.length - 1; k >= 0; k -= 1) {
-        const handler = handlers[k];
-        if (listener && handler.listener === listener) {
-          el.removeEventListener(event, handler.proxyListener, capture);
-          handlers.splice(k, 1);
-        } else if (!listener) {
-          el.removeEventListener(event, handler.proxyListener, capture);
-          handlers.splice(k, 1);
+      if (handlers && handlers.length) {
+        for (let k = handlers.length - 1; k >= 0; k -= 1) {
+          const handler = handlers[k];
+          if (listener && handler.listener === listener) {
+            el.removeEventListener(event, handler.proxyListener, capture);
+            handlers.splice(k, 1);
+          } else if (!listener) {
+            el.removeEventListener(event, handler.proxyListener, capture);
+            handlers.splice(k, 1);
+          }
         }
       }
     }
