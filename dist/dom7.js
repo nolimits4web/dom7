@@ -1,5 +1,5 @@
 /**
- * Dom7 2.0.6
+ * Dom7 2.0.7
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: May 27, 2018
+ * Released on: June 14, 2018
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -204,7 +204,7 @@ function addClass(className) {
   var classes = className.split(' ');
   for (var i = 0; i < classes.length; i += 1) {
     for (var j = 0; j < this.length; j += 1) {
-      if (typeof this$1[j].classList !== 'undefined') { this$1[j].classList.add(classes[i]); }
+      if (typeof this$1[j] !== 'undefined' && typeof this$1[j].classList !== 'undefined') { this$1[j].classList.add(classes[i]); }
     }
   }
   return this;
@@ -215,7 +215,7 @@ function removeClass(className) {
   var classes = className.split(' ');
   for (var i = 0; i < classes.length; i += 1) {
     for (var j = 0; j < this.length; j += 1) {
-      if (typeof this$1[j].classList !== 'undefined') { this$1[j].classList.remove(classes[i]); }
+      if (typeof this$1[j] !== 'undefined' && typeof this$1[j].classList !== 'undefined') { this$1[j].classList.remove(classes[i]); }
     }
   }
   return this;
@@ -230,7 +230,7 @@ function toggleClass(className) {
   var classes = className.split(' ');
   for (var i = 0; i < classes.length; i += 1) {
     for (var j = 0; j < this.length; j += 1) {
-      if (typeof this$1[j].classList !== 'undefined') { this$1[j].classList.toggle(classes[i]); }
+      if (typeof this$1[j] !== 'undefined' && typeof this$1[j].classList !== 'undefined') { this$1[j].classList.toggle(classes[i]); }
     }
   }
   return this;

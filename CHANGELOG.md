@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.0.7 - Released on June 14, 2018
+  * Fixed issue with undefined elements in classList access (#13)
+
 ## Dom7 v2.0.6 - Released on May 27, 2018
   * Fixed issue with remove event listeners when they was not added
 
