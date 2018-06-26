@@ -1,6 +1,6 @@
 {
   "name": "dom7",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
   "jsnext:main": "dist/dom7.module.js",
@@ -8,6 +8,7 @@
   "scripts": {
     "build-dev": "NODE_ENV=development gulp build",
     "build-prod": "NODE_ENV=production gulp build",
+    "es6toes5-prod": "babel dist --presets babel-preset-es2015 --plugins transform-class-properties --out-dir dist",
     "dev": "NODE_ENV=development gulp build && NODE_ENV=development gulp demo && gulp server",
     "prod": "NODE_ENV=production gulp demo && NODE_ENV=production gulp server",
     "test": "npm run build-dev"
@@ -45,7 +46,10 @@
     "rollup-plugin-node-resolve": "^3.0.2",
     "rollup-stream": "^1.24.1",
     "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
+    "vinyl-source-stream": "^2.0.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-es2015": "^6.0.15",
+    "babel-cli": "^6.26.0"
   },
   "dependencies": {
     "ssr-window": "^1.0.0"

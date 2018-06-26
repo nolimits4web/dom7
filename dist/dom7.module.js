@@ -1,70 +1,78 @@
-/**
- * Dom7 2.0.7
- * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
- * http://framework7.io/docs/dom.html
- *
- * Copyright 2018, Vladimir Kharlampidi
- * The iDangero.us
- * http://www.idangero.us/
- *
- * Licensed under MIT
- *
- * Released on: June 14, 2018
- */
-import { document, window } from 'ssr-window';
+'use strict';
 
-class Dom7 {
-  constructor(arr) {
-    const self = this;
-    // Create array-like object
-    for (let i = 0; i < arr.length; i += 1) {
-      self[i] = arr[i];
-    }
-    self.length = arr.length;
-    // Return collection with methods
-    return this;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ssrWindow = require('ssr-window');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
+                                                                                                                                                           * Dom7 2.0.7
+                                                                                                                                                           * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
+                                                                                                                                                           * http://framework7.io/docs/dom.html
+                                                                                                                                                           *
+                                                                                                                                                           * Copyright 2018, Vladimir Kharlampidi
+                                                                                                                                                           * The iDangero.us
+                                                                                                                                                           * http://www.idangero.us/
+                                                                                                                                                           *
+                                                                                                                                                           * Licensed under MIT
+                                                                                                                                                           *
+                                                                                                                                                           * Released on: June 26, 2018
+                                                                                                                                                           */
+
+
+var Dom7 = function Dom7(arr) {
+  _classCallCheck(this, Dom7);
+
+  var self = this;
+  // Create array-like object
+  for (var i = 0; i < arr.length; i += 1) {
+    self[i] = arr[i];
   }
-}
+  self.length = arr.length;
+  // Return collection with methods
+  return this;
+};
 
 function $$1(selector, context) {
-  const arr = [];
-  let i = 0;
+  var arr = [];
+  var i = 0;
   if (selector && !context) {
     if (selector instanceof Dom7) {
       return selector;
     }
   }
   if (selector) {
-      // String
+    // String
     if (typeof selector === 'string') {
-      let els;
-      let tempParent;
-      const html = selector.trim();
-      if (html.indexOf('<') >= 0 && html.indexOf('>') >= 0) {
-        let toCreate = 'div';
-        if (html.indexOf('<li') === 0) toCreate = 'ul';
-        if (html.indexOf('<tr') === 0) toCreate = 'tbody';
-        if (html.indexOf('<td') === 0 || html.indexOf('<th') === 0) toCreate = 'tr';
-        if (html.indexOf('<tbody') === 0) toCreate = 'table';
-        if (html.indexOf('<option') === 0) toCreate = 'select';
-        tempParent = document.createElement(toCreate);
-        tempParent.innerHTML = html;
+      var els = void 0;
+      var tempParent = void 0;
+      var _html = selector.trim();
+      if (_html.indexOf('<') >= 0 && _html.indexOf('>') >= 0) {
+        var toCreate = 'div';
+        if (_html.indexOf('<li') === 0) toCreate = 'ul';
+        if (_html.indexOf('<tr') === 0) toCreate = 'tbody';
+        if (_html.indexOf('<td') === 0 || _html.indexOf('<th') === 0) toCreate = 'tr';
+        if (_html.indexOf('<tbody') === 0) toCreate = 'table';
+        if (_html.indexOf('<option') === 0) toCreate = 'select';
+        tempParent = _ssrWindow.document.createElement(toCreate);
+        tempParent.innerHTML = _html;
         for (i = 0; i < tempParent.childNodes.length; i += 1) {
           arr.push(tempParent.childNodes[i]);
         }
       } else {
         if (!context && selector[0] === '#' && !selector.match(/[ .<>:~]/)) {
           // Pure ID selector
-          els = [document.getElementById(selector.trim().split('#')[1])];
+          els = [_ssrWindow.document.getElementById(selector.trim().split('#')[1])];
         } else {
           // Other selectors
-          els = (context || document).querySelectorAll(selector.trim());
+          els = (context || _ssrWindow.document).querySelectorAll(selector.trim());
         }
         for (i = 0; i < els.length; i += 1) {
           if (els[i]) arr.push(els[i]);
         }
       }
-    } else if (selector.nodeType || selector === window || selector === document) {
+    } else if (selector.nodeType || selector === _ssrWindow.window || selector === _ssrWindow.document) {
       // Node/element
       arr.push(selector);
     } else if (selector.length > 0 && selector[0].nodeType) {
@@ -82,25 +90,25 @@ $$1.Class = Dom7;
 $$1.Dom7 = Dom7;
 
 function unique(arr) {
-  const uniqueArray = [];
-  for (let i = 0; i < arr.length; i += 1) {
+  var uniqueArray = [];
+  for (var i = 0; i < arr.length; i += 1) {
     if (uniqueArray.indexOf(arr[i]) === -1) uniqueArray.push(arr[i]);
   }
   return uniqueArray;
 }
 function toCamelCase(string) {
-  return string.toLowerCase().replace(/-(.)/g, (match, group1) => group1.toUpperCase());
+  return string.toLowerCase().replace(/-(.)/g, function (match, group1) {
+    return group1.toUpperCase();
+  });
 }
 
 function requestAnimationFrame(callback) {
-  if (window.requestAnimationFrame) return window.requestAnimationFrame(callback);
-  else if (window.webkitRequestAnimationFrame) return window.webkitRequestAnimationFrame(callback);
-  return window.setTimeout(callback, 1000 / 60);
+  if (_ssrWindow.window.requestAnimationFrame) return _ssrWindow.window.requestAnimationFrame(callback);else if (_ssrWindow.window.webkitRequestAnimationFrame) return _ssrWindow.window.webkitRequestAnimationFrame(callback);
+  return _ssrWindow.window.setTimeout(callback, 1000 / 60);
 }
 function cancelAnimationFrame(id) {
-  if (window.cancelAnimationFrame) return window.cancelAnimationFrame(id);
-  else if (window.webkitCancelAnimationFrame) return window.webkitCancelAnimationFrame(id);
-  return window.clearTimeout(id);
+  if (_ssrWindow.window.cancelAnimationFrame) return _ssrWindow.window.cancelAnimationFrame(id);else if (_ssrWindow.window.webkitCancelAnimationFrame) return _ssrWindow.window.webkitCancelAnimationFrame(id);
+  return _ssrWindow.window.clearTimeout(id);
 }
 
 // Classes and attributes
@@ -108,18 +116,18 @@ function addClass(className) {
   if (typeof className === 'undefined') {
     return this;
   }
-  const classes = className.split(' ');
-  for (let i = 0; i < classes.length; i += 1) {
-    for (let j = 0; j < this.length; j += 1) {
+  var classes = className.split(' ');
+  for (var i = 0; i < classes.length; i += 1) {
+    for (var j = 0; j < this.length; j += 1) {
       if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') this[j].classList.add(classes[i]);
     }
   }
   return this;
 }
 function removeClass(className) {
-  const classes = className.split(' ');
-  for (let i = 0; i < classes.length; i += 1) {
-    for (let j = 0; j < this.length; j += 1) {
+  var classes = className.split(' ');
+  for (var i = 0; i < classes.length; i += 1) {
+    for (var j = 0; j < this.length; j += 1) {
       if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') this[j].classList.remove(classes[i]);
     }
   }
@@ -130,9 +138,9 @@ function hasClass(className) {
   return this[0].classList.contains(className);
 }
 function toggleClass(className) {
-  const classes = className.split(' ');
-  for (let i = 0; i < classes.length; i += 1) {
-    for (let j = 0; j < this.length; j += 1) {
+  var classes = className.split(' ');
+  for (var i = 0; i < classes.length; i += 1) {
+    for (var j = 0; j < this.length; j += 1) {
       if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') this[j].classList.toggle(classes[i]);
     }
   }
@@ -146,14 +154,14 @@ function attr(attrs, value) {
   }
 
   // Set attrs
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     if (arguments.length === 2) {
       // String
       this[i].setAttribute(attrs, value);
     } else {
       // Object
       // eslint-disable-next-line
-      for (const attrName in attrs) {
+      for (var attrName in attrs) {
         this[i][attrName] = attrs[attrName];
         this[i].setAttribute(attrName, attrs[attrName]);
       }
@@ -163,7 +171,7 @@ function attr(attrs, value) {
 }
 // eslint-disable-next-line
 function removeAttr(attr) {
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     this[i].removeAttribute(attr);
   }
   return this;
@@ -175,14 +183,14 @@ function prop(props, value) {
     if (this[0]) return this[0][props];
   } else {
     // Set props
-    for (let i = 0; i < this.length; i += 1) {
+    for (var i = 0; i < this.length; i += 1) {
       if (arguments.length === 2) {
         // String
         this[i][props] = value;
       } else {
         // Object
         // eslint-disable-next-line
-        for (const propName in props) {
+        for (var propName in props) {
           this[i][propName] = props[propName];
         }
       }
@@ -191,16 +199,16 @@ function prop(props, value) {
   }
 }
 function data(key, value) {
-  let el;
+  var el = void 0;
   if (typeof value === 'undefined') {
     el = this[0];
     // Get value
     if (el) {
-      if (el.dom7ElementDataStorage && (key in el.dom7ElementDataStorage)) {
+      if (el.dom7ElementDataStorage && key in el.dom7ElementDataStorage) {
         return el.dom7ElementDataStorage[key];
       }
 
-      const dataKey = el.getAttribute(`data-${key}`);
+      var dataKey = el.getAttribute('data-' + key);
       if (dataKey) {
         return dataKey;
       }
@@ -210,7 +218,7 @@ function data(key, value) {
   }
 
   // Set value
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     el = this[i];
     if (!el.dom7ElementDataStorage) el.dom7ElementDataStorage = {};
     el.dom7ElementDataStorage[key] = value;
@@ -218,8 +226,8 @@ function data(key, value) {
   return this;
 }
 function removeData(key) {
-  for (let i = 0; i < this.length; i += 1) {
-    const el = this[i];
+  for (var i = 0; i < this.length; i += 1) {
+    var el = this[i];
     if (el.dom7ElementDataStorage && el.dom7ElementDataStorage[key]) {
       el.dom7ElementDataStorage[key] = null;
       delete el.dom7ElementDataStorage[key];
@@ -227,38 +235,36 @@ function removeData(key) {
   }
 }
 function dataset() {
-  const el = this[0];
+  var el = this[0];
   if (!el) return undefined;
-  const dataset = {}; // eslint-disable-line
+  var dataset = {}; // eslint-disable-line
   if (el.dataset) {
     // eslint-disable-next-line
-    for (const dataKey in el.dataset) {
+    for (var dataKey in el.dataset) {
       dataset[dataKey] = el.dataset[dataKey];
     }
   } else {
-    for (let i = 0; i < el.attributes.length; i += 1) {
+    for (var i = 0; i < el.attributes.length; i += 1) {
       // eslint-disable-next-line
-      const attr = el.attributes[i];
-      if (attr.name.indexOf('data-') >= 0) {
-        dataset[toCamelCase(attr.name.split('data-')[1])] = attr.value;
+      var _attr = el.attributes[i];
+      if (_attr.name.indexOf('data-') >= 0) {
+        dataset[toCamelCase(_attr.name.split('data-')[1])] = _attr.value;
       }
     }
   }
   // eslint-disable-next-line
-  for (const key in dataset) {
-    if (dataset[key] === 'false') dataset[key] = false;
-    else if (dataset[key] === 'true') dataset[key] = true;
-    else if (parseFloat(dataset[key]) === dataset[key] * 1) dataset[key] *= 1;
+  for (var key in dataset) {
+    if (dataset[key] === 'false') dataset[key] = false;else if (dataset[key] === 'true') dataset[key] = true;else if (parseFloat(dataset[key]) === dataset[key] * 1) dataset[key] *= 1;
   }
   return dataset;
 }
 function val(value) {
-  const dom = this;
+  var dom = this;
   if (typeof value === 'undefined') {
     if (dom[0]) {
       if (dom[0].multiple && dom[0].nodeName.toLowerCase() === 'select') {
-        const values = [];
-        for (let i = 0; i < dom[0].selectedOptions.length; i += 1) {
+        var values = [];
+        for (var i = 0; i < dom[0].selectedOptions.length; i += 1) {
           values.push(dom[0].selectedOptions[i].value);
         }
         return values;
@@ -268,10 +274,10 @@ function val(value) {
     return undefined;
   }
 
-  for (let i = 0; i < dom.length; i += 1) {
-    const el = dom[i];
+  for (var _i = 0; _i < dom.length; _i += 1) {
+    var el = dom[_i];
     if (Array.isArray(value) && el.multiple && el.nodeName.toLowerCase() === 'select') {
-      for (let j = 0; j < el.options.length; j += 1) {
+      for (var j = 0; j < el.options.length; j += 1) {
         el.options[j].selected = value.indexOf(el.options[j].value) >= 0;
       }
     } else {
@@ -283,8 +289,8 @@ function val(value) {
 // Transforms
 // eslint-disable-next-line
 function transform(transform) {
-  for (let i = 0; i < this.length; i += 1) {
-    const elStyle = this[i].style;
+  for (var i = 0; i < this.length; i += 1) {
+    var elStyle = this[i].style;
     elStyle.webkitTransform = transform;
     elStyle.transform = transform;
   }
@@ -292,99 +298,120 @@ function transform(transform) {
 }
 function transition(duration) {
   if (typeof duration !== 'string') {
-    duration = `${duration}ms`; // eslint-disable-line
+    duration = duration + 'ms'; // eslint-disable-line
   }
-  for (let i = 0; i < this.length; i += 1) {
-    const elStyle = this[i].style;
+  for (var i = 0; i < this.length; i += 1) {
+    var elStyle = this[i].style;
     elStyle.webkitTransitionDuration = duration;
     elStyle.transitionDuration = duration;
   }
   return this;
 }
 // Events
-function on(...args) {
-  let [eventType, targetSelector, listener, capture] = args;
+function on() {
+  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  var eventType = args[0],
+      targetSelector = args[1],
+      listener = args[2],
+      capture = args[3];
+
   if (typeof args[1] === 'function') {
-    [eventType, listener, capture] = args;
+    eventType = args[0];
+    listener = args[1];
+    capture = args[2];
+
     targetSelector = undefined;
   }
   if (!capture) capture = false;
 
   function handleLiveEvent(e) {
-    const target = e.target;
+    var target = e.target;
     if (!target) return;
-    const eventData = e.target.dom7EventData || [];
+    var eventData = e.target.dom7EventData || [];
     if (eventData.indexOf(e) < 0) {
       eventData.unshift(e);
     }
-    if ($$1(target).is(targetSelector)) listener.apply(target, eventData);
-    else {
-      const parents = $$1(target).parents(); // eslint-disable-line
-      for (let k = 0; k < parents.length; k += 1) {
-        if ($$1(parents[k]).is(targetSelector)) listener.apply(parents[k], eventData);
+    if ($$1(target).is(targetSelector)) listener.apply(target, eventData);else {
+      var _parents = $$1(target).parents(); // eslint-disable-line
+      for (var k = 0; k < _parents.length; k += 1) {
+        if ($$1(_parents[k]).is(targetSelector)) listener.apply(_parents[k], eventData);
       }
     }
   }
   function handleEvent(e) {
-    const eventData = e && e.target ? e.target.dom7EventData || [] : [];
+    var eventData = e && e.target ? e.target.dom7EventData || [] : [];
     if (eventData.indexOf(e) < 0) {
       eventData.unshift(e);
     }
     listener.apply(this, eventData);
   }
-  const events = eventType.split(' ');
-  let j;
-  for (let i = 0; i < this.length; i += 1) {
-    const el = this[i];
+  var events = eventType.split(' ');
+  var j = void 0;
+  for (var i = 0; i < this.length; i += 1) {
+    var el = this[i];
     if (!targetSelector) {
       for (j = 0; j < events.length; j += 1) {
-        const event = events[j];
+        var event = events[j];
         if (!el.dom7Listeners) el.dom7Listeners = {};
         if (!el.dom7Listeners[event]) el.dom7Listeners[event] = [];
         el.dom7Listeners[event].push({
-          listener,
-          proxyListener: handleEvent,
+          listener: listener,
+          proxyListener: handleEvent
         });
         el.addEventListener(event, handleEvent, capture);
       }
     } else {
       // Live events
       for (j = 0; j < events.length; j += 1) {
-        const event = events[j];
+        var _event = events[j];
         if (!el.dom7LiveListeners) el.dom7LiveListeners = {};
-        if (!el.dom7LiveListeners[event]) el.dom7LiveListeners[event] = [];
-        el.dom7LiveListeners[event].push({
-          listener,
-          proxyListener: handleLiveEvent,
+        if (!el.dom7LiveListeners[_event]) el.dom7LiveListeners[_event] = [];
+        el.dom7LiveListeners[_event].push({
+          listener: listener,
+          proxyListener: handleLiveEvent
         });
-        el.addEventListener(event, handleLiveEvent, capture);
+        el.addEventListener(_event, handleLiveEvent, capture);
       }
     }
   }
   return this;
 }
-function off(...args) {
-  let [eventType, targetSelector, listener, capture] = args;
+function off() {
+  for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    args[_key2] = arguments[_key2];
+  }
+
+  var eventType = args[0],
+      targetSelector = args[1],
+      listener = args[2],
+      capture = args[3];
+
   if (typeof args[1] === 'function') {
-    [eventType, listener, capture] = args;
+    eventType = args[0];
+    listener = args[1];
+    capture = args[2];
+
     targetSelector = undefined;
   }
   if (!capture) capture = false;
 
-  const events = eventType.split(' ');
-  for (let i = 0; i < events.length; i += 1) {
-    const event = events[i];
-    for (let j = 0; j < this.length; j += 1) {
-      const el = this[j];
-      let handlers;
+  var events = eventType.split(' ');
+  for (var i = 0; i < events.length; i += 1) {
+    var event = events[i];
+    for (var j = 0; j < this.length; j += 1) {
+      var el = this[j];
+      var handlers = void 0;
       if (!targetSelector && el.dom7Listeners) {
         handlers = el.dom7Listeners[event];
       } else if (targetSelector && el.dom7LiveListeners) {
         handlers = el.dom7LiveListeners[event];
       }
       if (handlers && handlers.length) {
-        for (let k = handlers.length - 1; k >= 0; k -= 1) {
-          const handler = handlers[k];
+        for (var k = handlers.length - 1; k >= 0; k -= 1) {
+          var handler = handlers[k];
           if (listener && handler.listener === listener) {
             el.removeEventListener(event, handler.proxyListener, capture);
             handlers.splice(k, 1);
@@ -398,40 +425,62 @@ function off(...args) {
   }
   return this;
 }
-function once(...args) {
-  const dom = this;
-  let [eventName, targetSelector, listener, capture] = args;
+function once() {
+  var dom = this;
+
+  for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    args[_key3] = arguments[_key3];
+  }
+
+  var eventName = args[0],
+      targetSelector = args[1],
+      listener = args[2],
+      capture = args[3];
+
   if (typeof args[1] === 'function') {
-    [eventName, listener, capture] = args;
+    eventName = args[0];
+    listener = args[1];
+    capture = args[2];
+
     targetSelector = undefined;
   }
-  function proxy(...eventArgs) {
+  function proxy() {
+    for (var _len4 = arguments.length, eventArgs = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      eventArgs[_key4] = arguments[_key4];
+    }
+
     listener.apply(this, eventArgs);
     dom.off(eventName, targetSelector, proxy, capture);
   }
   return dom.on(eventName, targetSelector, proxy, capture);
 }
-function trigger(...args) {
-  const events = args[0].split(' ');
-  const eventData = args[1];
-  for (let i = 0; i < events.length; i += 1) {
-    const event = events[i];
-    for (let j = 0; j < this.length; j += 1) {
-      const el = this[j];
-      let evt;
+function trigger() {
+  for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    args[_key5] = arguments[_key5];
+  }
+
+  var events = args[0].split(' ');
+  var eventData = args[1];
+  for (var i = 0; i < events.length; i += 1) {
+    var event = events[i];
+    for (var j = 0; j < this.length; j += 1) {
+      var el = this[j];
+      var evt = void 0;
       try {
-        evt = new window.CustomEvent(event, {
+        evt = new _ssrWindow.window.CustomEvent(event, {
           detail: eventData,
           bubbles: true,
-          cancelable: true,
+          cancelable: true
         });
       } catch (e) {
-        evt = document.createEvent('Event');
+        evt = _ssrWindow.document.createEvent('Event');
         evt.initEvent(event, true, true);
         evt.detail = eventData;
       }
       // eslint-disable-next-line
-      el.dom7EventData = args.filter((data, dataIndex) => dataIndex > 0);
+      el.dom7EventData = args.filter(function (data, dataIndex) {
+        return dataIndex > 0;
+      });
       el.dispatchEvent(evt);
       el.dom7EventData = [];
       delete el.dom7EventData;
@@ -440,9 +489,9 @@ function trigger(...args) {
   return this;
 }
 function transitionEnd(callback) {
-  const events = ['webkitTransitionEnd', 'transitionend'];
-  const dom = this;
-  let i;
+  var events = ['webkitTransitionEnd', 'transitionend'];
+  var dom = this;
+  var i = void 0;
   function fireCallBack(e) {
     /* jshint validthis:true */
     if (e.target !== this) return;
@@ -459,9 +508,9 @@ function transitionEnd(callback) {
   return this;
 }
 function animationEnd(callback) {
-  const events = ['webkitAnimationEnd', 'animationend'];
-  const dom = this;
-  let i;
+  var events = ['webkitAnimationEnd', 'animationend'];
+  var dom = this;
+  var i = void 0;
   function fireCallBack(e) {
     if (e.target !== this) return;
     callback.call(this, e);
@@ -478,8 +527,8 @@ function animationEnd(callback) {
 }
 // Sizing/Styles
 function width() {
-  if (this[0] === window) {
-    return window.innerWidth;
+  if (this[0] === _ssrWindow.window) {
+    return _ssrWindow.window.innerWidth;
   }
 
   if (this.length > 0) {
@@ -492,16 +541,16 @@ function outerWidth(includeMargins) {
   if (this.length > 0) {
     if (includeMargins) {
       // eslint-disable-next-line
-      const styles = this.styles();
-      return this[0].offsetWidth + parseFloat(styles.getPropertyValue('margin-right')) + parseFloat(styles.getPropertyValue('margin-left'));
+      var _styles = this.styles();
+      return this[0].offsetWidth + parseFloat(_styles.getPropertyValue('margin-right')) + parseFloat(_styles.getPropertyValue('margin-left'));
     }
     return this[0].offsetWidth;
   }
   return null;
 }
 function height() {
-  if (this[0] === window) {
-    return window.innerHeight;
+  if (this[0] === _ssrWindow.window) {
+    return _ssrWindow.window.innerHeight;
   }
 
   if (this.length > 0) {
@@ -514,8 +563,8 @@ function outerHeight(includeMargins) {
   if (this.length > 0) {
     if (includeMargins) {
       // eslint-disable-next-line
-      const styles = this.styles();
-      return this[0].offsetHeight + parseFloat(styles.getPropertyValue('margin-top')) + parseFloat(styles.getPropertyValue('margin-bottom'));
+      var _styles2 = this.styles();
+      return this[0].offsetHeight + parseFloat(_styles2.getPropertyValue('margin-top')) + parseFloat(_styles2.getPropertyValue('margin-bottom'));
     }
     return this[0].offsetHeight;
   }
@@ -523,34 +572,34 @@ function outerHeight(includeMargins) {
 }
 function offset() {
   if (this.length > 0) {
-    const el = this[0];
-    const box = el.getBoundingClientRect();
-    const body = document.body;
-    const clientTop = el.clientTop || body.clientTop || 0;
-    const clientLeft = el.clientLeft || body.clientLeft || 0;
-    const scrollTop = el === window ? window.scrollY : el.scrollTop;
-    const scrollLeft = el === window ? window.scrollX : el.scrollLeft;
+    var el = this[0];
+    var box = el.getBoundingClientRect();
+    var body = _ssrWindow.document.body;
+    var clientTop = el.clientTop || body.clientTop || 0;
+    var clientLeft = el.clientLeft || body.clientLeft || 0;
+    var _scrollTop = el === _ssrWindow.window ? _ssrWindow.window.scrollY : el.scrollTop;
+    var _scrollLeft = el === _ssrWindow.window ? _ssrWindow.window.scrollX : el.scrollLeft;
     return {
-      top: (box.top + scrollTop) - clientTop,
-      left: (box.left + scrollLeft) - clientLeft,
+      top: box.top + _scrollTop - clientTop,
+      left: box.left + _scrollLeft - clientLeft
     };
   }
 
   return null;
 }
 function hide() {
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     this[i].style.display = 'none';
   }
   return this;
 }
 function show() {
-  for (let i = 0; i < this.length; i += 1) {
-    const el = this[i];
+  for (var i = 0; i < this.length; i += 1) {
+    var el = this[i];
     if (el.style.display === 'none') {
       el.style.display = '';
     }
-    if (window.getComputedStyle(el, null).getPropertyValue('display') === 'none') {
+    if (_ssrWindow.window.getComputedStyle(el, null).getPropertyValue('display') === 'none') {
       // Still not visible
       el.style.display = 'block';
     }
@@ -558,19 +607,19 @@ function show() {
   return this;
 }
 function styles() {
-  if (this[0]) return window.getComputedStyle(this[0], null);
+  if (this[0]) return _ssrWindow.window.getComputedStyle(this[0], null);
   return {};
 }
 function css(props, value) {
-  let i;
+  var i = void 0;
   if (arguments.length === 1) {
     if (typeof props === 'string') {
-      if (this[0]) return window.getComputedStyle(this[0], null).getPropertyValue(props);
+      if (this[0]) return _ssrWindow.window.getComputedStyle(this[0], null).getPropertyValue(props);
     } else {
       for (i = 0; i < this.length; i += 1) {
         // eslint-disable-next-line
-        for (let prop in props) {
-          this[i].style[prop] = props[prop];
+        for (var _prop in props) {
+          this[i].style[_prop] = props[_prop];
         }
       }
       return this;
@@ -587,8 +636,8 @@ function css(props, value) {
 
 // Dom manipulation
 function toArray() {
-  const arr = [];
-  for (let i = 0; i < this.length; i += 1) {
+  var arr = [];
+  for (var i = 0; i < this.length; i += 1) {
     arr.push(this[i]);
   }
   return arr;
@@ -598,7 +647,7 @@ function each(callback) {
   // Don't bother continuing without a callback
   if (!callback) return this;
   // Iterate over the current collection
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     // If the callback returns false
     if (callback.call(this[i], i, this[i]) === false) {
       // End the loop early
@@ -612,7 +661,7 @@ function forEach(callback) {
   // Don't bother continuing without a callback
   if (!callback) return this;
   // Iterate over the current collection
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     // If the callback returns false
     if (callback.call(this[i], this[i], i) === false) {
       // End the loop early
@@ -623,17 +672,17 @@ function forEach(callback) {
   return this;
 }
 function filter(callback) {
-  const matchedItems = [];
-  const dom = this;
-  for (let i = 0; i < dom.length; i += 1) {
+  var matchedItems = [];
+  var dom = this;
+  for (var i = 0; i < dom.length; i += 1) {
     if (callback.call(dom[i], i, dom[i])) matchedItems.push(dom[i]);
   }
   return new Dom7(matchedItems);
 }
 function map(callback) {
-  const modifiedItems = [];
-  const dom = this;
-  for (let i = 0; i < dom.length; i += 1) {
+  var modifiedItems = [];
+  var dom = this;
+  for (var i = 0; i < dom.length; i += 1) {
     modifiedItems.push(callback.call(dom[i], i, dom[i]));
   }
   return new Dom7(modifiedItems);
@@ -644,7 +693,7 @@ function html(html) {
     return this[0] ? this[0].innerHTML : undefined;
   }
 
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     this[i].innerHTML = html;
   }
   return this;
@@ -658,28 +707,25 @@ function text(text) {
     return null;
   }
 
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     this[i].textContent = text;
   }
   return this;
 }
 function is(selector) {
-  const el = this[0];
-  let compareWith;
-  let i;
+  var el = this[0];
+  var compareWith = void 0;
+  var i = void 0;
   if (!el || typeof selector === 'undefined') return false;
   if (typeof selector === 'string') {
-    if (el.matches) return el.matches(selector);
-    else if (el.webkitMatchesSelector) return el.webkitMatchesSelector(selector);
-    else if (el.msMatchesSelector) return el.msMatchesSelector(selector);
+    if (el.matches) return el.matches(selector);else if (el.webkitMatchesSelector) return el.webkitMatchesSelector(selector);else if (el.msMatchesSelector) return el.msMatchesSelector(selector);
 
     compareWith = $$1(selector);
     for (i = 0; i < compareWith.length; i += 1) {
       if (compareWith[i] === el) return true;
     }
     return false;
-  } else if (selector === document) return el === document;
-  else if (selector === window) return el === window;
+  } else if (selector === _ssrWindow.document) return el === _ssrWindow.document;else if (selector === _ssrWindow.window) return el === _ssrWindow.window;
 
   if (selector.nodeType || selector instanceof Dom7) {
     compareWith = selector.nodeType ? [selector] : selector;
@@ -691,14 +737,14 @@ function is(selector) {
   return false;
 }
 function indexOf(el) {
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     if (this[i] === el) return i;
   }
   return -1;
 }
 function index() {
-  let child = this[0];
-  let i;
+  var child = this[0];
+  var i = void 0;
   if (child) {
     i = 0;
     // eslint-disable-next-line
@@ -712,8 +758,8 @@ function index() {
 // eslint-disable-next-line
 function eq(index) {
   if (typeof index === 'undefined') return this;
-  const length = this.length;
-  let returnIndex;
+  var length = this.length;
+  var returnIndex = void 0;
   if (index > length - 1) {
     return new Dom7([]);
   }
@@ -724,20 +770,20 @@ function eq(index) {
   }
   return new Dom7([this[index]]);
 }
-function append(...args) {
-  let newChild;
+function append() {
+  var newChild = void 0;
 
-  for (let k = 0; k < args.length; k += 1) {
-    newChild = args[k];
-    for (let i = 0; i < this.length; i += 1) {
+  for (var k = 0; k < arguments.length; k += 1) {
+    newChild = arguments.length <= k ? undefined : arguments[k];
+    for (var i = 0; i < this.length; i += 1) {
       if (typeof newChild === 'string') {
-        const tempDiv = document.createElement('div');
+        var tempDiv = _ssrWindow.document.createElement('div');
         tempDiv.innerHTML = newChild;
         while (tempDiv.firstChild) {
           this[i].appendChild(tempDiv.firstChild);
         }
       } else if (newChild instanceof Dom7) {
-        for (let j = 0; j < newChild.length; j += 1) {
+        for (var j = 0; j < newChild.length; j += 1) {
           this[i].appendChild(newChild[j]);
         }
       } else {
@@ -748,17 +794,17 @@ function append(...args) {
 
   return this;
 }
- // eslint-disable-next-line
+// eslint-disable-next-line
 function appendTo(parent) {
   $$1(parent).append(this);
   return this;
 }
 function prepend(newChild) {
-  let i;
-  let j;
+  var i = void 0;
+  var j = void 0;
   for (i = 0; i < this.length; i += 1) {
     if (typeof newChild === 'string') {
-      const tempDiv = document.createElement('div');
+      var tempDiv = _ssrWindow.document.createElement('div');
       tempDiv.innerHTML = newChild;
       for (j = tempDiv.childNodes.length - 1; j >= 0; j -= 1) {
         this[i].insertBefore(tempDiv.childNodes[j], this[i].childNodes[0]);
@@ -773,30 +819,30 @@ function prepend(newChild) {
   }
   return this;
 }
- // eslint-disable-next-line
+// eslint-disable-next-line
 function prependTo(parent) {
   $$1(parent).prepend(this);
   return this;
 }
 function insertBefore(selector) {
-  const before = $$1(selector);
-  for (let i = 0; i < this.length; i += 1) {
+  var before = $$1(selector);
+  for (var i = 0; i < this.length; i += 1) {
     if (before.length === 1) {
       before[0].parentNode.insertBefore(this[i], before[0]);
     } else if (before.length > 1) {
-      for (let j = 0; j < before.length; j += 1) {
+      for (var j = 0; j < before.length; j += 1) {
         before[j].parentNode.insertBefore(this[i].cloneNode(true), before[j]);
       }
     }
   }
 }
 function insertAfter(selector) {
-  const after = $$1(selector);
-  for (let i = 0; i < this.length; i += 1) {
+  var after = $$1(selector);
+  for (var i = 0; i < this.length; i += 1) {
     if (after.length === 1) {
       after[0].parentNode.insertBefore(this[i], after[0].nextSibling);
     } else if (after.length > 1) {
-      for (let j = 0; j < after.length; j += 1) {
+      for (var j = 0; j < after.length; j += 1) {
         after[j].parentNode.insertBefore(this[i].cloneNode(true), after[j].nextSibling);
       }
     }
@@ -817,21 +863,21 @@ function next(selector) {
   return new Dom7([]);
 }
 function nextAll(selector) {
-  const nextEls = [];
-  let el = this[0];
+  var nextEls = [];
+  var el = this[0];
   if (!el) return new Dom7([]);
   while (el.nextElementSibling) {
-    const next = el.nextElementSibling; // eslint-disable-line
+    var _next = el.nextElementSibling; // eslint-disable-line
     if (selector) {
-      if ($$1(next).is(selector)) nextEls.push(next);
-    } else nextEls.push(next);
-    el = next;
+      if ($$1(_next).is(selector)) nextEls.push(_next);
+    } else nextEls.push(_next);
+    el = _next;
   }
   return new Dom7(nextEls);
 }
 function prev(selector) {
   if (this.length > 0) {
-    const el = this[0];
+    var el = this[0];
     if (selector) {
       if (el.previousElementSibling && $$1(el.previousElementSibling).is(selector)) {
         return new Dom7([el.previousElementSibling]);
@@ -845,15 +891,15 @@ function prev(selector) {
   return new Dom7([]);
 }
 function prevAll(selector) {
-  const prevEls = [];
-  let el = this[0];
+  var prevEls = [];
+  var el = this[0];
   if (!el) return new Dom7([]);
   while (el.previousElementSibling) {
-    const prev = el.previousElementSibling; // eslint-disable-line
+    var _prev = el.previousElementSibling; // eslint-disable-line
     if (selector) {
-      if ($$1(prev).is(selector)) prevEls.push(prev);
-    } else prevEls.push(prev);
-    el = prev;
+      if ($$1(_prev).is(selector)) prevEls.push(_prev);
+    } else prevEls.push(_prev);
+    el = _prev;
   }
   return new Dom7(prevEls);
 }
@@ -861,8 +907,8 @@ function siblings(selector) {
   return this.nextAll(selector).add(this.prevAll(selector));
 }
 function parent(selector) {
-  const parents = []; // eslint-disable-line
-  for (let i = 0; i < this.length; i += 1) {
+  var parents = []; // eslint-disable-line
+  for (var i = 0; i < this.length; i += 1) {
     if (this[i].parentNode !== null) {
       if (selector) {
         if ($$1(this[i].parentNode).is(selector)) parents.push(this[i].parentNode);
@@ -874,22 +920,22 @@ function parent(selector) {
   return $$1(unique(parents));
 }
 function parents(selector) {
-  const parents = []; // eslint-disable-line
-  for (let i = 0; i < this.length; i += 1) {
-    let parent = this[i].parentNode; // eslint-disable-line
-    while (parent) {
+  var parents = []; // eslint-disable-line
+  for (var i = 0; i < this.length; i += 1) {
+    var _parent = this[i].parentNode; // eslint-disable-line
+    while (_parent) {
       if (selector) {
-        if ($$1(parent).is(selector)) parents.push(parent);
+        if ($$1(_parent).is(selector)) parents.push(_parent);
       } else {
-        parents.push(parent);
+        parents.push(_parent);
       }
-      parent = parent.parentNode;
+      _parent = _parent.parentNode;
     }
   }
   return $$1(unique(parents));
 }
 function closest(selector) {
-  let closest = this; // eslint-disable-line
+  var closest = this; // eslint-disable-line
   if (typeof selector === 'undefined') {
     return new Dom7([]);
   }
@@ -899,21 +945,21 @@ function closest(selector) {
   return closest;
 }
 function find(selector) {
-  const foundElements = [];
-  for (let i = 0; i < this.length; i += 1) {
-    const found = this[i].querySelectorAll(selector);
-    for (let j = 0; j < found.length; j += 1) {
+  var foundElements = [];
+  for (var i = 0; i < this.length; i += 1) {
+    var found = this[i].querySelectorAll(selector);
+    for (var j = 0; j < found.length; j += 1) {
       foundElements.push(found[j]);
     }
   }
   return new Dom7(foundElements);
 }
 function children(selector) {
-  const children = []; // eslint-disable-line
-  for (let i = 0; i < this.length; i += 1) {
-    const childNodes = this[i].childNodes;
+  var children = []; // eslint-disable-line
+  for (var i = 0; i < this.length; i += 1) {
+    var childNodes = this[i].childNodes;
 
-    for (let j = 0; j < childNodes.length; j += 1) {
+    for (var j = 0; j < childNodes.length; j += 1) {
       if (!selector) {
         if (childNodes[j].nodeType === 1) children.push(childNodes[j]);
       } else if (childNodes[j].nodeType === 1 && $$1(childNodes[j]).is(selector)) {
@@ -924,7 +970,7 @@ function children(selector) {
   return new Dom7(unique(children));
 }
 function remove() {
-  for (let i = 0; i < this.length; i += 1) {
+  for (var i = 0; i < this.length; i += 1) {
     if (this[i].parentNode) this[i].parentNode.removeChild(this[i]);
   }
   return this;
@@ -932,12 +978,17 @@ function remove() {
 function detach() {
   return this.remove();
 }
-function add(...args) {
-  const dom = this;
-  let i;
-  let j;
+function add() {
+  var dom = this;
+  var i = void 0;
+  var j = void 0;
+
+  for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+    args[_key6] = arguments[_key6];
+  }
+
   for (i = 0; i < args.length; i += 1) {
-    const toAdd = $$1(args[i]);
+    var toAdd = $$1(args[i]);
     for (j = 0; j < toAdd.length; j += 1) {
       dom[dom.length] = toAdd[j];
       dom.length += 1;
@@ -946,10 +997,10 @@ function add(...args) {
   return dom;
 }
 function empty() {
-  for (let i = 0; i < this.length; i += 1) {
-    const el = this[i];
+  for (var i = 0; i < this.length; i += 1) {
+    var el = this[i];
     if (el.nodeType === 1) {
-      for (let j = 0; j < el.childNodes.length; j += 1) {
+      for (var j = 0; j < el.childNodes.length; j += 1) {
         if (el.childNodes[j].parentNode) {
           el.childNodes[j].parentNode.removeChild(el.childNodes[j]);
         }
@@ -960,91 +1011,101 @@ function empty() {
   return this;
 }
 
-
-
-
 var Methods = Object.freeze({
-	addClass: addClass,
-	removeClass: removeClass,
-	hasClass: hasClass,
-	toggleClass: toggleClass,
-	attr: attr,
-	removeAttr: removeAttr,
-	prop: prop,
-	data: data,
-	removeData: removeData,
-	dataset: dataset,
-	val: val,
-	transform: transform,
-	transition: transition,
-	on: on,
-	off: off,
-	once: once,
-	trigger: trigger,
-	transitionEnd: transitionEnd,
-	animationEnd: animationEnd,
-	width: width,
-	outerWidth: outerWidth,
-	height: height,
-	outerHeight: outerHeight,
-	offset: offset,
-	hide: hide,
-	show: show,
-	styles: styles,
-	css: css,
-	toArray: toArray,
-	each: each,
-	forEach: forEach,
-	filter: filter,
-	map: map,
-	html: html,
-	text: text,
-	is: is,
-	indexOf: indexOf,
-	index: index,
-	eq: eq,
-	append: append,
-	appendTo: appendTo,
-	prepend: prepend,
-	prependTo: prependTo,
-	insertBefore: insertBefore,
-	insertAfter: insertAfter,
-	next: next,
-	nextAll: nextAll,
-	prev: prev,
-	prevAll: prevAll,
-	siblings: siblings,
-	parent: parent,
-	parents: parents,
-	closest: closest,
-	find: find,
-	children: children,
-	remove: remove,
-	detach: detach,
-	add: add,
-	empty: empty
+  addClass: addClass,
+  removeClass: removeClass,
+  hasClass: hasClass,
+  toggleClass: toggleClass,
+  attr: attr,
+  removeAttr: removeAttr,
+  prop: prop,
+  data: data,
+  removeData: removeData,
+  dataset: dataset,
+  val: val,
+  transform: transform,
+  transition: transition,
+  on: on,
+  off: off,
+  once: once,
+  trigger: trigger,
+  transitionEnd: transitionEnd,
+  animationEnd: animationEnd,
+  width: width,
+  outerWidth: outerWidth,
+  height: height,
+  outerHeight: outerHeight,
+  offset: offset,
+  hide: hide,
+  show: show,
+  styles: styles,
+  css: css,
+  toArray: toArray,
+  each: each,
+  forEach: forEach,
+  filter: filter,
+  map: map,
+  html: html,
+  text: text,
+  is: is,
+  indexOf: indexOf,
+  index: index,
+  eq: eq,
+  append: append,
+  appendTo: appendTo,
+  prepend: prepend,
+  prependTo: prependTo,
+  insertBefore: insertBefore,
+  insertAfter: insertAfter,
+  next: next,
+  nextAll: nextAll,
+  prev: prev,
+  prevAll: prevAll,
+  siblings: siblings,
+  parent: parent,
+  parents: parents,
+  closest: closest,
+  find: find,
+  children: children,
+  remove: remove,
+  detach: detach,
+  add: add,
+  empty: empty
 });
 
-function scrollTo(...args) {
-  let [left, top, duration, easing, callback] = args;
+function scrollTo() {
+  for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+    args[_key7] = arguments[_key7];
+  }
+
+  var left = args[0],
+      top = args[1],
+      duration = args[2],
+      easing = args[3],
+      callback = args[4];
+
   if (args.length === 4 && typeof easing === 'function') {
     callback = easing;
-    [left, top, duration, callback, easing] = args;
+    left = args[0];
+    top = args[1];
+    duration = args[2];
+    callback = args[3];
+    easing = args[4];
   }
   if (typeof easing === 'undefined') easing = 'swing';
 
   return this.each(function animate() {
-    const el = this;
-    let currentTop;
-    let currentLeft;
-    let maxTop;
-    let maxLeft;
-    let newTop;
-    let newLeft;
-    let scrollTop; // eslint-disable-line
-    let scrollLeft; // eslint-disable-line
-    let animateTop = top > 0 || top === 0;
-    let animateLeft = left > 0 || left === 0;
+    var el = this;
+    var currentTop = void 0;
+    var currentLeft = void 0;
+    var maxTop = void 0;
+    var maxLeft = void 0;
+    var newTop = void 0;
+    var newLeft = void 0;
+    var scrollTop = void 0; // eslint-disable-line
+    var scrollLeft = void 0; // eslint-disable-line
+    var animateTop = top > 0 || top === 0;
+    var animateLeft = left > 0 || left === 0;
     if (typeof easing === 'undefined') {
       easing = 'swing';
     }
@@ -1069,18 +1130,20 @@ function scrollTo(...args) {
       maxLeft = el.scrollWidth - el.offsetWidth;
       newLeft = Math.max(Math.min(left, maxLeft), 0);
     }
-    let startTime = null;
+    var startTime = null;
     if (animateTop && newTop === currentTop) animateTop = false;
     if (animateLeft && newLeft === currentLeft) animateLeft = false;
-    function render(time = new Date().getTime()) {
+    function render() {
+      var time = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Date().getTime();
+
       if (startTime === null) {
         startTime = time;
       }
-      const progress = Math.max(Math.min((time - startTime) / duration, 1), 0);
-      const easeProgress = easing === 'linear' ? progress : (0.5 - (Math.cos(progress * Math.PI) / 2));
-      let done;
-      if (animateTop) scrollTop = currentTop + (easeProgress * (newTop - currentTop));
-      if (animateLeft) scrollLeft = currentLeft + (easeProgress * (newLeft - currentLeft));
+      var progress = Math.max(Math.min((time - startTime) / duration, 1), 0);
+      var easeProgress = easing === 'linear' ? progress : 0.5 - Math.cos(progress * Math.PI) / 2;
+      var done = void 0;
+      if (animateTop) scrollTop = currentTop + easeProgress * (newTop - currentTop);
+      if (animateLeft) scrollLeft = currentLeft + easeProgress * (newLeft - currentLeft);
       if (animateTop && newTop > currentTop && scrollTop >= newTop) {
         el.scrollTop = newTop;
         done = true;
@@ -1110,24 +1173,46 @@ function scrollTo(...args) {
   });
 }
 // scrollTop(top, duration, easing, callback) {
-function scrollTop(...args) {
-  let [top, duration, easing, callback] = args;
-  if (args.length === 3 && typeof easing === 'function') {
-    [top, duration, callback, easing] = args;
+function scrollTop() {
+  for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+    args[_key8] = arguments[_key8];
   }
-  const dom = this;
+
+  var top = args[0],
+      duration = args[1],
+      easing = args[2],
+      callback = args[3];
+
+  if (args.length === 3 && typeof easing === 'function') {
+    top = args[0];
+    duration = args[1];
+    callback = args[2];
+    easing = args[3];
+  }
+  var dom = this;
   if (typeof top === 'undefined') {
     if (dom.length > 0) return dom[0].scrollTop;
     return null;
   }
   return dom.scrollTo(undefined, top, duration, easing, callback);
 }
-function scrollLeft(...args) {
-  let [left, duration, easing, callback] = args;
-  if (args.length === 3 && typeof easing === 'function') {
-    [left, duration, callback, easing] = args;
+function scrollLeft() {
+  for (var _len9 = arguments.length, args = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
+    args[_key9] = arguments[_key9];
   }
-  const dom = this;
+
+  var left = args[0],
+      duration = args[1],
+      easing = args[2],
+      callback = args[3];
+
+  if (args.length === 3 && typeof easing === 'function') {
+    left = args[0];
+    duration = args[1];
+    callback = args[2];
+    easing = args[3];
+  }
+  var dom = this;
   if (typeof left === 'undefined') {
     if (dom.length > 0) return dom[0].scrollLeft;
     return null;
@@ -1135,22 +1220,19 @@ function scrollLeft(...args) {
   return dom.scrollTo(left, undefined, duration, easing, callback);
 }
 
-
-
-
 var Scroll = Object.freeze({
-	scrollTo: scrollTo,
-	scrollTop: scrollTop,
-	scrollLeft: scrollLeft
+  scrollTo: scrollTo,
+  scrollTop: scrollTop,
+  scrollLeft: scrollLeft
 });
 
 function animate(initialProps, initialParams) {
-  const els = this;
-  const a = {
+  var els = this;
+  var a = {
     props: Object.assign({}, initialProps),
     params: Object.assign({
       duration: 300,
-      easing: 'swing', // or 'linear'
+      easing: 'swing' // or 'linear'
       /* Callbacks
       begin(elements)
       complete(elements)
@@ -1162,88 +1244,88 @@ function animate(initialProps, initialParams) {
     animating: false,
     que: [],
 
-    easingProgress(easing, progress) {
+    easingProgress: function easingProgress(easing, progress) {
       if (easing === 'swing') {
-        return 0.5 - (Math.cos(progress * Math.PI) / 2);
+        return 0.5 - Math.cos(progress * Math.PI) / 2;
       }
       if (typeof easing === 'function') {
         return easing(progress);
       }
       return progress;
     },
-    stop() {
+    stop: function stop() {
       if (a.frameId) {
         cancelAnimationFrame(a.frameId);
       }
       a.animating = false;
-      a.elements.each((index, el) => {
-        const element = el;
+      a.elements.each(function (index, el) {
+        var element = el;
         delete element.dom7AnimateInstance;
       });
       a.que = [];
     },
-    done(complete) {
+    done: function done(complete) {
       a.animating = false;
-      a.elements.each((index, el) => {
-        const element = el;
+      a.elements.each(function (index, el) {
+        var element = el;
         delete element.dom7AnimateInstance;
       });
       if (complete) complete(els);
       if (a.que.length > 0) {
-        const que = a.que.shift();
+        var que = a.que.shift();
         a.animate(que[0], que[1]);
       }
     },
-    animate(props, params) {
+    animate: function animate(props, params) {
       if (a.animating) {
         a.que.push([props, params]);
         return a;
       }
-      const elements = [];
+      var elements = [];
 
       // Define & Cache Initials & Units
-      a.elements.each((index, el) => {
-        let initialFullValue;
-        let initialValue;
-        let unit;
-        let finalValue;
-        let finalFullValue;
+      a.elements.each(function (index, el) {
+        var initialFullValue = void 0;
+        var initialValue = void 0;
+        var unit = void 0;
+        var finalValue = void 0;
+        var finalFullValue = void 0;
 
         if (!el.dom7AnimateInstance) a.elements[index].dom7AnimateInstance = a;
 
         elements[index] = {
-          container: el,
+          container: el
         };
-        Object.keys(props).forEach((prop) => {
-          initialFullValue = window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
+        Object.keys(props).forEach(function (prop) {
+          initialFullValue = _ssrWindow.window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
           initialValue = parseFloat(initialFullValue);
           unit = initialFullValue.replace(initialValue, '');
           finalValue = parseFloat(props[prop]);
           finalFullValue = props[prop] + unit;
           elements[index][prop] = {
-            initialFullValue,
-            initialValue,
-            unit,
-            finalValue,
-            finalFullValue,
-            currentValue: initialValue,
+            initialFullValue: initialFullValue,
+            initialValue: initialValue,
+            unit: unit,
+            finalValue: finalValue,
+            finalFullValue: finalFullValue,
+            currentValue: initialValue
           };
         });
       });
 
-      let startTime = null;
-      let time;
-      let elementsDone = 0;
-      let propsDone = 0;
-      let done;
-      let began = false;
+      var startTime = null;
+      var time = void 0;
+      var elementsDone = 0;
+      var propsDone = 0;
+      var done = void 0;
+      var began = false;
 
       a.animating = true;
 
       function render() {
         time = new Date().getTime();
-        let progress;
-        let easeProgress;
+        var progress = void 0;
+        var easeProgress = void 0;
         // let el;
         if (!began) {
           began = true;
@@ -1254,23 +1336,25 @@ function animate(initialProps, initialParams) {
         }
         if (params.progress) {
           // eslint-disable-next-line
-          params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), ((startTime + params.duration) - time < 0 ? 0 : (startTime + params.duration) - time), startTime);
+          params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), startTime + params.duration - time < 0 ? 0 : startTime + params.duration - time, startTime);
         }
 
-        elements.forEach((element) => {
-          const el = element;
+        elements.forEach(function (element) {
+          var el = element;
           if (done || el.done) return;
-          Object.keys(props).forEach((prop) => {
+          Object.keys(props).forEach(function (prop) {
             if (done || el.done) return;
             progress = Math.max(Math.min((time - startTime) / params.duration, 1), 0);
             easeProgress = a.easingProgress(params.easing, progress);
-            const { initialValue, finalValue, unit } = el[prop];
-            el[prop].currentValue = initialValue + (easeProgress * (finalValue - initialValue));
-            const currentValue = el[prop].currentValue;
+            var _el$prop = el[prop],
+                initialValue = _el$prop.initialValue,
+                finalValue = _el$prop.finalValue,
+                unit = _el$prop.unit;
 
-            if (
-              (finalValue > initialValue && currentValue >= finalValue) ||
-              (finalValue < initialValue && currentValue <= finalValue)) {
+            el[prop].currentValue = initialValue + easeProgress * (finalValue - initialValue);
+            var currentValue = el[prop].currentValue;
+
+            if (finalValue > initialValue && currentValue >= finalValue || finalValue < initialValue && currentValue <= finalValue) {
               el.container.style[prop] = finalValue + unit;
               propsDone += 1;
               if (propsDone === Object.keys(props).length) {
@@ -1294,15 +1378,15 @@ function animate(initialProps, initialParams) {
       }
       a.frameId = requestAnimationFrame(render);
       return a;
-    },
+    }
   };
 
   if (a.elements.length === 0) {
     return els;
   }
 
-  let animateInstance;
-  for (let i = 0; i < a.elements.length; i += 1) {
+  var animateInstance = void 0;
+  for (var i = 0; i < a.elements.length; i += 1) {
     if (a.elements[i].dom7AnimateInstance) {
       animateInstance = a.elements[i].dom7AnimateInstance;
     } else a.elements[i].dom7AnimateInstance = a;
@@ -1321,137 +1405,222 @@ function animate(initialProps, initialParams) {
 }
 
 function stop() {
-  const els = this;
-  for (let i = 0; i < els.length; i += 1) {
+  var els = this;
+  for (var i = 0; i < els.length; i += 1) {
     if (els[i].dom7AnimateInstance) {
       els[i].dom7AnimateInstance.stop();
     }
   }
 }
 
-
-
-
 var Animate = Object.freeze({
-	animate: animate,
-	stop: stop
+  animate: animate,
+  stop: stop
 });
 
-const noTrigger = ('resize scroll').split(' ');
-function eventShortcut(name, ...args) {
+var noTrigger = 'resize scroll'.split(' ');
+function eventShortcut(name) {
+  for (var _len10 = arguments.length, args = Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
+    args[_key10 - 1] = arguments[_key10];
+  }
+
   if (typeof args[0] === 'undefined') {
-    for (let i = 0; i < this.length; i += 1) {
+    for (var i = 0; i < this.length; i += 1) {
       if (noTrigger.indexOf(name) < 0) {
-        if (name in this[i]) this[i][name]();
-        else {
+        if (name in this[i]) this[i][name]();else {
           $$1(this[i]).trigger(name);
         }
       }
     }
     return this;
   }
-  return this.on(name, ...args);
+  return this.on.apply(this, [name].concat(args));
 }
 
-function click(...args) {
-  return eventShortcut.bind(this)('click', ...args);
-}
-function blur(...args) {
-  return eventShortcut.bind(this)('blur', ...args);
-}
-function focus(...args) {
-  return eventShortcut.bind(this)('focus', ...args);
-}
-function focusin(...args) {
-  return eventShortcut.bind(this)('focusin', ...args);
-}
-function focusout(...args) {
-  return eventShortcut.bind(this)('focusout', ...args);
-}
-function keyup(...args) {
-  return eventShortcut.bind(this)('keyup', ...args);
-}
-function keydown(...args) {
-  return eventShortcut.bind(this)('keydown', ...args);
-}
-function keypress(...args) {
-  return eventShortcut.bind(this)('keypress', ...args);
-}
-function submit(...args) {
-  return eventShortcut.bind(this)('submit', ...args);
-}
-function change(...args) {
-  return eventShortcut.bind(this)('change', ...args);
-}
-function mousedown(...args) {
-  return eventShortcut.bind(this)('mousedown', ...args);
-}
-function mousemove(...args) {
-  return eventShortcut.bind(this)('mousemove', ...args);
-}
-function mouseup(...args) {
-  return eventShortcut.bind(this)('mouseup', ...args);
-}
-function mouseenter(...args) {
-  return eventShortcut.bind(this)('mouseenter', ...args);
-}
-function mouseleave(...args) {
-  return eventShortcut.bind(this)('mouseleave', ...args);
-}
-function mouseout(...args) {
-  return eventShortcut.bind(this)('mouseout', ...args);
-}
-function mouseover(...args) {
-  return eventShortcut.bind(this)('mouseover', ...args);
-}
-function touchstart(...args) {
-  return eventShortcut.bind(this)('touchstart', ...args);
-}
-function touchend(...args) {
-  return eventShortcut.bind(this)('touchend', ...args);
-}
-function touchmove(...args) {
-  return eventShortcut.bind(this)('touchmove', ...args);
-}
-function resize(...args) {
-  return eventShortcut.bind(this)('resize', ...args);
-}
-function scroll(...args) {
-  return eventShortcut.bind(this)('scroll', ...args);
-}
+function click() {
+  for (var _len11 = arguments.length, args = Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+    args[_key11] = arguments[_key11];
+  }
 
+  return eventShortcut.bind(this).apply(undefined, ['click'].concat(args));
+}
+function blur() {
+  for (var _len12 = arguments.length, args = Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+    args[_key12] = arguments[_key12];
+  }
 
+  return eventShortcut.bind(this).apply(undefined, ['blur'].concat(args));
+}
+function focus() {
+  for (var _len13 = arguments.length, args = Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
+    args[_key13] = arguments[_key13];
+  }
 
+  return eventShortcut.bind(this).apply(undefined, ['focus'].concat(args));
+}
+function focusin() {
+  for (var _len14 = arguments.length, args = Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
+    args[_key14] = arguments[_key14];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['focusin'].concat(args));
+}
+function focusout() {
+  for (var _len15 = arguments.length, args = Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
+    args[_key15] = arguments[_key15];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['focusout'].concat(args));
+}
+function keyup() {
+  for (var _len16 = arguments.length, args = Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
+    args[_key16] = arguments[_key16];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['keyup'].concat(args));
+}
+function keydown() {
+  for (var _len17 = arguments.length, args = Array(_len17), _key17 = 0; _key17 < _len17; _key17++) {
+    args[_key17] = arguments[_key17];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['keydown'].concat(args));
+}
+function keypress() {
+  for (var _len18 = arguments.length, args = Array(_len18), _key18 = 0; _key18 < _len18; _key18++) {
+    args[_key18] = arguments[_key18];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['keypress'].concat(args));
+}
+function submit() {
+  for (var _len19 = arguments.length, args = Array(_len19), _key19 = 0; _key19 < _len19; _key19++) {
+    args[_key19] = arguments[_key19];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['submit'].concat(args));
+}
+function change() {
+  for (var _len20 = arguments.length, args = Array(_len20), _key20 = 0; _key20 < _len20; _key20++) {
+    args[_key20] = arguments[_key20];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['change'].concat(args));
+}
+function mousedown() {
+  for (var _len21 = arguments.length, args = Array(_len21), _key21 = 0; _key21 < _len21; _key21++) {
+    args[_key21] = arguments[_key21];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['mousedown'].concat(args));
+}
+function mousemove() {
+  for (var _len22 = arguments.length, args = Array(_len22), _key22 = 0; _key22 < _len22; _key22++) {
+    args[_key22] = arguments[_key22];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['mousemove'].concat(args));
+}
+function mouseup() {
+  for (var _len23 = arguments.length, args = Array(_len23), _key23 = 0; _key23 < _len23; _key23++) {
+    args[_key23] = arguments[_key23];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['mouseup'].concat(args));
+}
+function mouseenter() {
+  for (var _len24 = arguments.length, args = Array(_len24), _key24 = 0; _key24 < _len24; _key24++) {
+    args[_key24] = arguments[_key24];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['mouseenter'].concat(args));
+}
+function mouseleave() {
+  for (var _len25 = arguments.length, args = Array(_len25), _key25 = 0; _key25 < _len25; _key25++) {
+    args[_key25] = arguments[_key25];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['mouseleave'].concat(args));
+}
+function mouseout() {
+  for (var _len26 = arguments.length, args = Array(_len26), _key26 = 0; _key26 < _len26; _key26++) {
+    args[_key26] = arguments[_key26];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['mouseout'].concat(args));
+}
+function mouseover() {
+  for (var _len27 = arguments.length, args = Array(_len27), _key27 = 0; _key27 < _len27; _key27++) {
+    args[_key27] = arguments[_key27];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['mouseover'].concat(args));
+}
+function touchstart() {
+  for (var _len28 = arguments.length, args = Array(_len28), _key28 = 0; _key28 < _len28; _key28++) {
+    args[_key28] = arguments[_key28];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['touchstart'].concat(args));
+}
+function touchend() {
+  for (var _len29 = arguments.length, args = Array(_len29), _key29 = 0; _key29 < _len29; _key29++) {
+    args[_key29] = arguments[_key29];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['touchend'].concat(args));
+}
+function touchmove() {
+  for (var _len30 = arguments.length, args = Array(_len30), _key30 = 0; _key30 < _len30; _key30++) {
+    args[_key30] = arguments[_key30];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['touchmove'].concat(args));
+}
+function resize() {
+  for (var _len31 = arguments.length, args = Array(_len31), _key31 = 0; _key31 < _len31; _key31++) {
+    args[_key31] = arguments[_key31];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['resize'].concat(args));
+}
+function scroll() {
+  for (var _len32 = arguments.length, args = Array(_len32), _key32 = 0; _key32 < _len32; _key32++) {
+    args[_key32] = arguments[_key32];
+  }
+
+  return eventShortcut.bind(this).apply(undefined, ['scroll'].concat(args));
+}
 
 var eventShortcuts = Object.freeze({
-	click: click,
-	blur: blur,
-	focus: focus,
-	focusin: focusin,
-	focusout: focusout,
-	keyup: keyup,
-	keydown: keydown,
-	keypress: keypress,
-	submit: submit,
-	change: change,
-	mousedown: mousedown,
-	mousemove: mousemove,
-	mouseup: mouseup,
-	mouseenter: mouseenter,
-	mouseleave: mouseleave,
-	mouseout: mouseout,
-	mouseover: mouseover,
-	touchstart: touchstart,
-	touchend: touchend,
-	touchmove: touchmove,
-	resize: resize,
-	scroll: scroll
+  click: click,
+  blur: blur,
+  focus: focus,
+  focusin: focusin,
+  focusout: focusout,
+  keyup: keyup,
+  keydown: keydown,
+  keypress: keypress,
+  submit: submit,
+  change: change,
+  mousedown: mousedown,
+  mousemove: mousemove,
+  mouseup: mouseup,
+  mouseenter: mouseenter,
+  mouseleave: mouseleave,
+  mouseout: mouseout,
+  mouseover: mouseover,
+  touchstart: touchstart,
+  touchend: touchend,
+  touchmove: touchmove,
+  resize: resize,
+  scroll: scroll
 });
 
-[Methods, Scroll, Animate, eventShortcuts].forEach((group) => {
-  Object.keys(group).forEach((methodName) => {
+[Methods, Scroll, Animate, eventShortcuts].forEach(function (group) {
+  Object.keys(group).forEach(function (methodName) {
     $$1.fn[methodName] = group[methodName];
   });
 });
 
-export default $$1;
+exports.default = $$1;
