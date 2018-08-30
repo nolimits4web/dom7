@@ -3,13 +3,14 @@
   "version": "2.0.7",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
+  "types": "dom7.d.ts",
   "jsnext:main": "dist/dom7.module.js",
   "module": "dist/dom7.module.js",
   "scripts": {
-    "build-dev": "NODE_ENV=development gulp build",
-    "build-prod": "NODE_ENV=production gulp build",
-    "dev": "NODE_ENV=development gulp build && NODE_ENV=development gulp demo && gulp server",
-    "prod": "NODE_ENV=production gulp demo && NODE_ENV=production gulp server",
+    "build-dev": "cross-env NODE_ENV=development gulp build",
+    "build-prod": "cross-env NODE_ENV=production gulp build",
+    "dev": "cross-env NODE_ENV=development gulp build && cross-env NODE_ENV=development gulp demo && gulp server",
+    "prod": "cross-env NODE_ENV=production gulp demo && cross-env NODE_ENV=production gulp server",
     "test": "npm run build-dev"
   },
   "repository": {
@@ -30,6 +31,7 @@
   },
   "homepage": "http://framework7.io/docs/dom.html",
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "eslint": "^4.9.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
