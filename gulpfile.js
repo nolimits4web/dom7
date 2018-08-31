@@ -1,14 +1,13 @@
+const fs = require('fs');
 const gulp = require('gulp');
 const connect = require('gulp-connect');
 const open = require('gulp-open');
 const header = require('gulp-header');
 const uglify = require('gulp-uglify');
 const sourcemaps = require('gulp-sourcemaps');
-const rollup = require('rollup-stream');
+const rollup = require('rollup');
 const resolve = require('rollup-plugin-node-resolve');
 const buble = require('rollup-plugin-buble');
-const source = require('vinyl-source-stream');
-const buffer = require('vinyl-buffer');
 const rename = require('gulp-rename');
 const modifyFile = require('gulp-modify-file');
 const pkg = require('./package.json');
@@ -39,77 +38,88 @@ const banner = `
 // UMD DIST
 function umd(cb) {
   const env = process.env.NODE_ENV || 'development';
-  rollup({
+  const output = env === 'development' ? './build' : './dist';
+
+  rollup.rollup({
     input: './src/dom7.js',
     plugins: [resolve(), buble()],
-    format: 'umd',
-    name: 'Dom7',
-    strict: true,
-    sourcemap: env === 'development',
-    banner,
-  })
-    .pipe(source('dom7.js', './src'))
-    .pipe(buffer())
-    .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
-    .on('end', () => {
-      if (env === 'development') {
-        if (cb) cb();
-        return;
-      }
-      gulp.src('./dist/dom7.js')
-        .pipe(sourcemaps.init())
-        .pipe(uglify())
-        .pipe(header(banner))
-        .pipe(rename('dom7.min.js'))
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest('./dist/'))
-        .on('end', () => {
-          if (cb) cb();
-        });
+  }).then((bundle) => {
+    return bundle.write({
+      strict: true,
+      file: `${output}/dom7.js`,
+      format: 'umd',
+      name: 'Dom7',
+      sourcemap: env === 'development',
+      sourcemapFile: `${output}/dom7.js.map`,
+      banner,
     });
+  }).then(() => {
+    if (env === 'development') {
+      if (cb) cb();
+      return;
+    }
+    gulp.src('./dist/dom7.js')
+      .pipe(sourcemaps.init())
+      .pipe(uglify())
+      .pipe(header(banner))
+      .pipe(rename('dom7.min.js'))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest('./dist/'))
+      .on('end', () => {
+        if (cb) cb();
+      });
+  });
 }
+
 // ES MODULE DIST
 function es(cb) {
   const env = process.env.NODE_ENV || 'development';
+  const output = env === 'development' ? './build' : './dist';
   let cbs = 0;
-  rollup({
+
+  rollup.rollup({
     input: './src/dom7.js',
-    format: 'es',
-    name: 'Dom7',
-    strict: true,
     external: ['ssr-window'],
-    sourcemap: env === 'development',
-    banner,
-  })
-    .pipe(source('dom7.js', './src'))
-    .pipe(buffer())
-    .pipe(rename('dom7.module.js'))
-    .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
-    .on('end', () => {
-      cbs += 1;
-      if (cb && cbs === 2) cb();
+  }).then((bundle) => {
+    return bundle.write({
+      strict: true,
+      file: `${output}/dom7.module.js`,
+      format: 'es',
+      name: 'Dom7',
+      sourcemap: env === 'development',
+      sourcemapFile: `${output}/dom7.module.js.map`,
+      banner,
     });
-  rollup({
+  }).then(() => {
+    cbs += 1;
+    if (cb && cbs === 2) cb();
+  });
+
+  rollup.rollup({
     input: './src/dom7.modular.js',
-    format: 'es',
-    name: 'Dom7',
-    strict: true,
     external: ['ssr-window'],
-    sourcemap: env === 'development',
-    banner,
-  })
-    .pipe(source('dom7.js', './src'))
-    .pipe(buffer())
-    .pipe(rename('dom7.modular.js'))
-    .pipe(gulp.dest(`./${env === 'development' ? 'build' : 'dist'}/`))
-    .on('end', () => {
-      cbs += 1;
-      if (cb && cbs === 2) cb();
+  }).then((bundle) => {
+    return bundle.write({
+      strict: true,
+      file: `${output}/dom7.modular.js`,
+      format: 'es',
+      name: 'Dom7',
+      sourcemap: env === 'development',
+      sourcemapFile: `${output}/dom7.modular.js.map`,
+      banner,
     });
+  }).then(() => {
+    cbs += 1;
+    if (cb && cbs === 2) cb();
+  });
 }
 
 gulp.task('build', (cb) => {
   let cbs = 0;
+  const env = process.env.NODE_ENV || 'development';
+  const output = env === 'development' ? './build' : './dist';
+  fs.copyFileSync('./src/dom7.d.ts', `${output}/dom7.d.ts`);
+
   umd(() => {
     cbs += 1;
     if (cbs === 2) cb();

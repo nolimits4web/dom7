@@ -1,62 +1,3 @@
-export interface Dom7AjaxSettings {
-    /** Request url */
-    url?: string;
-    /** Request method (e.g. "POST", "GET", "PUT") */
-    method?: string;
-    /** A function to be called if the request succeeds */
-    success?: Function;
-    /** A pre-request callback function that can be used to modify the XHR object before it is sent. Use this to set custom headers, etc */
-    beforeSend?: Function;
-    /** A function to be called if the request fails */
-    error?: Function;
-    /** A function to be called when the request finishes (after success and error callbacks are executed) */
-    complete?: Function;
-    /** If you need synchronous requests, set this option to `false` */
-    async?: boolean;
-    /** If set to false, it will force requested pages not to be cached by the browser. Setting cache to false will only work correctly with HEAD and GET requests. It works by appending "_nocache={timestamp}" to the GET parameters */
-    cache?: boolean;
-    /** Content type. Also could be 'multipart/form-data' and 'text/plain'. For cross-domain requests, setting the content type to anything other than application/x-www-form-urlencoded, multipart/form-data, or text/plain will trigger the browser to send a preflight OPTIONS request to the server */
-    contentType?: any;
-    /** If you wish to force a crossDomain request (such as JSONP) on the same domain, set the value of crossDomain to true. When true additional "X-Requested-With: XMLHttpRequest" header will be added to request */
-    crossDomain?: boolean;
-    /** Data to be sent to the server. It is converted to a query string, if not already a string. It's appended to the url for GET-requests. See processData option to prevent this automatic processing. For POST requests could be `FormData` type */
-    data?: any;
-    /** By default, data passed in to the data option as an object (technically, anything other than a string) will be processed and transformed into a query string, fitting to the default content-type "application/x-www-form-urlencoded". If you want to send a DOMDocument, or other non-processed data, set this option to `false` */
-    processData?: boolean;
-    /** The type of data that you're expecting back from the server. Could be 'text' or 'json' */
-    dataType?: string;
-    /** An object of additional header key/value pairs to send along with requests using the XMLHttpRequest transport */
-    headers?: { [key: string]: any; };
-    /** An object of fieldName-fieldValue pairs to set on the native XHR object */
-    xhrFields?: { [key: string]: any; };
-    /** A username to be used with XMLHttpRequest in response to an HTTP access authentication request */
-    username?: string;
-    /** A password to be used with XMLHttpRequest in response to an HTTP access authentication request */
-    password?: string;
-    /** Set a timeout (in milliseconds) for the request */
-    timeout?: number;
-}
-
-export interface Dom7XHR extends XMLHttpRequest {
-    /** Object with passed XHR request parameters */
-    requestParameters?: any;
-    /** String with request URL */
-    requestUrl?: string;
-}
-
-export interface DomAjaxSettings {
-    /** A pre-request callback function that can be used to modify the XHR object before it is sent. Use this to set custom headers, etc */
-    beforeSend? (jqXHR: Dom7XHR, settings: DomAjaxSettings): any;
-    /** A function to be called if the request fails */
-    error? (jqXHR: Dom7XHR, textStatus: string, errorThrown: string): any;
-    /** A function to be called if the request succeeds */
-    success? (data: any, textStatus: string, jqXHR: Dom7XHR): any;
-    /** A function to be called when the request finishes (after success and error callbacks are executed) */
-    complete? (jqXHR: Dom7XHR, textStatus: string): any;
-    /** An object of numeric HTTP codes and functions to be called when the response has the corresponding code. For example, the following will alert when the response status is a 404 */
-    statusCode?: { [key: string]: any; };
-}
-
 export interface Dom7 {
     length: number;
 
@@ -345,16 +286,8 @@ export interface Dom7Static
     (event: EventTarget): Dom7;
 
     // UTILITY
-    /** A generic iterator function, which can be used to seamlessly iterate over both objects and arrays. Arrays and array-like objects with a length property (such as a function's arguments object) are iterated by numeric index, from 0 to length-1. Other objects are iterated via their named properties */
-    each(callback : (index : number, element : any) => void) : void;
-    /** Parse url query get parameters. Method returns object with query parameters */
-    parseUrlQuery(url : string) : any;
-    /** Determine whether the argument is an array. Returns a Boolean indicating whether the object is a JavaScript array */
-    isArray(target: any) : boolean;
     /** Remove duplicates in passed array. Returns a new unique array */
     unique<T>(target: T[]) : T[];
-    /** Create a serialized representation of a plain object suitable for use in a URL query string. Returns a new unique array */
-    serializeObject(target: any) : string;
     /** Convert hypens-case string to camelCase string. Returns a new camelCase string */
     toCamelCase(string: string) : string;
     /** Get element's data set (set of data- attributes) as plain Object. Returns a new plain object with dataset */
@@ -363,18 +296,6 @@ export interface Dom7Static
     requestAnimationFrame(callback: () => void) : number;
     /** Cancels an animation frame request. */
     cancelAnimationFrame(requestID: number): void;
-    /** Replace diacritics in specified text string with standard latin characters */
-    removeDiacritics(text: string): string;
-
-    /** Load data from the server. Returns plain XHR object */
-    ajax(parameters : Dom7AjaxSettings) : Dom7XHR;
-
-    /** Load data from the server using a HTTP GET request. Returns plain XHR object */
-    get(url: string, data: any, success : (data : any, status : number, xhr : Dom7XHR) => void) : Dom7XHR;
-    /** Load data from the server using a HTTP POST request. Returns plain XHR object */
-    post(url: string, data: any, success : (data : any, status : number, xhr : Dom7XHR) => void) : Dom7XHR;
-    /** Load JSON-encoded data from the server using a GET HTTP request. Returns plain XHR object */
-    getJSON(url: string, data: any, success : (data : any, status : number, xhr : Dom7XHR) => void) : Dom7XHR;
 }
 
 declare const Dom7 : Dom7Static

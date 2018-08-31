@@ -1,5 +1,5 @@
 /**
- * Dom7 2.0.7
+ * Dom7 2.1.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,9 +9,9 @@
  *
  * Licensed under MIT
  *
- * Released on: June 14, 2018
+ * Released on: August 31, 2018
  */
-import { document, window } from 'ssr-window';
+import { window, document } from 'ssr-window';
 
 class Dom7 {
   constructor(arr) {
@@ -26,7 +26,7 @@ class Dom7 {
   }
 }
 
-function $$1(selector, context) {
+function $(selector, context) {
   const arr = [];
   let i = 0;
   if (selector && !context) {
@@ -77,9 +77,9 @@ function $$1(selector, context) {
   return new Dom7(arr);
 }
 
-$$1.fn = Dom7.prototype;
-$$1.Class = Dom7;
-$$1.Dom7 = Dom7;
+$.fn = Dom7.prototype;
+$.Class = Dom7;
+$.Dom7 = Dom7;
 
 function unique(arr) {
   const uniqueArray = [];
@@ -317,11 +317,11 @@ function on(...args) {
     if (eventData.indexOf(e) < 0) {
       eventData.unshift(e);
     }
-    if ($$1(target).is(targetSelector)) listener.apply(target, eventData);
+    if ($(target).is(targetSelector)) listener.apply(target, eventData);
     else {
-      const parents = $$1(target).parents(); // eslint-disable-line
+      const parents = $(target).parents(); // eslint-disable-line
       for (let k = 0; k < parents.length; k += 1) {
-        if ($$1(parents[k]).is(targetSelector)) listener.apply(parents[k], eventData);
+        if ($(parents[k]).is(targetSelector)) listener.apply(parents[k], eventData);
       }
     }
   }
@@ -673,7 +673,7 @@ function is(selector) {
     else if (el.webkitMatchesSelector) return el.webkitMatchesSelector(selector);
     else if (el.msMatchesSelector) return el.msMatchesSelector(selector);
 
-    compareWith = $$1(selector);
+    compareWith = $(selector);
     for (i = 0; i < compareWith.length; i += 1) {
       if (compareWith[i] === el) return true;
     }
@@ -750,7 +750,7 @@ function append(...args) {
 }
  // eslint-disable-next-line
 function appendTo(parent) {
-  $$1(parent).append(this);
+  $(parent).append(this);
   return this;
 }
 function prepend(newChild) {
@@ -775,11 +775,11 @@ function prepend(newChild) {
 }
  // eslint-disable-next-line
 function prependTo(parent) {
-  $$1(parent).prepend(this);
+  $(parent).prepend(this);
   return this;
 }
 function insertBefore(selector) {
-  const before = $$1(selector);
+  const before = $(selector);
   for (let i = 0; i < this.length; i += 1) {
     if (before.length === 1) {
       before[0].parentNode.insertBefore(this[i], before[0]);
@@ -791,7 +791,7 @@ function insertBefore(selector) {
   }
 }
 function insertAfter(selector) {
-  const after = $$1(selector);
+  const after = $(selector);
   for (let i = 0; i < this.length; i += 1) {
     if (after.length === 1) {
       after[0].parentNode.insertBefore(this[i], after[0].nextSibling);
@@ -805,7 +805,7 @@ function insertAfter(selector) {
 function next(selector) {
   if (this.length > 0) {
     if (selector) {
-      if (this[0].nextElementSibling && $$1(this[0].nextElementSibling).is(selector)) {
+      if (this[0].nextElementSibling && $(this[0].nextElementSibling).is(selector)) {
         return new Dom7([this[0].nextElementSibling]);
       }
       return new Dom7([]);
@@ -823,7 +823,7 @@ function nextAll(selector) {
   while (el.nextElementSibling) {
     const next = el.nextElementSibling; // eslint-disable-line
     if (selector) {
-      if ($$1(next).is(selector)) nextEls.push(next);
+      if ($(next).is(selector)) nextEls.push(next);
     } else nextEls.push(next);
     el = next;
   }
@@ -833,7 +833,7 @@ function prev(selector) {
   if (this.length > 0) {
     const el = this[0];
     if (selector) {
-      if (el.previousElementSibling && $$1(el.previousElementSibling).is(selector)) {
+      if (el.previousElementSibling && $(el.previousElementSibling).is(selector)) {
         return new Dom7([el.previousElementSibling]);
       }
       return new Dom7([]);
@@ -851,7 +851,7 @@ function prevAll(selector) {
   while (el.previousElementSibling) {
     const prev = el.previousElementSibling; // eslint-disable-line
     if (selector) {
-      if ($$1(prev).is(selector)) prevEls.push(prev);
+      if ($(prev).is(selector)) prevEls.push(prev);
     } else prevEls.push(prev);
     el = prev;
   }
@@ -865,13 +865,13 @@ function parent(selector) {
   for (let i = 0; i < this.length; i += 1) {
     if (this[i].parentNode !== null) {
       if (selector) {
-        if ($$1(this[i].parentNode).is(selector)) parents.push(this[i].parentNode);
+        if ($(this[i].parentNode).is(selector)) parents.push(this[i].parentNode);
       } else {
         parents.push(this[i].parentNode);
       }
     }
   }
-  return $$1(unique(parents));
+  return $(unique(parents));
 }
 function parents(selector) {
   const parents = []; // eslint-disable-line
@@ -879,14 +879,14 @@ function parents(selector) {
     let parent = this[i].parentNode; // eslint-disable-line
     while (parent) {
       if (selector) {
-        if ($$1(parent).is(selector)) parents.push(parent);
+        if ($(parent).is(selector)) parents.push(parent);
       } else {
         parents.push(parent);
       }
       parent = parent.parentNode;
     }
   }
-  return $$1(unique(parents));
+  return $(unique(parents));
 }
 function closest(selector) {
   let closest = this; // eslint-disable-line
@@ -916,7 +916,7 @@ function children(selector) {
     for (let j = 0; j < childNodes.length; j += 1) {
       if (!selector) {
         if (childNodes[j].nodeType === 1) children.push(childNodes[j]);
-      } else if (childNodes[j].nodeType === 1 && $$1(childNodes[j]).is(selector)) {
+      } else if (childNodes[j].nodeType === 1 && $(childNodes[j]).is(selector)) {
         children.push(childNodes[j]);
       }
     }
@@ -937,7 +937,7 @@ function add(...args) {
   let i;
   let j;
   for (i = 0; i < args.length; i += 1) {
-    const toAdd = $$1(args[i]);
+    const toAdd = $(args[i]);
     for (j = 0; j < toAdd.length; j += 1) {
       dom[dom.length] = toAdd[j];
       dom.length += 1;
@@ -960,69 +960,66 @@ function empty() {
   return this;
 }
 
-
-
-
-var Methods = Object.freeze({
-	addClass: addClass,
-	removeClass: removeClass,
-	hasClass: hasClass,
-	toggleClass: toggleClass,
-	attr: attr,
-	removeAttr: removeAttr,
-	prop: prop,
-	data: data,
-	removeData: removeData,
-	dataset: dataset,
-	val: val,
-	transform: transform,
-	transition: transition,
-	on: on,
-	off: off,
-	once: once,
-	trigger: trigger,
-	transitionEnd: transitionEnd,
-	animationEnd: animationEnd,
-	width: width,
-	outerWidth: outerWidth,
-	height: height,
-	outerHeight: outerHeight,
-	offset: offset,
-	hide: hide,
-	show: show,
-	styles: styles,
-	css: css,
-	toArray: toArray,
-	each: each,
-	forEach: forEach,
-	filter: filter,
-	map: map,
-	html: html,
-	text: text,
-	is: is,
-	indexOf: indexOf,
-	index: index,
-	eq: eq,
-	append: append,
-	appendTo: appendTo,
-	prepend: prepend,
-	prependTo: prependTo,
-	insertBefore: insertBefore,
-	insertAfter: insertAfter,
-	next: next,
-	nextAll: nextAll,
-	prev: prev,
-	prevAll: prevAll,
-	siblings: siblings,
-	parent: parent,
-	parents: parents,
-	closest: closest,
-	find: find,
-	children: children,
-	remove: remove,
-	detach: detach,
-	add: add,
-	empty: empty
+var Methods = /*#__PURE__*/Object.freeze({
+  addClass: addClass,
+  removeClass: removeClass,
+  hasClass: hasClass,
+  toggleClass: toggleClass,
+  attr: attr,
+  removeAttr: removeAttr,
+  prop: prop,
+  data: data,
+  removeData: removeData,
+  dataset: dataset,
+  val: val,
+  transform: transform,
+  transition: transition,
+  on: on,
+  off: off,
+  once: once,
+  trigger: trigger,
+  transitionEnd: transitionEnd,
+  animationEnd: animationEnd,
+  width: width,
+  outerWidth: outerWidth,
+  height: height,
+  outerHeight: outerHeight,
+  offset: offset,
+  hide: hide,
+  show: show,
+  styles: styles,
+  css: css,
+  toArray: toArray,
+  each: each,
+  forEach: forEach,
+  filter: filter,
+  map: map,
+  html: html,
+  text: text,
+  is: is,
+  indexOf: indexOf,
+  index: index,
+  eq: eq,
+  append: append,
+  appendTo: appendTo,
+  prepend: prepend,
+  prependTo: prependTo,
+  insertBefore: insertBefore,
+  insertAfter: insertAfter,
+  next: next,
+  nextAll: nextAll,
+  prev: prev,
+  prevAll: prevAll,
+  siblings: siblings,
+  parent: parent,
+  parents: parents,
+  closest: closest,
+  find: find,
+  children: children,
+  remove: remove,
+  detach: detach,
+  add: add,
+  empty: empty
 });
 
 function scrollTo(...args) {
@@ -1135,13 +1132,10 @@ function scrollLeft(...args) {
   return dom.scrollTo(left, undefined, duration, easing, callback);
 }
 
-
-
-
-var Scroll = Object.freeze({
-	scrollTo: scrollTo,
-	scrollTop: scrollTop,
-	scrollLeft: scrollLeft
+var Scroll = /*#__PURE__*/Object.freeze({
+  scrollTo: scrollTo,
+  scrollTop: scrollTop,
+  scrollLeft: scrollLeft
 });
 
 function animate(initialProps, initialParams) {
@@ -1329,12 +1323,9 @@ function stop() {
   }
 }
 
-
-
-
-var Animate = Object.freeze({
-	animate: animate,
-	stop: stop
+var Animate = /*#__PURE__*/Object.freeze({
+  animate: animate,
+  stop: stop
 });
 
 const noTrigger = ('resize scroll').split(' ');
@@ -1344,7 +1335,7 @@ function eventShortcut(name, ...args) {
       if (noTrigger.indexOf(name) < 0) {
         if (name in this[i]) this[i][name]();
         else {
-          $$1(this[i]).trigger(name);
+          $(this[i]).trigger(name);
         }
       }
     }
@@ -1420,38 +1411,35 @@ function scroll(...args) {
   return eventShortcut.bind(this)('scroll', ...args);
 }
 
-
-
-
-var eventShortcuts = Object.freeze({
-	click: click,
-	blur: blur,
-	focus: focus,
-	focusin: focusin,
-	focusout: focusout,
-	keyup: keyup,
-	keydown: keydown,
-	keypress: keypress,
-	submit: submit,
-	change: change,
-	mousedown: mousedown,
-	mousemove: mousemove,
-	mouseup: mouseup,
-	mouseenter: mouseenter,
-	mouseleave: mouseleave,
-	mouseout: mouseout,
-	mouseover: mouseover,
-	touchstart: touchstart,
-	touchend: touchend,
-	touchmove: touchmove,
-	resize: resize,
-	scroll: scroll
+var eventShortcuts = /*#__PURE__*/Object.freeze({
+  click: click,
+  blur: blur,
+  focus: focus,
+  focusin: focusin,
+  focusout: focusout,
+  keyup: keyup,
+  keydown: keydown,
+  keypress: keypress,
+  submit: submit,
+  change: change,
+  mousedown: mousedown,
+  mousemove: mousemove,
+  mouseup: mouseup,
+  mouseenter: mouseenter,
+  mouseleave: mouseleave,
+  mouseout: mouseout,
+  mouseover: mouseover,
+  touchstart: touchstart,
+  touchend: touchend,
+  touchmove: touchmove,
+  resize: resize,
+  scroll: scroll
 });
 
 [Methods, Scroll, Animate, eventShortcuts].forEach((group) => {
   Object.keys(group).forEach((methodName) => {
-    $$1.fn[methodName] = group[methodName];
+    $.fn[methodName] = group[methodName];
   });
 });
 
-export default $$1;
+export default $;

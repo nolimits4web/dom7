@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.1.0 - Released on August 31, 2018
+  * Added TypeScript definitions
+
 ## Dom7 v2.0.7 - Released on June 14, 2018
   * Fixed issue with undefined elements in classList access (#13)
 
