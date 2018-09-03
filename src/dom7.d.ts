@@ -1,4 +1,4 @@
-export interface Dom7 {
+interface Dom7 {
     length: number;
 
     /**  Retrieve one of the elements matched by the Dom7 object (jQuery syntax). **/
