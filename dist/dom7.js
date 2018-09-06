@@ -1,5 +1,5 @@
 /**
- * Dom7 2.1.0
+ * Dom7 2.1.1
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: August 31, 2018
+ * Released on: September 6, 2018
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
