@@ -284,18 +284,6 @@ export interface Dom7
     (element: Document): Dom7Instance;
     (elementArray: Element[]): Dom7Instance;
     (event: EventTarget): Dom7Instance;
-
-    // UTILITY
-    /** Remove duplicates in passed array. Returns a new unique array */
-    unique<T>(target: T[]) : T[];
-    /** Convert hypens-case string to camelCase string. Returns a new camelCase string */
-    toCamelCase(string: string) : string;
-    /** Get element's data set (set of data- attributes) as plain Object. Returns a new plain object with dataset */
-    dataset(target: string | HTMLElement | Dom7Instance) : any;
-    /** Cross-browser implementation on requestAnimationFrame. Returns animation request id, that uniquely identifies the entry in the callback list */
-    requestAnimationFrame(callback: () => void) : number;
-    /** Cancels an animation frame request. */
-    cancelAnimationFrame(requestID: number): void;
 }
 
 declare const Dom7 : Dom7

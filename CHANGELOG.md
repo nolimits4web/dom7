@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.1.2 - Released on September 13, 2018
+  * Small tweaks for TypeScript definitions
+
 ## Dom7 v2.1.1 - Released on September 6, 2018
   * Small tweaks for TypeScript definitions
 
