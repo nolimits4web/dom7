@@ -288,6 +288,9 @@ function off(...args) {
           if (listener && handler.listener === listener) {
             el.removeEventListener(event, handler.proxyListener, capture);
             handlers.splice(k, 1);
+          } else if (listener && handler.listener && handler.listener.dom7proxy && handler.listener.dom7proxy === listener) {
+            el.removeEventListener(event, handler.proxyListener, capture);
+            handlers.splice(k, 1);
           } else if (!listener) {
             el.removeEventListener(event, handler.proxyListener, capture);
             handlers.splice(k, 1);
@@ -305,11 +308,15 @@ function once(...args) {
     [eventName, listener, capture] = args;
     targetSelector = undefined;
   }
-  function proxy(...eventArgs) {
+  function onceHandler(...eventArgs) {
     listener.apply(this, eventArgs);
-    dom.off(eventName, targetSelector, proxy, capture);
+    dom.off(eventName, targetSelector, onceHandler, capture);
+    if (onceHandler.dom7proxy) {
+      delete onceHandler.dom7proxy;
+    }
   }
-  return dom.on(eventName, targetSelector, proxy, capture);
+  onceHandler.dom7proxy = listener;
+  return dom.on(eventName, targetSelector, onceHandler, capture);
 }
 function trigger(...args) {
   const events = args[0].split(' ');
