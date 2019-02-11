@@ -655,7 +655,7 @@ function append(...args) {
 
   return this;
 }
- // eslint-disable-next-line
+// eslint-disable-next-line
 function appendTo(parent) {
   $(parent).append(this);
   return this;
@@ -680,7 +680,7 @@ function prepend(newChild) {
   }
   return this;
 }
- // eslint-disable-next-line
+// eslint-disable-next-line
 function prependTo(parent) {
   $(parent).prepend(this);
   return this;
