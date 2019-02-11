@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.1.3 - Released on February 11, 2019
+  * Fixed issue when `.once` bound event could still be there after unbinding it with `.off`
+
 ## Dom7 v2.1.2 - Released on September 13, 2018
   * Small tweaks for TypeScript definitions
 

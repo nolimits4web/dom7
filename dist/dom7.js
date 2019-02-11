@@ -1,21 +1,21 @@
 /**
- * Dom7 2.1.2
+ * Dom7 2.1.3
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
- * Copyright 2018, Vladimir Kharlampidi
+ * Copyright 2019, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  *
  * Licensed under MIT
  *
- * Released on: September 13, 2018
+ * Released on: February 11, 2019
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.Dom7 = factory());
-}(this, (function () { 'use strict';
+  (global = global || self, global.Dom7 = factory());
+}(this, function () { 'use strict';
 
   /**
    * SSR Window 1.0.1
@@ -180,26 +180,22 @@
 
   // Classes and attributes
   function addClass(className) {
-    var this$1 = this;
-
     if (typeof className === 'undefined') {
       return this;
     }
     var classes = className.split(' ');
     for (var i = 0; i < classes.length; i += 1) {
       for (var j = 0; j < this.length; j += 1) {
-        if (typeof this$1[j] !== 'undefined' && typeof this$1[j].classList !== 'undefined') { this$1[j].classList.add(classes[i]); }
+        if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') { this[j].classList.add(classes[i]); }
       }
     }
     return this;
   }
   function removeClass(className) {
-    var this$1 = this;
-
     var classes = className.split(' ');
     for (var i = 0; i < classes.length; i += 1) {
       for (var j = 0; j < this.length; j += 1) {
-        if (typeof this$1[j] !== 'undefined' && typeof this$1[j].classList !== 'undefined') { this$1[j].classList.remove(classes[i]); }
+        if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') { this[j].classList.remove(classes[i]); }
       }
     }
     return this;
@@ -209,19 +205,16 @@
     return this[0].classList.contains(className);
   }
   function toggleClass(className) {
-    var this$1 = this;
-
     var classes = className.split(' ');
     for (var i = 0; i < classes.length; i += 1) {
       for (var j = 0; j < this.length; j += 1) {
-        if (typeof this$1[j] !== 'undefined' && typeof this$1[j].classList !== 'undefined') { this$1[j].classList.toggle(classes[i]); }
+        if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') { this[j].classList.toggle(classes[i]); }
       }
     }
     return this;
   }
   function attr(attrs, value) {
     var arguments$1 = arguments;
-    var this$1 = this;
 
     if (arguments.length === 1 && typeof attrs === 'string') {
       // Get attr
@@ -233,13 +226,13 @@
     for (var i = 0; i < this.length; i += 1) {
       if (arguments$1.length === 2) {
         // String
-        this$1[i].setAttribute(attrs, value);
+        this[i].setAttribute(attrs, value);
       } else {
         // Object
         // eslint-disable-next-line
         for (var attrName in attrs) {
-          this$1[i][attrName] = attrs[attrName];
-          this$1[i].setAttribute(attrName, attrs[attrName]);
+          this[i][attrName] = attrs[attrName];
+          this[i].setAttribute(attrName, attrs[attrName]);
         }
       }
     }
@@ -247,17 +240,14 @@
   }
   // eslint-disable-next-line
   function removeAttr(attr) {
-    var this$1 = this;
-
     for (var i = 0; i < this.length; i += 1) {
-      this$1[i].removeAttribute(attr);
+      this[i].removeAttribute(attr);
     }
     return this;
   }
   // eslint-disable-next-line
   function prop(props, value) {
     var arguments$1 = arguments;
-    var this$1 = this;
 
     if (arguments.length === 1 && typeof props === 'string') {
       // Get prop
@@ -267,12 +257,12 @@
       for (var i = 0; i < this.length; i += 1) {
         if (arguments$1.length === 2) {
           // String
-          this$1[i][props] = value;
+          this[i][props] = value;
         } else {
           // Object
           // eslint-disable-next-line
           for (var propName in props) {
-            this$1[i][propName] = props[propName];
+            this[i][propName] = props[propName];
           }
         }
       }
@@ -280,8 +270,6 @@
     }
   }
   function data(key, value) {
-    var this$1 = this;
-
     var el;
     if (typeof value === 'undefined') {
       el = this[0];
@@ -302,17 +290,15 @@
 
     // Set value
     for (var i = 0; i < this.length; i += 1) {
-      el = this$1[i];
+      el = this[i];
       if (!el.dom7ElementDataStorage) { el.dom7ElementDataStorage = {}; }
       el.dom7ElementDataStorage[key] = value;
     }
     return this;
   }
   function removeData(key) {
-    var this$1 = this;
-
     for (var i = 0; i < this.length; i += 1) {
-      var el = this$1[i];
+      var el = this[i];
       if (el.dom7ElementDataStorage && el.dom7ElementDataStorage[key]) {
         el.dom7ElementDataStorage[key] = null;
         delete el.dom7ElementDataStorage[key];
@@ -376,23 +362,19 @@
   // Transforms
   // eslint-disable-next-line
   function transform(transform) {
-    var this$1 = this;
-
     for (var i = 0; i < this.length; i += 1) {
-      var elStyle = this$1[i].style;
+      var elStyle = this[i].style;
       elStyle.webkitTransform = transform;
       elStyle.transform = transform;
     }
     return this;
   }
   function transition(duration) {
-    var this$1 = this;
-
     if (typeof duration !== 'string') {
       duration = duration + "ms"; // eslint-disable-line
     }
     for (var i = 0; i < this.length; i += 1) {
-      var elStyle = this$1[i].style;
+      var elStyle = this[i].style;
       elStyle.webkitTransitionDuration = duration;
       elStyle.transitionDuration = duration;
     }
@@ -400,7 +382,6 @@
   }
   // Events
   function on() {
-    var this$1 = this;
     var assign;
 
     var args = [], len = arguments.length;
@@ -440,7 +421,7 @@
     var events = eventType.split(' ');
     var j;
     for (var i = 0; i < this.length; i += 1) {
-      var el = this$1[i];
+      var el = this[i];
       if (!targetSelector) {
         for (j = 0; j < events.length; j += 1) {
           var event = events[j];
@@ -469,7 +450,6 @@
     return this;
   }
   function off() {
-    var this$1 = this;
     var assign;
 
     var args = [], len = arguments.length;
@@ -488,7 +468,7 @@
     for (var i = 0; i < events.length; i += 1) {
       var event = events[i];
       for (var j = 0; j < this.length; j += 1) {
-        var el = this$1[j];
+        var el = this[j];
         var handlers = (void 0);
         if (!targetSelector && el.dom7Listeners) {
           handlers = el.dom7Listeners[event];
@@ -499,6 +479,9 @@
           for (var k = handlers.length - 1; k >= 0; k -= 1) {
             var handler = handlers[k];
             if (listener && handler.listener === listener) {
+              el.removeEventListener(event, handler.proxyListener, capture);
+              handlers.splice(k, 1);
+            } else if (listener && handler.listener && handler.listener.dom7proxy && handler.listener.dom7proxy === listener) {
               el.removeEventListener(event, handler.proxyListener, capture);
               handlers.splice(k, 1);
             } else if (!listener) {
@@ -525,17 +508,20 @@
       (assign = args, eventName = assign[0], listener = assign[1], capture = assign[2]);
       targetSelector = undefined;
     }
-    function proxy() {
+    function onceHandler() {
       var eventArgs = [], len = arguments.length;
       while ( len-- ) eventArgs[ len ] = arguments[ len ];
 
       listener.apply(this, eventArgs);
-      dom.off(eventName, targetSelector, proxy, capture);
+      dom.off(eventName, targetSelector, onceHandler, capture);
+      if (onceHandler.dom7proxy) {
+        delete onceHandler.dom7proxy;
+      }
     }
-    return dom.on(eventName, targetSelector, proxy, capture);
+    onceHandler.dom7proxy = listener;
+    return dom.on(eventName, targetSelector, onceHandler, capture);
   }
   function trigger() {
-    var this$1 = this;
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
 
@@ -544,7 +530,7 @@
     for (var i = 0; i < events.length; i += 1) {
       var event = events[i];
       for (var j = 0; j < this.length; j += 1) {
-        var el = this$1[j];
+        var el = this[j];
         var evt = (void 0);
         try {
           evt = new win.CustomEvent(event, {
@@ -666,18 +652,14 @@
     return null;
   }
   function hide() {
-    var this$1 = this;
-
     for (var i = 0; i < this.length; i += 1) {
-      this$1[i].style.display = 'none';
+      this[i].style.display = 'none';
     }
     return this;
   }
   function show() {
-    var this$1 = this;
-
     for (var i = 0; i < this.length; i += 1) {
-      var el = this$1[i];
+      var el = this[i];
       if (el.style.display === 'none') {
         el.style.display = '';
       }
@@ -693,8 +675,6 @@
     return {};
   }
   function css(props, value) {
-    var this$1 = this;
-
     var i;
     if (arguments.length === 1) {
       if (typeof props === 'string') {
@@ -703,7 +683,7 @@
         for (i = 0; i < this.length; i += 1) {
           // eslint-disable-next-line
           for (var prop in props) {
-            this$1[i].style[prop] = props[prop];
+            this[i].style[prop] = props[prop];
           }
         }
         return this;
@@ -711,7 +691,7 @@
     }
     if (arguments.length === 2 && typeof props === 'string') {
       for (i = 0; i < this.length; i += 1) {
-        this$1[i].style[props] = value;
+        this[i].style[props] = value;
       }
       return this;
     }
@@ -720,42 +700,36 @@
 
   // Dom manipulation
   function toArray() {
-    var this$1 = this;
-
     var arr = [];
     for (var i = 0; i < this.length; i += 1) {
-      arr.push(this$1[i]);
+      arr.push(this[i]);
     }
     return arr;
   }
   // Iterate over the collection passing elements to `callback`
   function each(callback) {
-    var this$1 = this;
-
     // Don't bother continuing without a callback
     if (!callback) { return this; }
     // Iterate over the current collection
     for (var i = 0; i < this.length; i += 1) {
       // If the callback returns false
-      if (callback.call(this$1[i], i, this$1[i]) === false) {
+      if (callback.call(this[i], i, this[i]) === false) {
         // End the loop early
-        return this$1;
+        return this;
       }
     }
     // Return `this` to allow chained DOM operations
     return this;
   }
   function forEach(callback) {
-    var this$1 = this;
-
     // Don't bother continuing without a callback
     if (!callback) { return this; }
     // Iterate over the current collection
     for (var i = 0; i < this.length; i += 1) {
       // If the callback returns false
-      if (callback.call(this$1[i], this$1[i], i) === false) {
+      if (callback.call(this[i], this[i], i) === false) {
         // End the loop early
-        return this$1;
+        return this;
       }
     }
     // Return `this` to allow chained DOM operations
@@ -779,21 +753,17 @@
   }
   // eslint-disable-next-line
   function html(html) {
-    var this$1 = this;
-
     if (typeof html === 'undefined') {
       return this[0] ? this[0].innerHTML : undefined;
     }
 
     for (var i = 0; i < this.length; i += 1) {
-      this$1[i].innerHTML = html;
+      this[i].innerHTML = html;
     }
     return this;
   }
   // eslint-disable-next-line
   function text(text) {
-    var this$1 = this;
-
     if (typeof text === 'undefined') {
       if (this[0]) {
         return this[0].textContent.trim();
@@ -802,7 +772,7 @@
     }
 
     for (var i = 0; i < this.length; i += 1) {
-      this$1[i].textContent = text;
+      this[i].textContent = text;
     }
     return this;
   }
@@ -834,10 +804,8 @@
     return false;
   }
   function indexOf(el) {
-    var this$1 = this;
-
     for (var i = 0; i < this.length; i += 1) {
-      if (this$1[i] === el) { return i; }
+      if (this[i] === el) { return i; }
     }
     return -1;
   }
@@ -870,7 +838,6 @@
     return new Dom7([this[index]]);
   }
   function append() {
-    var this$1 = this;
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
 
@@ -883,28 +850,26 @@
           var tempDiv = doc.createElement('div');
           tempDiv.innerHTML = newChild;
           while (tempDiv.firstChild) {
-            this$1[i].appendChild(tempDiv.firstChild);
+            this[i].appendChild(tempDiv.firstChild);
           }
         } else if (newChild instanceof Dom7) {
           for (var j = 0; j < newChild.length; j += 1) {
-            this$1[i].appendChild(newChild[j]);
+            this[i].appendChild(newChild[j]);
           }
         } else {
-          this$1[i].appendChild(newChild);
+          this[i].appendChild(newChild);
         }
       }
     }
 
     return this;
   }
-   // eslint-disable-next-line
+  // eslint-disable-next-line
   function appendTo(parent) {
     $(parent).append(this);
     return this;
   }
   function prepend(newChild) {
-    var this$1 = this;
-
     var i;
     var j;
     for (i = 0; i < this.length; i += 1) {
@@ -912,47 +877,43 @@
         var tempDiv = doc.createElement('div');
         tempDiv.innerHTML = newChild;
         for (j = tempDiv.childNodes.length - 1; j >= 0; j -= 1) {
-          this$1[i].insertBefore(tempDiv.childNodes[j], this$1[i].childNodes[0]);
+          this[i].insertBefore(tempDiv.childNodes[j], this[i].childNodes[0]);
         }
       } else if (newChild instanceof Dom7) {
         for (j = 0; j < newChild.length; j += 1) {
-          this$1[i].insertBefore(newChild[j], this$1[i].childNodes[0]);
+          this[i].insertBefore(newChild[j], this[i].childNodes[0]);
         }
       } else {
-        this$1[i].insertBefore(newChild, this$1[i].childNodes[0]);
+        this[i].insertBefore(newChild, this[i].childNodes[0]);
       }
     }
     return this;
   }
-   // eslint-disable-next-line
+  // eslint-disable-next-line
   function prependTo(parent) {
     $(parent).prepend(this);
     return this;
   }
   function insertBefore(selector) {
-    var this$1 = this;
-
     var before = $(selector);
     for (var i = 0; i < this.length; i += 1) {
       if (before.length === 1) {
-        before[0].parentNode.insertBefore(this$1[i], before[0]);
+        before[0].parentNode.insertBefore(this[i], before[0]);
       } else if (before.length > 1) {
         for (var j = 0; j < before.length; j += 1) {
-          before[j].parentNode.insertBefore(this$1[i].cloneNode(true), before[j]);
+          before[j].parentNode.insertBefore(this[i].cloneNode(true), before[j]);
         }
       }
     }
   }
   function insertAfter(selector) {
-    var this$1 = this;
-
     var after = $(selector);
     for (var i = 0; i < this.length; i += 1) {
       if (after.length === 1) {
-        after[0].parentNode.insertBefore(this$1[i], after[0].nextSibling);
+        after[0].parentNode.insertBefore(this[i], after[0].nextSibling);
       } else if (after.length > 1) {
         for (var j = 0; j < after.length; j += 1) {
-          after[j].parentNode.insertBefore(this$1[i].cloneNode(true), after[j].nextSibling);
+          after[j].parentNode.insertBefore(this[i].cloneNode(true), after[j].nextSibling);
         }
       }
     }
@@ -1016,26 +977,22 @@
     return this.nextAll(selector).add(this.prevAll(selector));
   }
   function parent(selector) {
-    var this$1 = this;
-
     var parents = []; // eslint-disable-line
     for (var i = 0; i < this.length; i += 1) {
-      if (this$1[i].parentNode !== null) {
+      if (this[i].parentNode !== null) {
         if (selector) {
-          if ($(this$1[i].parentNode).is(selector)) { parents.push(this$1[i].parentNode); }
+          if ($(this[i].parentNode).is(selector)) { parents.push(this[i].parentNode); }
         } else {
-          parents.push(this$1[i].parentNode);
+          parents.push(this[i].parentNode);
         }
       }
     }
     return $(unique(parents));
   }
   function parents(selector) {
-    var this$1 = this;
-
     var parents = []; // eslint-disable-line
     for (var i = 0; i < this.length; i += 1) {
-      var parent = this$1[i].parentNode; // eslint-disable-line
+      var parent = this[i].parentNode; // eslint-disable-line
       while (parent) {
         if (selector) {
           if ($(parent).is(selector)) { parents.push(parent); }
@@ -1058,11 +1015,9 @@
     return closest;
   }
   function find(selector) {
-    var this$1 = this;
-
     var foundElements = [];
     for (var i = 0; i < this.length; i += 1) {
-      var found = this$1[i].querySelectorAll(selector);
+      var found = this[i].querySelectorAll(selector);
       for (var j = 0; j < found.length; j += 1) {
         foundElements.push(found[j]);
       }
@@ -1070,11 +1025,9 @@
     return new Dom7(foundElements);
   }
   function children(selector) {
-    var this$1 = this;
-
     var children = []; // eslint-disable-line
     for (var i = 0; i < this.length; i += 1) {
-      var childNodes = this$1[i].childNodes;
+      var childNodes = this[i].childNodes;
 
       for (var j = 0; j < childNodes.length; j += 1) {
         if (!selector) {
@@ -1087,10 +1040,8 @@
     return new Dom7(unique(children));
   }
   function remove() {
-    var this$1 = this;
-
     for (var i = 0; i < this.length; i += 1) {
-      if (this$1[i].parentNode) { this$1[i].parentNode.removeChild(this$1[i]); }
+      if (this[i].parentNode) { this[i].parentNode.removeChild(this[i]); }
     }
     return this;
   }
@@ -1114,10 +1065,8 @@
     return dom;
   }
   function empty() {
-    var this$1 = this;
-
     for (var i = 0; i < this.length; i += 1) {
-      var el = this$1[i];
+      var el = this[i];
       if (el.nodeType === 1) {
         for (var j = 0; j < el.childNodes.length; j += 1) {
           if (el.childNodes[j].parentNode) {
@@ -1527,7 +1476,6 @@
 
   var noTrigger = ('resize scroll').split(' ');
   function eventShortcut(name) {
-    var this$1 = this;
     var ref;
 
     var args = [], len = arguments.length - 1;
@@ -1535,9 +1483,9 @@
     if (typeof args[0] === 'undefined') {
       for (var i = 0; i < this.length; i += 1) {
         if (noTrigger.indexOf(name) < 0) {
-          if (name in this$1[i]) { this$1[i][name](); }
+          if (name in this[i]) { this[i][name](); }
           else {
-            $(this$1[i]).trigger(name);
+            $(this[i]).trigger(name);
           }
         }
       }
@@ -1712,4 +1660,4 @@
 
   return $;
 
-})));
+}));

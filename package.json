@@ -1,6 +1,6 @@
 {
   "name": "dom7",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
   "types": "dist/dom7.d.ts",

@@ -1,17 +1,17 @@
 /**
- * Dom7 2.1.2
+ * Dom7 2.1.3
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
- * Copyright 2018, Vladimir Kharlampidi
+ * Copyright 2019, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  *
  * Licensed under MIT
  *
- * Released on: September 13, 2018
+ * Released on: February 11, 2019
  */
-import { window, document } from 'ssr-window';
+import { document, window } from 'ssr-window';
 
 class Dom7 {
   constructor(arr) {
@@ -388,6 +388,9 @@ function off(...args) {
           if (listener && handler.listener === listener) {
             el.removeEventListener(event, handler.proxyListener, capture);
             handlers.splice(k, 1);
+          } else if (listener && handler.listener && handler.listener.dom7proxy && handler.listener.dom7proxy === listener) {
+            el.removeEventListener(event, handler.proxyListener, capture);
+            handlers.splice(k, 1);
           } else if (!listener) {
             el.removeEventListener(event, handler.proxyListener, capture);
             handlers.splice(k, 1);
@@ -405,11 +408,15 @@ function once(...args) {
     [eventName, listener, capture] = args;
     targetSelector = undefined;
   }
-  function proxy(...eventArgs) {
+  function onceHandler(...eventArgs) {
     listener.apply(this, eventArgs);
-    dom.off(eventName, targetSelector, proxy, capture);
+    dom.off(eventName, targetSelector, onceHandler, capture);
+    if (onceHandler.dom7proxy) {
+      delete onceHandler.dom7proxy;
+    }
   }
-  return dom.on(eventName, targetSelector, proxy, capture);
+  onceHandler.dom7proxy = listener;
+  return dom.on(eventName, targetSelector, onceHandler, capture);
 }
 function trigger(...args) {
   const events = args[0].split(' ');
@@ -748,7 +755,7 @@ function append(...args) {
 
   return this;
 }
- // eslint-disable-next-line
+// eslint-disable-next-line
 function appendTo(parent) {
   $(parent).append(this);
   return this;
@@ -773,7 +780,7 @@ function prepend(newChild) {
   }
   return this;
 }
- // eslint-disable-next-line
+// eslint-disable-next-line
 function prependTo(parent) {
   $(parent).prepend(this);
   return this;
