@@ -148,7 +148,7 @@ gulp.task('demo', (cb) => {
 });
 
 gulp.task('watch', () => {
-  gulp.watch('./src/*.js', ['build']);
+  gulp.watch('./src/*.js', gulp.series(['build']));
 });
 
 gulp.task('connect', () => connect.server({
@@ -159,4 +159,4 @@ gulp.task('connect', () => connect.server({
 
 gulp.task('open', () => gulp.src('./demo/index.html').pipe(open({ uri: 'http://localhost:3000/demo/index.html' })));
 
-gulp.task('server', ['watch', 'connect', 'open']);
+gulp.task('server', gulp.parallel(['watch', 'connect', 'open']));
