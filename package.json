@@ -3,6 +3,7 @@
   "version": "2.1.3",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "main": "dist/dom7.js",
+  "browser": "dist/dom7.js",
   "types": "dist/dom7.d.ts",
   "jsnext:main": "dist/dom7.module.js",
   "module": "dist/dom7.module.js",
