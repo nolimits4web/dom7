@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: February 11, 2019
+ * Released on: December 21, 2019
  */
 import { document, window } from 'ssr-window';
 
@@ -1076,6 +1076,9 @@ function scrollTo(...args) {
     let startTime = null;
     if (animateTop && newTop === currentTop) animateTop = false;
     if (animateLeft && newLeft === currentLeft) animateLeft = false;
+    if (!animateLeft && !animateTop) {
+      return;
+    }
     function render(time = new Date().getTime()) {
       if (startTime === null) {
         startTime = time;

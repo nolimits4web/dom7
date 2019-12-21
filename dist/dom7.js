@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: February 11, 2019
+ * Released on: December 21, 2019
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1196,6 +1196,9 @@
       var startTime = null;
       if (animateTop && newTop === currentTop) { animateTop = false; }
       if (animateLeft && newLeft === currentLeft) { animateLeft = false; }
+      if (!animateLeft && !animateTop) {
+        return;
+      }
       function render(time) {
         if ( time === void 0 ) time = new Date().getTime();
 
