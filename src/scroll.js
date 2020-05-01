@@ -1,4 +1,4 @@
-import { requestAnimationFrame } from './utils';
+import { window } from 'ssr-window';
 
 function scrollTo(...args) {
   let [left, top, duration, easing, callback] = args;
@@ -52,10 +52,13 @@ function scrollTo(...args) {
         startTime = time;
       }
       const progress = Math.max(Math.min((time - startTime) / duration, 1), 0);
-      const easeProgress = easing === 'linear' ? progress : (0.5 - (Math.cos(progress * Math.PI) / 2));
+      const easeProgress =
+        easing === 'linear' ? progress : 0.5 - Math.cos(progress * Math.PI) / 2;
       let done;
-      if (animateTop) scrollTop = currentTop + (easeProgress * (newTop - currentTop));
-      if (animateLeft) scrollLeft = currentLeft + (easeProgress * (newLeft - currentLeft));
+      if (animateTop)
+        scrollTop = currentTop + easeProgress * (newTop - currentTop);
+      if (animateLeft)
+        scrollLeft = currentLeft + easeProgress * (newLeft - currentLeft);
       if (animateTop && newTop > currentTop && scrollTop >= newTop) {
         el.scrollTop = newTop;
         done = true;
@@ -79,9 +82,9 @@ function scrollTo(...args) {
       }
       if (animateTop) el.scrollTop = scrollTop;
       if (animateLeft) el.scrollLeft = scrollLeft;
-      requestAnimationFrame(render);
+      window.requestAnimationFrame(render);
     }
-    requestAnimationFrame(render);
+    window.requestAnimationFrame(render);
   });
 }
 // scrollTop(top, duration, easing, callback) {
