@@ -1,4 +1,5 @@
 import { window, document } from 'ssr-window';
+import $ from './$';
 import Dom7 from './dom7-class';
 import { arrayFlat, arrayFilter, toCamelCase } from './utils';
 
