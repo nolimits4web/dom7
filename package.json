@@ -11,7 +11,7 @@
     "build-prod": "cross-env NODE_ENV=production gulp build",
     "dev": "cross-env NODE_ENV=development gulp build && cross-env NODE_ENV=development gulp demo && gulp server",
     "prod": "cross-env NODE_ENV=production gulp demo && cross-env NODE_ENV=production gulp server",
-    "prettier": "prettier --ignore-path .gitignore --write \"**/*.+(js|json|scss)\"",
+    "prettier": "prettier \"**/*.+(js|json|scss)\"",
     "format": "npm run prettier -- --write",
     "check-format": "npm run prettier -- --list-different",
     "lint": "eslint --ext .js,.ts,.tsx .",

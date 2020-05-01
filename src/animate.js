@@ -9,10 +9,10 @@ function animate(initialProps, initialParams) {
         duration: 300,
         easing: 'swing', // or 'linear'
         /* Callbacks
-      begin(elements)
-      complete(elements)
-      progress(elements, complete, remaining, start, tweenValue)
-      */
+        begin(elements)
+        complete(elements)
+        progress(elements, complete, remaining, start, tweenValue)
+        */
       },
       initialParams,
     ),
