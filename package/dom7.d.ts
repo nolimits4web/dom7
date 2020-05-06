@@ -120,7 +120,7 @@ export interface Dom7Instance {
     /** Create a new Dom7Instance collection with elements added to the set of matched elements */
     add(... elements : Array<Element | Dom7Instance>) : Dom7Instance;
     /** Iterate over collection, executing a callback function for each matched element */
-    each(callback : (index : number, element : any) => void) : Dom7Instance;
+    each(callback : (element : any, index : number) => void) : Dom7Instance;
     /** Get the HTML contents of the first element in the set of matched elements */
     html() : string;
     /** Set the HTML contents of every matched element */

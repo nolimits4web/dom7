@@ -3,85 +3,37 @@
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
- * Copyright 2019, Vladimir Kharlampidi
+ * Copyright 2020, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  *
  * Licensed under MIT
  *
- * Released on: February 11, 2019
+ * Released on: May 6, 2020
  */
 import { document, window } from 'ssr-window';
 
-class Dom7 {
-  constructor(arr) {
-    const self = this;
-    // Create array-like object
-    for (let i = 0; i < arr.length; i += 1) {
-      self[i] = arr[i];
-    }
-    self.length = arr.length;
-    // Return collection with methods
-    return this;
+class Dom7 extends Array {
+  constructor(items) {
+    super(...items);
   }
 }
 
-function $(selector, context) {
-  const arr = [];
-  let i = 0;
-  if (selector && !context) {
-    if (selector instanceof Dom7) {
-      return selector;
+function arrayFlat(arr = []) {
+  const res = [];
+  arr.forEach((el) => {
+    if (Array.isArray(el)) {
+      res.push(...arrayFlat(el));
+    } else {
+      res.push(el);
     }
-  }
-  if (selector) {
-      // String
-    if (typeof selector === 'string') {
-      let els;
-      let tempParent;
-      const html = selector.trim();
-      if (html.indexOf('<') >= 0 && html.indexOf('>') >= 0) {
-        let toCreate = 'div';
-        if (html.indexOf('<li') === 0) toCreate = 'ul';
-        if (html.indexOf('<tr') === 0) toCreate = 'tbody';
-        if (html.indexOf('<td') === 0 || html.indexOf('<th') === 0) toCreate = 'tr';
-        if (html.indexOf('<tbody') === 0) toCreate = 'table';
-        if (html.indexOf('<option') === 0) toCreate = 'select';
-        tempParent = document.createElement(toCreate);
-        tempParent.innerHTML = html;
-        for (i = 0; i < tempParent.childNodes.length; i += 1) {
-          arr.push(tempParent.childNodes[i]);
-        }
-      } else {
-        if (!context && selector[0] === '#' && !selector.match(/[ .<>:~]/)) {
-          // Pure ID selector
-          els = [document.getElementById(selector.trim().split('#')[1])];
-        } else {
-          // Other selectors
-          els = (context || document).querySelectorAll(selector.trim());
-        }
-        for (i = 0; i < els.length; i += 1) {
-          if (els[i]) arr.push(els[i]);
-        }
-      }
-    } else if (selector.nodeType || selector === window || selector === document) {
-      // Node/element
-      arr.push(selector);
-    } else if (selector.length > 0 && selector[0].nodeType) {
-      // Array of elements or instance of Dom
-      for (i = 0; i < selector.length; i += 1) {
-        arr.push(selector[i]);
-      }
-    }
-  }
-  return new Dom7(arr);
+  });
+  return res;
 }
-
-$.fn = Dom7.prototype;
-$.Class = Dom7;
-$.Dom7 = Dom7;
-
-function unique(arr) {
+function arrayFilter(arr, callback) {
+  return Array.prototype.filter.call(arr, callback);
+}
+function arrayUnique(arr) {
   const uniqueArray = [];
   for (let i = 0; i < arr.length; i += 1) {
     if (uniqueArray.indexOf(arr[i]) === -1) uniqueArray.push(arr[i]);
@@ -89,54 +41,97 @@ function unique(arr) {
   return uniqueArray;
 }
 function toCamelCase(string) {
-  return string.toLowerCase().replace(/-(.)/g, (match, group1) => group1.toUpperCase());
+  return string
+    .toLowerCase()
+    .replace(/-(.)/g, (match, group) => group.toUpperCase());
 }
 
-function requestAnimationFrame(callback) {
-  if (window.requestAnimationFrame) return window.requestAnimationFrame(callback);
-  else if (window.webkitRequestAnimationFrame) return window.webkitRequestAnimationFrame(callback);
-  return window.setTimeout(callback, 1000 / 60);
-}
-function cancelAnimationFrame(id) {
-  if (window.cancelAnimationFrame) return window.cancelAnimationFrame(id);
-  else if (window.webkitCancelAnimationFrame) return window.webkitCancelAnimationFrame(id);
-  return window.clearTimeout(id);
+function qsa(selector, context) {
+  if (typeof selector !== 'string') {
+    return [selector];
+  }
+  const a = [];
+  const res = context.querySelectorAll(selector);
+  for (let i = 0; i < res.length; i += 1) {
+    a.push(res[i]);
+  }
+  return a;
 }
 
-// Classes and attributes
-function addClass(className) {
-  if (typeof className === 'undefined') {
-    return this;
+function $(selector, context) {
+  let arr = [];
+  if (!context && selector instanceof Dom7) {
+    return selector;
   }
-  const classes = className.split(' ');
-  for (let i = 0; i < classes.length; i += 1) {
-    for (let j = 0; j < this.length; j += 1) {
-      if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') this[j].classList.add(classes[i]);
+  if (!selector) {
+    return new Dom7(arr);
+  }
+  if (typeof selector === 'string') {
+    const html = selector.trim();
+    if (html.indexOf('<') >= 0 && html.indexOf('>') >= 0) {
+      let toCreate = 'div';
+      if (html.indexOf('<li') === 0) toCreate = 'ul';
+      if (html.indexOf('<tr') === 0) toCreate = 'tbody';
+      if (html.indexOf('<td') === 0 || html.indexOf('<th') === 0)
+        toCreate = 'tr';
+      if (html.indexOf('<tbody') === 0) toCreate = 'table';
+      if (html.indexOf('<option') === 0) toCreate = 'select';
+      const tempParent = document.createElement(toCreate);
+      tempParent.innerHTML = html;
+      for (let i = 0; i < tempParent.childNodes.length; i += 1) {
+        arr.push(tempParent.childNodes[i]);
+      }
+    } else {
+      arr = qsa(selector.trim(), context || document);
     }
+    // arr = qsa(selector, document);
+  } else if (
+    selector.nodeType ||
+    selector === window ||
+    selector === document
+  ) {
+    arr.push(selector);
+  } else if (Array.isArray(selector)) {
+    if (selector instanceof Dom7) return selector;
+    arr = selector;
   }
+  return new Dom7(arrayUnique(arr));
+}
+
+$.fn = Dom7.prototype;
+
+function addClass(...classes) {
+  const classNames = arrayFlat(classes.map((c) => c.split(' ')));
+  this.forEach((el) => {
+    el.classList.add(...classNames);
+  });
   return this;
 }
-function removeClass(className) {
-  const classes = className.split(' ');
-  for (let i = 0; i < classes.length; i += 1) {
-    for (let j = 0; j < this.length; j += 1) {
-      if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') this[j].classList.remove(classes[i]);
-    }
-  }
+function removeClass(...classes) {
+  const classNames = arrayFlat(classes.map((c) => c.split(' ')));
+  this.forEach((el) => {
+    el.classList.remove(...classNames);
+  });
   return this;
 }
-function hasClass(className) {
-  if (!this[0]) return false;
-  return this[0].classList.contains(className);
+function toggleClass(...classes) {
+  const classNames = arrayFlat(classes.map((c) => c.split(' ')));
+  this.forEach((el) => {
+    classNames.forEach((className) => {
+      el.classList.toggle(className);
+    });
+  });
 }
-function toggleClass(className) {
-  const classes = className.split(' ');
-  for (let i = 0; i < classes.length; i += 1) {
-    for (let j = 0; j < this.length; j += 1) {
-      if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') this[j].classList.toggle(classes[i]);
-    }
-  }
-  return this;
+function hasClass(...classes) {
+  const classNames = arrayFlat(classes.map((c) => c.split(' ')));
+  return (
+    arrayFilter(this, (el) => {
+      return (
+        classNames.filter((className) => el.classList.contains(className))
+          .length > 0
+      );
+    }).length > 0
+  );
 }
 function attr(attrs, value) {
   if (arguments.length === 1 && typeof attrs === 'string') {
@@ -152,7 +147,6 @@ function attr(attrs, value) {
       this[i].setAttribute(attrs, value);
     } else {
       // Object
-      // eslint-disable-next-line
       for (const attrName in attrs) {
         this[i][attrName] = attrs[attrName];
         this[i].setAttribute(attrName, attrs[attrName]);
@@ -161,14 +155,12 @@ function attr(attrs, value) {
   }
   return this;
 }
-// eslint-disable-next-line
 function removeAttr(attr) {
   for (let i = 0; i < this.length; i += 1) {
     this[i].removeAttribute(attr);
   }
   return this;
 }
-// eslint-disable-next-line
 function prop(props, value) {
   if (arguments.length === 1 && typeof props === 'string') {
     // Get prop
@@ -181,7 +173,6 @@ function prop(props, value) {
         this[i][props] = value;
       } else {
         // Object
-        // eslint-disable-next-line
         for (const propName in props) {
           this[i][propName] = props[propName];
         }
@@ -189,22 +180,21 @@ function prop(props, value) {
     }
     return this;
   }
+  return this;
 }
 function data(key, value) {
   let el;
   if (typeof value === 'undefined') {
     el = this[0];
+    if (!el) return undefined;
     // Get value
-    if (el) {
-      if (el.dom7ElementDataStorage && (key in el.dom7ElementDataStorage)) {
-        return el.dom7ElementDataStorage[key];
-      }
+    if (el.dom7ElementDataStorage && key in el.dom7ElementDataStorage) {
+      return el.dom7ElementDataStorage[key];
+    }
 
-      const dataKey = el.getAttribute(`data-${key}`);
-      if (dataKey) {
-        return dataKey;
-      }
-      return undefined;
+    const dataKey = el.getAttribute(`data-${key}`);
+    if (dataKey) {
+      return dataKey;
     }
     return undefined;
   }
@@ -231,20 +221,17 @@ function dataset() {
   if (!el) return undefined;
   const dataset = {}; // eslint-disable-line
   if (el.dataset) {
-    // eslint-disable-next-line
     for (const dataKey in el.dataset) {
       dataset[dataKey] = el.dataset[dataKey];
     }
   } else {
     for (let i = 0; i < el.attributes.length; i += 1) {
-      // eslint-disable-next-line
       const attr = el.attributes[i];
       if (attr.name.indexOf('data-') >= 0) {
         dataset[toCamelCase(attr.name.split('data-')[1])] = attr.value;
       }
     }
   }
-  // eslint-disable-next-line
   for (const key in dataset) {
     if (dataset[key] === 'false') dataset[key] = false;
     else if (dataset[key] === 'true') dataset[key] = true;
@@ -253,24 +240,28 @@ function dataset() {
   return dataset;
 }
 function val(value) {
-  const dom = this;
   if (typeof value === 'undefined') {
-    if (dom[0]) {
-      if (dom[0].multiple && dom[0].nodeName.toLowerCase() === 'select') {
-        const values = [];
-        for (let i = 0; i < dom[0].selectedOptions.length; i += 1) {
-          values.push(dom[0].selectedOptions[i].value);
-        }
-        return values;
+    // get value
+    const el = this[0];
+    if (!el) return undefined;
+    if (el.multiple && el.nodeName.toLowerCase() === 'select') {
+      const values = [];
+      for (let i = 0; i < el.selectedOptions.length; i += 1) {
+        values.push(el.selectedOptions[i].value);
       }
-      return dom[0].value;
+      return values;
     }
-    return undefined;
+    return el.value;
   }
 
-  for (let i = 0; i < dom.length; i += 1) {
-    const el = dom[i];
-    if (Array.isArray(value) && el.multiple && el.nodeName.toLowerCase() === 'select') {
+  // set value
+  for (let i = 0; i < this.length; i += 1) {
+    const el = this[i];
+    if (
+      Array.isArray(value) &&
+      el.multiple &&
+      el.nodeName.toLowerCase() === 'select'
+    ) {
       for (let j = 0; j < el.options.length; j += 1) {
         el.options[j].selected = value.indexOf(el.options[j].value) >= 0;
       }
@@ -278,30 +269,24 @@ function val(value) {
       el.value = value;
     }
   }
-  return dom;
+  return this;
 }
-// Transforms
-// eslint-disable-next-line
+function value(value) {
+  return this.val(value);
+}
 function transform(transform) {
   for (let i = 0; i < this.length; i += 1) {
-    const elStyle = this[i].style;
-    elStyle.webkitTransform = transform;
-    elStyle.transform = transform;
+    this[i].style.transform = transform;
   }
   return this;
 }
 function transition(duration) {
-  if (typeof duration !== 'string') {
-    duration = `${duration}ms`; // eslint-disable-line
-  }
   for (let i = 0; i < this.length; i += 1) {
-    const elStyle = this[i].style;
-    elStyle.webkitTransitionDuration = duration;
-    elStyle.transitionDuration = duration;
+    this[i].style.transition =
+      typeof duration !== 'string' ? `${duration}ms` : duration;
   }
   return this;
 }
-// Events
 function on(...args) {
   let [eventType, targetSelector, listener, capture] = args;
   if (typeof args[1] === 'function') {
@@ -321,7 +306,8 @@ function on(...args) {
     else {
       const parents = $(target).parents(); // eslint-disable-line
       for (let k = 0; k < parents.length; k += 1) {
-        if ($(parents[k]).is(targetSelector)) listener.apply(parents[k], eventData);
+        if ($(parents[k]).is(targetSelector))
+          listener.apply(parents[k], eventData);
       }
     }
   }
@@ -388,7 +374,12 @@ function off(...args) {
           if (listener && handler.listener === listener) {
             el.removeEventListener(event, handler.proxyListener, capture);
             handlers.splice(k, 1);
-          } else if (listener && handler.listener && handler.listener.dom7proxy && handler.listener.dom7proxy === listener) {
+          } else if (
+            listener &&
+            handler.listener &&
+            handler.listener.dom7proxy &&
+            handler.listener.dom7proxy === listener
+          ) {
             el.removeEventListener(event, handler.proxyListener, capture);
             handlers.splice(k, 1);
           } else if (!listener) {
@@ -425,19 +416,11 @@ function trigger(...args) {
     const event = events[i];
     for (let j = 0; j < this.length; j += 1) {
       const el = this[j];
-      let evt;
-      try {
-        evt = new window.CustomEvent(event, {
-          detail: eventData,
-          bubbles: true,
-          cancelable: true,
-        });
-      } catch (e) {
-        evt = document.createEvent('Event');
-        evt.initEvent(event, true, true);
-        evt.detail = eventData;
-      }
-      // eslint-disable-next-line
+      const evt = new window.CustomEvent(event, {
+        detail: eventData,
+        bubbles: true,
+        cancelable: true,
+      });
       el.dom7EventData = args.filter((data, dataIndex) => dataIndex > 0);
       el.dispatchEvent(evt);
       el.dom7EventData = [];
@@ -447,43 +430,29 @@ function trigger(...args) {
   return this;
 }
 function transitionEnd(callback) {
-  const events = ['webkitTransitionEnd', 'transitionend'];
   const dom = this;
-  let i;
   function fireCallBack(e) {
-    /* jshint validthis:true */
     if (e.target !== this) return;
     callback.call(this, e);
-    for (i = 0; i < events.length; i += 1) {
-      dom.off(events[i], fireCallBack);
-    }
+    dom.off('transitionend', fireCallBack);
   }
   if (callback) {
-    for (i = 0; i < events.length; i += 1) {
-      dom.on(events[i], fireCallBack);
-    }
+    dom.on('transitionend', fireCallBack);
   }
   return this;
 }
 function animationEnd(callback) {
-  const events = ['webkitAnimationEnd', 'animationend'];
   const dom = this;
-  let i;
   function fireCallBack(e) {
     if (e.target !== this) return;
     callback.call(this, e);
-    for (i = 0; i < events.length; i += 1) {
-      dom.off(events[i], fireCallBack);
-    }
+    dom.off('animationend', fireCallBack);
   }
   if (callback) {
-    for (i = 0; i < events.length; i += 1) {
-      dom.on(events[i], fireCallBack);
-    }
+    dom.on('animationend', fireCallBack);
   }
   return this;
 }
-// Sizing/Styles
 function width() {
   if (this[0] === window) {
     return window.innerWidth;
@@ -498,9 +467,12 @@ function width() {
 function outerWidth(includeMargins) {
   if (this.length > 0) {
     if (includeMargins) {
-      // eslint-disable-next-line
       const styles = this.styles();
-      return this[0].offsetWidth + parseFloat(styles.getPropertyValue('margin-right')) + parseFloat(styles.getPropertyValue('margin-left'));
+      return (
+        this[0].offsetWidth +
+        parseFloat(styles.getPropertyValue('margin-right')) +
+        parseFloat(styles.getPropertyValue('margin-left'))
+      );
     }
     return this[0].offsetWidth;
   }
@@ -520,9 +492,12 @@ function height() {
 function outerHeight(includeMargins) {
   if (this.length > 0) {
     if (includeMargins) {
-      // eslint-disable-next-line
       const styles = this.styles();
-      return this[0].offsetHeight + parseFloat(styles.getPropertyValue('margin-top')) + parseFloat(styles.getPropertyValue('margin-bottom'));
+      return (
+        this[0].offsetHeight +
+        parseFloat(styles.getPropertyValue('margin-top')) +
+        parseFloat(styles.getPropertyValue('margin-bottom'))
+      );
     }
     return this[0].offsetHeight;
   }
@@ -538,8 +513,8 @@ function offset() {
     const scrollTop = el === window ? window.scrollY : el.scrollTop;
     const scrollLeft = el === window ? window.scrollX : el.scrollLeft;
     return {
-      top: (box.top + scrollTop) - clientTop,
-      left: (box.left + scrollLeft) - clientLeft,
+      top: box.top + scrollTop - clientTop,
+      left: box.left + scrollLeft - clientLeft,
     };
   }
 
@@ -557,7 +532,9 @@ function show() {
     if (el.style.display === 'none') {
       el.style.display = '';
     }
-    if (window.getComputedStyle(el, null).getPropertyValue('display') === 'none') {
+    if (
+      window.getComputedStyle(el, null).getPropertyValue('display') === 'none'
+    ) {
       // Still not visible
       el.style.display = 'block';
     }
@@ -572,11 +549,13 @@ function css(props, value) {
   let i;
   if (arguments.length === 1) {
     if (typeof props === 'string') {
-      if (this[0]) return window.getComputedStyle(this[0], null).getPropertyValue(props);
+      // .css('width')
+      if (this[0])
+        return window.getComputedStyle(this[0], null).getPropertyValue(props);
     } else {
+      // .css({ width: '100px' })
       for (i = 0; i < this.length; i += 1) {
-        // eslint-disable-next-line
-        for (let prop in props) {
+        for (const prop in props) {
           this[i].style[prop] = props[prop];
         }
       }
@@ -584,6 +563,7 @@ function css(props, value) {
     }
   }
   if (arguments.length === 2 && typeof props === 'string') {
+    // .css('width', '100px')
     for (i = 0; i < this.length; i += 1) {
       this[i].style[props] = value;
     }
@@ -591,64 +571,17 @@ function css(props, value) {
   }
   return this;
 }
-
-// Dom manipulation
-function toArray() {
-  const arr = [];
-  for (let i = 0; i < this.length; i += 1) {
-    arr.push(this[i]);
-  }
-  return arr;
-}
-// Iterate over the collection passing elements to `callback`
 function each(callback) {
-  // Don't bother continuing without a callback
-  if (!callback) return this;
-  // Iterate over the current collection
-  for (let i = 0; i < this.length; i += 1) {
-    // If the callback returns false
-    if (callback.call(this[i], i, this[i]) === false) {
-      // End the loop early
-      return this;
-    }
-  }
-  // Return `this` to allow chained DOM operations
-  return this;
-}
-function forEach(callback) {
-  // Don't bother continuing without a callback
-  if (!callback) return this;
-  // Iterate over the current collection
-  for (let i = 0; i < this.length; i += 1) {
-    // If the callback returns false
-    if (callback.call(this[i], this[i], i) === false) {
-      // End the loop early
-      return this;
-    }
-  }
-  // Return `this` to allow chained DOM operations
+  this.forEach(callback);
   return this;
 }
 function filter(callback) {
-  const matchedItems = [];
-  const dom = this;
-  for (let i = 0; i < dom.length; i += 1) {
-    if (callback.call(dom[i], i, dom[i])) matchedItems.push(dom[i]);
-  }
-  return new Dom7(matchedItems);
+  const result = arrayFilter(this, callback);
+  return $(result);
 }
-function map(callback) {
-  const modifiedItems = [];
-  const dom = this;
-  for (let i = 0; i < dom.length; i += 1) {
-    modifiedItems.push(callback.call(dom[i], i, dom[i]));
-  }
-  return new Dom7(modifiedItems);
-}
-// eslint-disable-next-line
 function html(html) {
   if (typeof html === 'undefined') {
-    return this[0] ? this[0].innerHTML : undefined;
+    return this[0] ? this[0].innerHTML : null;
   }
 
   for (let i = 0; i < this.length; i += 1) {
@@ -656,13 +589,9 @@ function html(html) {
   }
   return this;
 }
-// eslint-disable-next-line
 function text(text) {
   if (typeof text === 'undefined') {
-    if (this[0]) {
-      return this[0].textContent.trim();
-    }
-    return null;
+    return this[0] ? this[0].textContent.trim() : null;
   }
 
   for (let i = 0; i < this.length; i += 1) {
@@ -677,16 +606,21 @@ function is(selector) {
   if (!el || typeof selector === 'undefined') return false;
   if (typeof selector === 'string') {
     if (el.matches) return el.matches(selector);
-    else if (el.webkitMatchesSelector) return el.webkitMatchesSelector(selector);
-    else if (el.msMatchesSelector) return el.msMatchesSelector(selector);
+    if (el.webkitMatchesSelector) return el.webkitMatchesSelector(selector);
+    if (el.msMatchesSelector) return el.msMatchesSelector(selector);
 
     compareWith = $(selector);
     for (i = 0; i < compareWith.length; i += 1) {
       if (compareWith[i] === el) return true;
     }
     return false;
-  } else if (selector === document) return el === document;
-  else if (selector === window) return el === window;
+  }
+  if (selector === document) {
+    return el === document;
+  }
+  if (selector === window) {
+    return el === window;
+  }
 
   if (selector.nodeType || selector instanceof Dom7) {
     compareWith = selector.nodeType ? [selector] : selector;
@@ -697,45 +631,24 @@ function is(selector) {
   }
   return false;
 }
-function indexOf(el) {
-  for (let i = 0; i < this.length; i += 1) {
-    if (this[i] === el) return i;
-  }
-  return -1;
-}
-function index() {
-  let child = this[0];
-  let i;
-  if (child) {
-    i = 0;
-    // eslint-disable-next-line
-    while ((child = child.previousSibling) !== null) {
-      if (child.nodeType === 1) i += 1;
-    }
-    return i;
-  }
-  return undefined;
-}
-// eslint-disable-next-line
 function eq(index) {
   if (typeof index === 'undefined') return this;
   const length = this.length;
-  let returnIndex;
   if (index > length - 1) {
-    return new Dom7([]);
+    return $([]);
   }
   if (index < 0) {
-    returnIndex = length + index;
-    if (returnIndex < 0) return new Dom7([]);
-    return new Dom7([this[returnIndex]]);
+    const returnIndex = length + index;
+    if (returnIndex < 0) return $([]);
+    return $([this[returnIndex]]);
   }
-  return new Dom7([this[index]]);
+  return $([this[index]]);
 }
-function append(...args) {
+function append(...els) {
   let newChild;
 
-  for (let k = 0; k < args.length; k += 1) {
-    newChild = args[k];
+  for (let k = 0; k < els.length; k += 1) {
+    newChild = els[k];
     for (let i = 0; i < this.length; i += 1) {
       if (typeof newChild === 'string') {
         const tempDiv = document.createElement('div');
@@ -755,7 +668,6 @@ function append(...args) {
 
   return this;
 }
-// eslint-disable-next-line
 function appendTo(parent) {
   $(parent).append(this);
   return this;
@@ -780,7 +692,6 @@ function prepend(newChild) {
   }
   return this;
 }
-// eslint-disable-next-line
 function prependTo(parent) {
   $(parent).prepend(this);
   return this;
@@ -804,7 +715,10 @@ function insertAfter(selector) {
       after[0].parentNode.insertBefore(this[i], after[0].nextSibling);
     } else if (after.length > 1) {
       for (let j = 0; j < after.length; j += 1) {
-        after[j].parentNode.insertBefore(this[i].cloneNode(true), after[j].nextSibling);
+        after[j].parentNode.insertBefore(
+          this[i].cloneNode(true),
+          after[j].nextSibling,
+        );
       }
     }
   }
@@ -812,21 +726,24 @@ function insertAfter(selector) {
 function next(selector) {
   if (this.length > 0) {
     if (selector) {
-      if (this[0].nextElementSibling && $(this[0].nextElementSibling).is(selector)) {
-        return new Dom7([this[0].nextElementSibling]);
+      if (
+        this[0].nextElementSibling &&
+        $(this[0].nextElementSibling).is(selector)
+      ) {
+        return $([this[0].nextElementSibling]);
       }
-      return new Dom7([]);
+      return $([]);
     }
 
-    if (this[0].nextElementSibling) return new Dom7([this[0].nextElementSibling]);
-    return new Dom7([]);
+    if (this[0].nextElementSibling) return $([this[0].nextElementSibling]);
+    return $([]);
   }
-  return new Dom7([]);
+  return $([]);
 }
 function nextAll(selector) {
   const nextEls = [];
   let el = this[0];
-  if (!el) return new Dom7([]);
+  if (!el) return $([]);
   while (el.nextElementSibling) {
     const next = el.nextElementSibling; // eslint-disable-line
     if (selector) {
@@ -834,27 +751,30 @@ function nextAll(selector) {
     } else nextEls.push(next);
     el = next;
   }
-  return new Dom7(nextEls);
+  return $(nextEls);
 }
 function prev(selector) {
   if (this.length > 0) {
     const el = this[0];
     if (selector) {
-      if (el.previousElementSibling && $(el.previousElementSibling).is(selector)) {
-        return new Dom7([el.previousElementSibling]);
+      if (
+        el.previousElementSibling &&
+        $(el.previousElementSibling).is(selector)
+      ) {
+        return $([el.previousElementSibling]);
       }
-      return new Dom7([]);
+      return $([]);
     }
 
-    if (el.previousElementSibling) return new Dom7([el.previousElementSibling]);
-    return new Dom7([]);
+    if (el.previousElementSibling) return $([el.previousElementSibling]);
+    return $([]);
   }
-  return new Dom7([]);
+  return $([]);
 }
 function prevAll(selector) {
   const prevEls = [];
   let el = this[0];
-  if (!el) return new Dom7([]);
+  if (!el) return $([]);
   while (el.previousElementSibling) {
     const prev = el.previousElementSibling; // eslint-disable-line
     if (selector) {
@@ -862,7 +782,7 @@ function prevAll(selector) {
     } else prevEls.push(prev);
     el = prev;
   }
-  return new Dom7(prevEls);
+  return $(prevEls);
 }
 function siblings(selector) {
   return this.nextAll(selector).add(this.prevAll(selector));
@@ -872,13 +792,14 @@ function parent(selector) {
   for (let i = 0; i < this.length; i += 1) {
     if (this[i].parentNode !== null) {
       if (selector) {
-        if ($(this[i].parentNode).is(selector)) parents.push(this[i].parentNode);
+        if ($(this[i].parentNode).is(selector))
+          parents.push(this[i].parentNode);
       } else {
         parents.push(this[i].parentNode);
       }
     }
   }
-  return $(unique(parents));
+  return $(parents);
 }
 function parents(selector) {
   const parents = []; // eslint-disable-line
@@ -893,12 +814,12 @@ function parents(selector) {
       parent = parent.parentNode;
     }
   }
-  return $(unique(parents));
+  return $(parents);
 }
 function closest(selector) {
   let closest = this; // eslint-disable-line
   if (typeof selector === 'undefined') {
-    return new Dom7([]);
+    return $([]);
   }
   if (!closest.is(selector)) {
     closest = closest.parents(selector).eq(0);
@@ -913,22 +834,20 @@ function find(selector) {
       foundElements.push(found[j]);
     }
   }
-  return new Dom7(foundElements);
+  return $(foundElements);
 }
 function children(selector) {
   const children = []; // eslint-disable-line
   for (let i = 0; i < this.length; i += 1) {
-    const childNodes = this[i].childNodes;
+    const childNodes = this[i].children;
 
     for (let j = 0; j < childNodes.length; j += 1) {
-      if (!selector) {
-        if (childNodes[j].nodeType === 1) children.push(childNodes[j]);
-      } else if (childNodes[j].nodeType === 1 && $(childNodes[j]).is(selector)) {
+      if (!selector || $(childNodes[j]).is(selector)) {
         children.push(childNodes[j]);
       }
     }
   }
-  return new Dom7(unique(children));
+  return $(children);
 }
 function remove() {
   for (let i = 0; i < this.length; i += 1) {
@@ -939,17 +858,9 @@ function remove() {
 function detach() {
   return this.remove();
 }
-function add(...args) {
+function add(...els) {
   const dom = this;
-  let i;
-  let j;
-  for (i = 0; i < args.length; i += 1) {
-    const toAdd = $(args[i]);
-    for (j = 0; j < toAdd.length; j += 1) {
-      dom[dom.length] = toAdd[j];
-      dom.length += 1;
-    }
-  }
+  dom.push(...els);
   return dom;
 }
 function empty() {
@@ -966,6 +877,65 @@ function empty() {
   }
   return this;
 }
+
+var methods = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  addClass: addClass,
+  removeClass: removeClass,
+  toggleClass: toggleClass,
+  hasClass: hasClass,
+  attr: attr,
+  removeAttr: removeAttr,
+  prop: prop,
+  data: data,
+  removeData: removeData,
+  dataset: dataset,
+  val: val,
+  value: value,
+  transform: transform,
+  transition: transition,
+  on: on,
+  off: off,
+  once: once,
+  trigger: trigger,
+  transitionEnd: transitionEnd,
+  animationEnd: animationEnd,
+  width: width,
+  outerWidth: outerWidth,
+  height: height,
+  outerHeight: outerHeight,
+  offset: offset,
+  hide: hide,
+  show: show,
+  styles: styles,
+  css: css,
+  each: each,
+  filter: filter,
+  html: html,
+  text: text,
+  is: is,
+  eq: eq,
+  append: append,
+  appendTo: appendTo,
+  prepend: prepend,
+  prependTo: prependTo,
+  insertBefore: insertBefore,
+  insertAfter: insertAfter,
+  next: next,
+  nextAll: nextAll,
+  prev: prev,
+  prevAll: prevAll,
+  siblings: siblings,
+  parent: parent,
+  parents: parents,
+  closest: closest,
+  find: find,
+  children: children,
+  remove: remove,
+  detach: detach,
+  add: add,
+  empty: empty
+});
 
 function scrollTo(...args) {
   let [left, top, duration, easing, callback] = args;
@@ -1019,10 +989,13 @@ function scrollTo(...args) {
         startTime = time;
       }
       const progress = Math.max(Math.min((time - startTime) / duration, 1), 0);
-      const easeProgress = easing === 'linear' ? progress : (0.5 - (Math.cos(progress * Math.PI) / 2));
+      const easeProgress =
+        easing === 'linear' ? progress : 0.5 - Math.cos(progress * Math.PI) / 2;
       let done;
-      if (animateTop) scrollTop = currentTop + (easeProgress * (newTop - currentTop));
-      if (animateLeft) scrollLeft = currentLeft + (easeProgress * (newLeft - currentLeft));
+      if (animateTop)
+        scrollTop = currentTop + easeProgress * (newTop - currentTop);
+      if (animateLeft)
+        scrollLeft = currentLeft + easeProgress * (newLeft - currentLeft);
       if (animateTop && newTop > currentTop && scrollTop >= newTop) {
         el.scrollTop = newTop;
         done = true;
@@ -1046,9 +1019,9 @@ function scrollTo(...args) {
       }
       if (animateTop) el.scrollTop = scrollTop;
       if (animateLeft) el.scrollLeft = scrollLeft;
-      requestAnimationFrame(render);
+      window.requestAnimationFrame(render);
     }
-    requestAnimationFrame(render);
+    window.requestAnimationFrame(render);
   });
 }
 // scrollTop(top, duration, easing, callback) {
@@ -1077,19 +1050,29 @@ function scrollLeft(...args) {
   return dom.scrollTo(left, undefined, duration, easing, callback);
 }
 
+var scroll = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  scrollTo: scrollTo,
+  scrollTop: scrollTop,
+  scrollLeft: scrollLeft
+});
+
 function animate(initialProps, initialParams) {
   const els = this;
   const a = {
     props: Object.assign({}, initialProps),
-    params: Object.assign({
-      duration: 300,
-      easing: 'swing', // or 'linear'
-      /* Callbacks
-      begin(elements)
-      complete(elements)
-      progress(elements, complete, remaining, start, tweenValue)
-      */
-    }, initialParams),
+    params: Object.assign(
+      {
+        duration: 300,
+        easing: 'swing', // or 'linear'
+        /* Callbacks
+        begin(elements)
+        complete(elements)
+        progress(elements, complete, remaining, start, tweenValue)
+        */
+      },
+      initialParams,
+    ),
 
     elements: els,
     animating: false,
@@ -1097,7 +1080,7 @@ function animate(initialProps, initialParams) {
 
     easingProgress(easing, progress) {
       if (easing === 'swing') {
-        return 0.5 - (Math.cos(progress * Math.PI) / 2);
+        return 0.5 - Math.cos(progress * Math.PI) / 2;
       }
       if (typeof easing === 'function') {
         return easing(progress);
@@ -1106,7 +1089,7 @@ function animate(initialProps, initialParams) {
     },
     stop() {
       if (a.frameId) {
-        cancelAnimationFrame(a.frameId);
+        window.cancelAnimationFrame(a.frameId);
       }
       a.animating = false;
       a.elements.each((index, el) => {
@@ -1148,7 +1131,10 @@ function animate(initialProps, initialParams) {
           container: el,
         };
         Object.keys(props).forEach((prop) => {
-          initialFullValue = window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
+          initialFullValue = window
+            .getComputedStyle(el, null)
+            .getPropertyValue(prop)
+            .replace(',', '.');
           initialValue = parseFloat(initialFullValue);
           unit = initialFullValue.replace(initialValue, '');
           finalValue = parseFloat(props[prop]);
@@ -1187,7 +1173,14 @@ function animate(initialProps, initialParams) {
         }
         if (params.progress) {
           // eslint-disable-next-line
-          params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), ((startTime + params.duration) - time < 0 ? 0 : (startTime + params.duration) - time), startTime);
+          params.progress(
+            els,
+            Math.max(Math.min((time - startTime) / params.duration, 1), 0),
+            startTime + params.duration - time < 0
+              ? 0
+              : startTime + params.duration - time,
+            startTime,
+          );
         }
 
         elements.forEach((element) => {
@@ -1195,15 +1188,20 @@ function animate(initialProps, initialParams) {
           if (done || el.done) return;
           Object.keys(props).forEach((prop) => {
             if (done || el.done) return;
-            progress = Math.max(Math.min((time - startTime) / params.duration, 1), 0);
+            progress = Math.max(
+              Math.min((time - startTime) / params.duration, 1),
+              0,
+            );
             easeProgress = a.easingProgress(params.easing, progress);
             const { initialValue, finalValue, unit } = el[prop];
-            el[prop].currentValue = initialValue + (easeProgress * (finalValue - initialValue));
+            el[prop].currentValue =
+              initialValue + easeProgress * (finalValue - initialValue);
             const currentValue = el[prop].currentValue;
 
             if (
               (finalValue > initialValue && currentValue >= finalValue) ||
-              (finalValue < initialValue && currentValue <= finalValue)) {
+              (finalValue < initialValue && currentValue <= finalValue)
+            ) {
               el.container.style[prop] = finalValue + unit;
               propsDone += 1;
               if (propsDone === Object.keys(props).length) {
@@ -1223,9 +1221,9 @@ function animate(initialProps, initialParams) {
         });
         if (done) return;
         // Then call
-        a.frameId = requestAnimationFrame(render);
+        a.frameId = window.requestAnimationFrame(render);
       }
-      a.frameId = requestAnimationFrame(render);
+      a.frameId = window.requestAnimationFrame(render);
       return a;
     },
   };
@@ -1262,8 +1260,14 @@ function stop() {
   }
 }
 
-const noTrigger = ('resize scroll').split(' ');
-function eventShortcut(name, ...args) {
+var animate$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  animate: animate,
+  stop: stop
+});
+
+const noTrigger = 'resize scroll'.split(' ');
+function shortcut(name, ...args) {
   if (typeof args[0] === 'undefined') {
     for (let i = 0; i < this.length; i += 1) {
       if (noTrigger.indexOf(name) < 0) {
@@ -1277,72 +1281,40 @@ function eventShortcut(name, ...args) {
   }
   return this.on(name, ...args);
 }
+const shortcuts = {};
+[
+  'click',
+  'blur',
+  'focus',
+  'focusin',
+  'focusout',
+  'keyup',
+  'keydown',
+  'keypress',
+  'submit',
+  'change',
+  'mousedown',
+  'mousemove',
+  'mouseup',
+  'mouseenter',
+  'mouseleave',
+  'mouseout',
+  'mouseover',
+  'touchstart',
+  'touchend',
+  'touchmove',
+  'resize',
+  'scroll',
+].forEach((name) => {
+  shortcuts[name] = function eventHandler(...args) {
+    return shortcut.bind(this)(name, ...args);
+  };
+});
 
-function click(...args) {
-  return eventShortcut.bind(this)('click', ...args);
-}
-function blur(...args) {
-  return eventShortcut.bind(this)('blur', ...args);
-}
-function focus(...args) {
-  return eventShortcut.bind(this)('focus', ...args);
-}
-function focusin(...args) {
-  return eventShortcut.bind(this)('focusin', ...args);
-}
-function focusout(...args) {
-  return eventShortcut.bind(this)('focusout', ...args);
-}
-function keyup(...args) {
-  return eventShortcut.bind(this)('keyup', ...args);
-}
-function keydown(...args) {
-  return eventShortcut.bind(this)('keydown', ...args);
-}
-function keypress(...args) {
-  return eventShortcut.bind(this)('keypress', ...args);
-}
-function submit(...args) {
-  return eventShortcut.bind(this)('submit', ...args);
-}
-function change(...args) {
-  return eventShortcut.bind(this)('change', ...args);
-}
-function mousedown(...args) {
-  return eventShortcut.bind(this)('mousedown', ...args);
-}
-function mousemove(...args) {
-  return eventShortcut.bind(this)('mousemove', ...args);
-}
-function mouseup(...args) {
-  return eventShortcut.bind(this)('mouseup', ...args);
-}
-function mouseenter(...args) {
-  return eventShortcut.bind(this)('mouseenter', ...args);
-}
-function mouseleave(...args) {
-  return eventShortcut.bind(this)('mouseleave', ...args);
-}
-function mouseout(...args) {
-  return eventShortcut.bind(this)('mouseout', ...args);
-}
-function mouseover(...args) {
-  return eventShortcut.bind(this)('mouseover', ...args);
-}
-function touchstart(...args) {
-  return eventShortcut.bind(this)('touchstart', ...args);
-}
-function touchend(...args) {
-  return eventShortcut.bind(this)('touchend', ...args);
-}
-function touchmove(...args) {
-  return eventShortcut.bind(this)('touchmove', ...args);
-}
-function resize(...args) {
-  return eventShortcut.bind(this)('resize', ...args);
-}
-function scroll(...args) {
-  return eventShortcut.bind(this)('scroll', ...args);
-}
+[methods, scroll, animate$1, shortcuts].forEach((group) => {
+  Object.keys(group).forEach((methodName) => {
+    $.fn[methodName] = group[methodName];
+  });
+});
 
-export { $, addClass, removeClass, hasClass, toggleClass, attr, removeAttr, prop, data, removeData, dataset, val, transform, transition, on, off, once, trigger, transitionEnd, animationEnd, width, outerWidth, height, outerHeight, offset, hide, show, styles, css, toArray, each, forEach, filter, map, html, text, is, indexOf, index, eq, append, appendTo, prepend, prependTo, insertBefore, insertAfter, next, nextAll, prev, prevAll, siblings, parent, parents, closest, find, children, remove, detach, add, empty, scrollTo, scrollTop, scrollLeft, animate, stop, click, blur, focus, focusin, focusout, keyup, keydown, keypress, submit, change, mousedown, mousemove, mouseup, mouseenter, mouseleave, mouseout, mouseover, touchstart, touchend, touchmove, resize, scroll };
+export default $;

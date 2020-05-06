@@ -35,7 +35,7 @@ function animate(initialProps, initialParams) {
         window.cancelAnimationFrame(a.frameId);
       }
       a.animating = false;
-      a.elements.each((index, el) => {
+      a.elements.each((el) => {
         const element = el;
         delete element.dom7AnimateInstance;
       });
@@ -43,7 +43,7 @@ function animate(initialProps, initialParams) {
     },
     done(complete) {
       a.animating = false;
-      a.elements.each((index, el) => {
+      a.elements.each((el) => {
         const element = el;
         delete element.dom7AnimateInstance;
       });
@@ -61,7 +61,7 @@ function animate(initialProps, initialParams) {
       const elements = [];
 
       // Define & Cache Initials & Units
-      a.elements.each((index, el) => {
+      a.elements.each((el, index) => {
         let initialFullValue;
         let initialValue;
         let unit;

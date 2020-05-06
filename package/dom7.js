@@ -3,19 +3,19 @@
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
- * Copyright 2019, Vladimir Kharlampidi
+ * Copyright 2020, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  *
  * Licensed under MIT
  *
- * Released on: February 11, 2019
+ * Released on: May 6, 2020
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = global || self, global.Dom7 = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
   /**
    * SSR Window 1.0.1
@@ -90,73 +90,35 @@
     clearTimeout: function clearTimeout() {},
   } : window; // eslint-disable-line
 
-  var Dom7 = function Dom7(arr) {
-    var self = this;
-    // Create array-like object
-    for (var i = 0; i < arr.length; i += 1) {
-      self[i] = arr[i];
+  var Dom7 = /*@__PURE__*/(function (Array) {
+    function Dom7(items) {
+      Array.apply(this, items);
     }
-    self.length = arr.length;
-    // Return collection with methods
-    return this;
-  };
 
-  function $(selector, context) {
-    var arr = [];
-    var i = 0;
-    if (selector && !context) {
-      if (selector instanceof Dom7) {
-        return selector;
+    if ( Array ) Dom7.__proto__ = Array;
+    Dom7.prototype = Object.create( Array && Array.prototype );
+    Dom7.prototype.constructor = Dom7;
+
+    return Dom7;
+  }(Array));
+
+  function arrayFlat(arr) {
+    if ( arr === void 0 ) arr = [];
+
+    var res = [];
+    arr.forEach(function (el) {
+      if (Array.isArray(el)) {
+        res.push.apply(res, arrayFlat(el));
+      } else {
+        res.push(el);
       }
-    }
-    if (selector) {
-        // String
-      if (typeof selector === 'string') {
-        var els;
-        var tempParent;
-        var html = selector.trim();
-        if (html.indexOf('<') >= 0 && html.indexOf('>') >= 0) {
-          var toCreate = 'div';
-          if (html.indexOf('<li') === 0) { toCreate = 'ul'; }
-          if (html.indexOf('<tr') === 0) { toCreate = 'tbody'; }
-          if (html.indexOf('<td') === 0 || html.indexOf('<th') === 0) { toCreate = 'tr'; }
-          if (html.indexOf('<tbody') === 0) { toCreate = 'table'; }
-          if (html.indexOf('<option') === 0) { toCreate = 'select'; }
-          tempParent = doc.createElement(toCreate);
-          tempParent.innerHTML = html;
-          for (i = 0; i < tempParent.childNodes.length; i += 1) {
-            arr.push(tempParent.childNodes[i]);
-          }
-        } else {
-          if (!context && selector[0] === '#' && !selector.match(/[ .<>:~]/)) {
-            // Pure ID selector
-            els = [doc.getElementById(selector.trim().split('#')[1])];
-          } else {
-            // Other selectors
-            els = (context || doc).querySelectorAll(selector.trim());
-          }
-          for (i = 0; i < els.length; i += 1) {
-            if (els[i]) { arr.push(els[i]); }
-          }
-        }
-      } else if (selector.nodeType || selector === win || selector === doc) {
-        // Node/element
-        arr.push(selector);
-      } else if (selector.length > 0 && selector[0].nodeType) {
-        // Array of elements or instance of Dom
-        for (i = 0; i < selector.length; i += 1) {
-          arr.push(selector[i]);
-        }
-      }
-    }
-    return new Dom7(arr);
+    });
+    return res;
   }
-
-  $.fn = Dom7.prototype;
-  $.Class = Dom7;
-  $.Dom7 = Dom7;
-
-  function unique(arr) {
+  function arrayFilter(arr, callback) {
+    return Array.prototype.filter.call(arr, callback);
+  }
+  function arrayUnique(arr) {
     var uniqueArray = [];
     for (var i = 0; i < arr.length; i += 1) {
       if (uniqueArray.indexOf(arr[i]) === -1) { uniqueArray.push(arr[i]); }
@@ -164,54 +126,113 @@
     return uniqueArray;
   }
   function toCamelCase(string) {
-    return string.toLowerCase().replace(/-(.)/g, function (match, group1) { return group1.toUpperCase(); });
+    return string
+      .toLowerCase()
+      .replace(/-(.)/g, function (match, group) { return group.toUpperCase(); });
   }
 
-  function requestAnimationFrame(callback) {
-    if (win.requestAnimationFrame) { return win.requestAnimationFrame(callback); }
-    else if (win.webkitRequestAnimationFrame) { return win.webkitRequestAnimationFrame(callback); }
-    return win.setTimeout(callback, 1000 / 60);
-  }
-  function cancelAnimationFrame(id) {
-    if (win.cancelAnimationFrame) { return win.cancelAnimationFrame(id); }
-    else if (win.webkitCancelAnimationFrame) { return win.webkitCancelAnimationFrame(id); }
-    return win.clearTimeout(id);
+  function qsa(selector, context) {
+    if (typeof selector !== 'string') {
+      return [selector];
+    }
+    var a = [];
+    var res = context.querySelectorAll(selector);
+    for (var i = 0; i < res.length; i += 1) {
+      a.push(res[i]);
+    }
+    return a;
   }
 
-  // Classes and attributes
-  function addClass(className) {
-    if (typeof className === 'undefined') {
-      return this;
+  function $(selector, context) {
+    var arr = [];
+    if (!context && selector instanceof Dom7) {
+      return selector;
     }
-    var classes = className.split(' ');
-    for (var i = 0; i < classes.length; i += 1) {
-      for (var j = 0; j < this.length; j += 1) {
-        if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') { this[j].classList.add(classes[i]); }
+    if (!selector) {
+      return new Dom7(arr);
+    }
+    if (typeof selector === 'string') {
+      var html = selector.trim();
+      if (html.indexOf('<') >= 0 && html.indexOf('>') >= 0) {
+        var toCreate = 'div';
+        if (html.indexOf('<li') === 0) { toCreate = 'ul'; }
+        if (html.indexOf('<tr') === 0) { toCreate = 'tbody'; }
+        if (html.indexOf('<td') === 0 || html.indexOf('<th') === 0)
+          { toCreate = 'tr'; }
+        if (html.indexOf('<tbody') === 0) { toCreate = 'table'; }
+        if (html.indexOf('<option') === 0) { toCreate = 'select'; }
+        var tempParent = doc.createElement(toCreate);
+        tempParent.innerHTML = html;
+        for (var i = 0; i < tempParent.childNodes.length; i += 1) {
+          arr.push(tempParent.childNodes[i]);
+        }
+      } else {
+        arr = qsa(selector.trim(), context || doc);
       }
+      // arr = qsa(selector, document);
+    } else if (
+      selector.nodeType ||
+      selector === win ||
+      selector === doc
+    ) {
+      arr.push(selector);
+    } else if (Array.isArray(selector)) {
+      if (selector instanceof Dom7) { return selector; }
+      arr = selector;
     }
+    return new Dom7(arrayUnique(arr));
+  }
+
+  $.fn = Dom7.prototype;
+
+  function addClass() {
+    var classes = [], len = arguments.length;
+    while ( len-- ) classes[ len ] = arguments[ len ];
+
+    var classNames = arrayFlat(classes.map(function (c) { return c.split(' '); }));
+    this.forEach(function (el) {
+      var ref;
+
+      (ref = el.classList).add.apply(ref, classNames);
+    });
     return this;
   }
-  function removeClass(className) {
-    var classes = className.split(' ');
-    for (var i = 0; i < classes.length; i += 1) {
-      for (var j = 0; j < this.length; j += 1) {
-        if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') { this[j].classList.remove(classes[i]); }
-      }
-    }
+  function removeClass() {
+    var classes = [], len = arguments.length;
+    while ( len-- ) classes[ len ] = arguments[ len ];
+
+    var classNames = arrayFlat(classes.map(function (c) { return c.split(' '); }));
+    this.forEach(function (el) {
+      var ref;
+
+      (ref = el.classList).remove.apply(ref, classNames);
+    });
     return this;
   }
-  function hasClass(className) {
-    if (!this[0]) { return false; }
-    return this[0].classList.contains(className);
+  function toggleClass() {
+    var classes = [], len = arguments.length;
+    while ( len-- ) classes[ len ] = arguments[ len ];
+
+    var classNames = arrayFlat(classes.map(function (c) { return c.split(' '); }));
+    this.forEach(function (el) {
+      classNames.forEach(function (className) {
+        el.classList.toggle(className);
+      });
+    });
   }
-  function toggleClass(className) {
-    var classes = className.split(' ');
-    for (var i = 0; i < classes.length; i += 1) {
-      for (var j = 0; j < this.length; j += 1) {
-        if (typeof this[j] !== 'undefined' && typeof this[j].classList !== 'undefined') { this[j].classList.toggle(classes[i]); }
-      }
-    }
-    return this;
+  function hasClass() {
+    var classes = [], len = arguments.length;
+    while ( len-- ) classes[ len ] = arguments[ len ];
+
+    var classNames = arrayFlat(classes.map(function (c) { return c.split(' '); }));
+    return (
+      arrayFilter(this, function (el) {
+        return (
+          classNames.filter(function (className) { return el.classList.contains(className); })
+            .length > 0
+        );
+      }).length > 0
+    );
   }
   function attr(attrs, value) {
     var arguments$1 = arguments;
@@ -229,7 +250,6 @@
         this[i].setAttribute(attrs, value);
       } else {
         // Object
-        // eslint-disable-next-line
         for (var attrName in attrs) {
           this[i][attrName] = attrs[attrName];
           this[i].setAttribute(attrName, attrs[attrName]);
@@ -238,14 +258,12 @@
     }
     return this;
   }
-  // eslint-disable-next-line
   function removeAttr(attr) {
     for (var i = 0; i < this.length; i += 1) {
       this[i].removeAttribute(attr);
     }
     return this;
   }
-  // eslint-disable-next-line
   function prop(props, value) {
     var arguments$1 = arguments;
 
@@ -260,7 +278,6 @@
           this[i][props] = value;
         } else {
           // Object
-          // eslint-disable-next-line
           for (var propName in props) {
             this[i][propName] = props[propName];
           }
@@ -268,22 +285,21 @@
       }
       return this;
     }
+    return this;
   }
   function data(key, value) {
     var el;
     if (typeof value === 'undefined') {
       el = this[0];
+      if (!el) { return undefined; }
       // Get value
-      if (el) {
-        if (el.dom7ElementDataStorage && (key in el.dom7ElementDataStorage)) {
-          return el.dom7ElementDataStorage[key];
-        }
+      if (el.dom7ElementDataStorage && key in el.dom7ElementDataStorage) {
+        return el.dom7ElementDataStorage[key];
+      }
 
-        var dataKey = el.getAttribute(("data-" + key));
-        if (dataKey) {
-          return dataKey;
-        }
-        return undefined;
+      var dataKey = el.getAttribute(("data-" + key));
+      if (dataKey) {
+        return dataKey;
       }
       return undefined;
     }
@@ -310,20 +326,17 @@
     if (!el) { return undefined; }
     var dataset = {}; // eslint-disable-line
     if (el.dataset) {
-      // eslint-disable-next-line
       for (var dataKey in el.dataset) {
         dataset[dataKey] = el.dataset[dataKey];
       }
     } else {
       for (var i = 0; i < el.attributes.length; i += 1) {
-        // eslint-disable-next-line
         var attr = el.attributes[i];
         if (attr.name.indexOf('data-') >= 0) {
           dataset[toCamelCase(attr.name.split('data-')[1])] = attr.value;
         }
       }
     }
-    // eslint-disable-next-line
     for (var key in dataset) {
       if (dataset[key] === 'false') { dataset[key] = false; }
       else if (dataset[key] === 'true') { dataset[key] = true; }
@@ -332,55 +345,53 @@
     return dataset;
   }
   function val(value) {
-    var dom = this;
     if (typeof value === 'undefined') {
-      if (dom[0]) {
-        if (dom[0].multiple && dom[0].nodeName.toLowerCase() === 'select') {
-          var values = [];
-          for (var i = 0; i < dom[0].selectedOptions.length; i += 1) {
-            values.push(dom[0].selectedOptions[i].value);
-          }
-          return values;
+      // get value
+      var el = this[0];
+      if (!el) { return undefined; }
+      if (el.multiple && el.nodeName.toLowerCase() === 'select') {
+        var values = [];
+        for (var i = 0; i < el.selectedOptions.length; i += 1) {
+          values.push(el.selectedOptions[i].value);
         }
-        return dom[0].value;
+        return values;
       }
-      return undefined;
+      return el.value;
     }
 
-    for (var i$1 = 0; i$1 < dom.length; i$1 += 1) {
-      var el = dom[i$1];
-      if (Array.isArray(value) && el.multiple && el.nodeName.toLowerCase() === 'select') {
-        for (var j = 0; j < el.options.length; j += 1) {
-          el.options[j].selected = value.indexOf(el.options[j].value) >= 0;
+    // set value
+    for (var i$1 = 0; i$1 < this.length; i$1 += 1) {
+      var el$1 = this[i$1];
+      if (
+        Array.isArray(value) &&
+        el$1.multiple &&
+        el$1.nodeName.toLowerCase() === 'select'
+      ) {
+        for (var j = 0; j < el$1.options.length; j += 1) {
+          el$1.options[j].selected = value.indexOf(el$1.options[j].value) >= 0;
         }
       } else {
-        el.value = value;
+        el$1.value = value;
       }
     }
-    return dom;
+    return this;
   }
-  // Transforms
-  // eslint-disable-next-line
+  function value(value) {
+    return this.val(value);
+  }
   function transform(transform) {
     for (var i = 0; i < this.length; i += 1) {
-      var elStyle = this[i].style;
-      elStyle.webkitTransform = transform;
-      elStyle.transform = transform;
+      this[i].style.transform = transform;
     }
     return this;
   }
   function transition(duration) {
-    if (typeof duration !== 'string') {
-      duration = duration + "ms"; // eslint-disable-line
-    }
     for (var i = 0; i < this.length; i += 1) {
-      var elStyle = this[i].style;
-      elStyle.webkitTransitionDuration = duration;
-      elStyle.transitionDuration = duration;
+      this[i].style.transition =
+        typeof duration !== 'string' ? (duration + "ms") : duration;
     }
     return this;
   }
-  // Events
   function on() {
     var assign;
 
@@ -407,7 +418,8 @@
       else {
         var parents = $(target).parents(); // eslint-disable-line
         for (var k = 0; k < parents.length; k += 1) {
-          if ($(parents[k]).is(targetSelector)) { listener.apply(parents[k], eventData); }
+          if ($(parents[k]).is(targetSelector))
+            { listener.apply(parents[k], eventData); }
         }
       }
     }
@@ -481,7 +493,12 @@
             if (listener && handler.listener === listener) {
               el.removeEventListener(event, handler.proxyListener, capture);
               handlers.splice(k, 1);
-            } else if (listener && handler.listener && handler.listener.dom7proxy && handler.listener.dom7proxy === listener) {
+            } else if (
+              listener &&
+              handler.listener &&
+              handler.listener.dom7proxy &&
+              handler.listener.dom7proxy === listener
+            ) {
               el.removeEventListener(event, handler.proxyListener, capture);
               handlers.splice(k, 1);
             } else if (!listener) {
@@ -531,19 +548,11 @@
       var event = events[i];
       for (var j = 0; j < this.length; j += 1) {
         var el = this[j];
-        var evt = (void 0);
-        try {
-          evt = new win.CustomEvent(event, {
-            detail: eventData,
-            bubbles: true,
-            cancelable: true,
-          });
-        } catch (e) {
-          evt = doc.createEvent('Event');
-          evt.initEvent(event, true, true);
-          evt.detail = eventData;
-        }
-        // eslint-disable-next-line
+        var evt = new win.CustomEvent(event, {
+          detail: eventData,
+          bubbles: true,
+          cancelable: true,
+        });
         el.dom7EventData = args.filter(function (data, dataIndex) { return dataIndex > 0; });
         el.dispatchEvent(evt);
         el.dom7EventData = [];
@@ -553,43 +562,29 @@
     return this;
   }
   function transitionEnd(callback) {
-    var events = ['webkitTransitionEnd', 'transitionend'];
     var dom = this;
-    var i;
     function fireCallBack(e) {
-      /* jshint validthis:true */
       if (e.target !== this) { return; }
       callback.call(this, e);
-      for (i = 0; i < events.length; i += 1) {
-        dom.off(events[i], fireCallBack);
-      }
+      dom.off('transitionend', fireCallBack);
     }
     if (callback) {
-      for (i = 0; i < events.length; i += 1) {
-        dom.on(events[i], fireCallBack);
-      }
+      dom.on('transitionend', fireCallBack);
     }
     return this;
   }
   function animationEnd(callback) {
-    var events = ['webkitAnimationEnd', 'animationend'];
     var dom = this;
-    var i;
     function fireCallBack(e) {
       if (e.target !== this) { return; }
       callback.call(this, e);
-      for (i = 0; i < events.length; i += 1) {
-        dom.off(events[i], fireCallBack);
-      }
+      dom.off('animationend', fireCallBack);
     }
     if (callback) {
-      for (i = 0; i < events.length; i += 1) {
-        dom.on(events[i], fireCallBack);
-      }
+      dom.on('animationend', fireCallBack);
     }
     return this;
   }
-  // Sizing/Styles
   function width() {
     if (this[0] === win) {
       return win.innerWidth;
@@ -604,9 +599,12 @@
   function outerWidth(includeMargins) {
     if (this.length > 0) {
       if (includeMargins) {
-        // eslint-disable-next-line
         var styles = this.styles();
-        return this[0].offsetWidth + parseFloat(styles.getPropertyValue('margin-right')) + parseFloat(styles.getPropertyValue('margin-left'));
+        return (
+          this[0].offsetWidth +
+          parseFloat(styles.getPropertyValue('margin-right')) +
+          parseFloat(styles.getPropertyValue('margin-left'))
+        );
       }
       return this[0].offsetWidth;
     }
@@ -626,9 +624,12 @@
   function outerHeight(includeMargins) {
     if (this.length > 0) {
       if (includeMargins) {
-        // eslint-disable-next-line
         var styles = this.styles();
-        return this[0].offsetHeight + parseFloat(styles.getPropertyValue('margin-top')) + parseFloat(styles.getPropertyValue('margin-bottom'));
+        return (
+          this[0].offsetHeight +
+          parseFloat(styles.getPropertyValue('margin-top')) +
+          parseFloat(styles.getPropertyValue('margin-bottom'))
+        );
       }
       return this[0].offsetHeight;
     }
@@ -644,8 +645,8 @@
       var scrollTop = el === win ? win.scrollY : el.scrollTop;
       var scrollLeft = el === win ? win.scrollX : el.scrollLeft;
       return {
-        top: (box.top + scrollTop) - clientTop,
-        left: (box.left + scrollLeft) - clientLeft,
+        top: box.top + scrollTop - clientTop,
+        left: box.left + scrollLeft - clientLeft,
       };
     }
 
@@ -663,7 +664,9 @@
       if (el.style.display === 'none') {
         el.style.display = '';
       }
-      if (win.getComputedStyle(el, null).getPropertyValue('display') === 'none') {
+      if (
+        win.getComputedStyle(el, null).getPropertyValue('display') === 'none'
+      ) {
         // Still not visible
         el.style.display = 'block';
       }
@@ -678,10 +681,12 @@
     var i;
     if (arguments.length === 1) {
       if (typeof props === 'string') {
-        if (this[0]) { return win.getComputedStyle(this[0], null).getPropertyValue(props); }
+        // .css('width')
+        if (this[0])
+          { return win.getComputedStyle(this[0], null).getPropertyValue(props); }
       } else {
+        // .css({ width: '100px' })
         for (i = 0; i < this.length; i += 1) {
-          // eslint-disable-next-line
           for (var prop in props) {
             this[i].style[prop] = props[prop];
           }
@@ -690,6 +695,7 @@
       }
     }
     if (arguments.length === 2 && typeof props === 'string') {
+      // .css('width', '100px')
       for (i = 0; i < this.length; i += 1) {
         this[i].style[props] = value;
       }
@@ -697,64 +703,17 @@
     }
     return this;
   }
-
-  // Dom manipulation
-  function toArray() {
-    var arr = [];
-    for (var i = 0; i < this.length; i += 1) {
-      arr.push(this[i]);
-    }
-    return arr;
-  }
-  // Iterate over the collection passing elements to `callback`
   function each(callback) {
-    // Don't bother continuing without a callback
-    if (!callback) { return this; }
-    // Iterate over the current collection
-    for (var i = 0; i < this.length; i += 1) {
-      // If the callback returns false
-      if (callback.call(this[i], i, this[i]) === false) {
-        // End the loop early
-        return this;
-      }
-    }
-    // Return `this` to allow chained DOM operations
-    return this;
-  }
-  function forEach(callback) {
-    // Don't bother continuing without a callback
-    if (!callback) { return this; }
-    // Iterate over the current collection
-    for (var i = 0; i < this.length; i += 1) {
-      // If the callback returns false
-      if (callback.call(this[i], this[i], i) === false) {
-        // End the loop early
-        return this;
-      }
-    }
-    // Return `this` to allow chained DOM operations
+    this.forEach(callback);
     return this;
   }
   function filter(callback) {
-    var matchedItems = [];
-    var dom = this;
-    for (var i = 0; i < dom.length; i += 1) {
-      if (callback.call(dom[i], i, dom[i])) { matchedItems.push(dom[i]); }
-    }
-    return new Dom7(matchedItems);
+    var result = arrayFilter(this, callback);
+    return $(result);
   }
-  function map(callback) {
-    var modifiedItems = [];
-    var dom = this;
-    for (var i = 0; i < dom.length; i += 1) {
-      modifiedItems.push(callback.call(dom[i], i, dom[i]));
-    }
-    return new Dom7(modifiedItems);
-  }
-  // eslint-disable-next-line
   function html(html) {
     if (typeof html === 'undefined') {
-      return this[0] ? this[0].innerHTML : undefined;
+      return this[0] ? this[0].innerHTML : null;
     }
 
     for (var i = 0; i < this.length; i += 1) {
@@ -762,13 +721,9 @@
     }
     return this;
   }
-  // eslint-disable-next-line
   function text(text) {
     if (typeof text === 'undefined') {
-      if (this[0]) {
-        return this[0].textContent.trim();
-      }
-      return null;
+      return this[0] ? this[0].textContent.trim() : null;
     }
 
     for (var i = 0; i < this.length; i += 1) {
@@ -783,16 +738,21 @@
     if (!el || typeof selector === 'undefined') { return false; }
     if (typeof selector === 'string') {
       if (el.matches) { return el.matches(selector); }
-      else if (el.webkitMatchesSelector) { return el.webkitMatchesSelector(selector); }
-      else if (el.msMatchesSelector) { return el.msMatchesSelector(selector); }
+      if (el.webkitMatchesSelector) { return el.webkitMatchesSelector(selector); }
+      if (el.msMatchesSelector) { return el.msMatchesSelector(selector); }
 
       compareWith = $(selector);
       for (i = 0; i < compareWith.length; i += 1) {
         if (compareWith[i] === el) { return true; }
       }
       return false;
-    } else if (selector === doc) { return el === doc; }
-    else if (selector === win) { return el === win; }
+    }
+    if (selector === doc) {
+      return el === doc;
+    }
+    if (selector === win) {
+      return el === win;
+    }
 
     if (selector.nodeType || selector instanceof Dom7) {
       compareWith = selector.nodeType ? [selector] : selector;
@@ -803,48 +763,27 @@
     }
     return false;
   }
-  function indexOf(el) {
-    for (var i = 0; i < this.length; i += 1) {
-      if (this[i] === el) { return i; }
-    }
-    return -1;
-  }
-  function index() {
-    var child = this[0];
-    var i;
-    if (child) {
-      i = 0;
-      // eslint-disable-next-line
-      while ((child = child.previousSibling) !== null) {
-        if (child.nodeType === 1) { i += 1; }
-      }
-      return i;
-    }
-    return undefined;
-  }
-  // eslint-disable-next-line
   function eq(index) {
     if (typeof index === 'undefined') { return this; }
     var length = this.length;
-    var returnIndex;
     if (index > length - 1) {
-      return new Dom7([]);
+      return $([]);
     }
     if (index < 0) {
-      returnIndex = length + index;
-      if (returnIndex < 0) { return new Dom7([]); }
-      return new Dom7([this[returnIndex]]);
+      var returnIndex = length + index;
+      if (returnIndex < 0) { return $([]); }
+      return $([this[returnIndex]]);
     }
-    return new Dom7([this[index]]);
+    return $([this[index]]);
   }
   function append() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
+    var els = [], len = arguments.length;
+    while ( len-- ) els[ len ] = arguments[ len ];
 
     var newChild;
 
-    for (var k = 0; k < args.length; k += 1) {
-      newChild = args[k];
+    for (var k = 0; k < els.length; k += 1) {
+      newChild = els[k];
       for (var i = 0; i < this.length; i += 1) {
         if (typeof newChild === 'string') {
           var tempDiv = doc.createElement('div');
@@ -864,7 +803,6 @@
 
     return this;
   }
-  // eslint-disable-next-line
   function appendTo(parent) {
     $(parent).append(this);
     return this;
@@ -889,7 +827,6 @@
     }
     return this;
   }
-  // eslint-disable-next-line
   function prependTo(parent) {
     $(parent).prepend(this);
     return this;
@@ -913,7 +850,10 @@
         after[0].parentNode.insertBefore(this[i], after[0].nextSibling);
       } else if (after.length > 1) {
         for (var j = 0; j < after.length; j += 1) {
-          after[j].parentNode.insertBefore(this[i].cloneNode(true), after[j].nextSibling);
+          after[j].parentNode.insertBefore(
+            this[i].cloneNode(true),
+            after[j].nextSibling
+          );
         }
       }
     }
@@ -921,21 +861,24 @@
   function next(selector) {
     if (this.length > 0) {
       if (selector) {
-        if (this[0].nextElementSibling && $(this[0].nextElementSibling).is(selector)) {
-          return new Dom7([this[0].nextElementSibling]);
+        if (
+          this[0].nextElementSibling &&
+          $(this[0].nextElementSibling).is(selector)
+        ) {
+          return $([this[0].nextElementSibling]);
         }
-        return new Dom7([]);
+        return $([]);
       }
 
-      if (this[0].nextElementSibling) { return new Dom7([this[0].nextElementSibling]); }
-      return new Dom7([]);
+      if (this[0].nextElementSibling) { return $([this[0].nextElementSibling]); }
+      return $([]);
     }
-    return new Dom7([]);
+    return $([]);
   }
   function nextAll(selector) {
     var nextEls = [];
     var el = this[0];
-    if (!el) { return new Dom7([]); }
+    if (!el) { return $([]); }
     while (el.nextElementSibling) {
       var next = el.nextElementSibling; // eslint-disable-line
       if (selector) {
@@ -943,27 +886,30 @@
       } else { nextEls.push(next); }
       el = next;
     }
-    return new Dom7(nextEls);
+    return $(nextEls);
   }
   function prev(selector) {
     if (this.length > 0) {
       var el = this[0];
       if (selector) {
-        if (el.previousElementSibling && $(el.previousElementSibling).is(selector)) {
-          return new Dom7([el.previousElementSibling]);
+        if (
+          el.previousElementSibling &&
+          $(el.previousElementSibling).is(selector)
+        ) {
+          return $([el.previousElementSibling]);
         }
-        return new Dom7([]);
+        return $([]);
       }
 
-      if (el.previousElementSibling) { return new Dom7([el.previousElementSibling]); }
-      return new Dom7([]);
+      if (el.previousElementSibling) { return $([el.previousElementSibling]); }
+      return $([]);
     }
-    return new Dom7([]);
+    return $([]);
   }
   function prevAll(selector) {
     var prevEls = [];
     var el = this[0];
-    if (!el) { return new Dom7([]); }
+    if (!el) { return $([]); }
     while (el.previousElementSibling) {
       var prev = el.previousElementSibling; // eslint-disable-line
       if (selector) {
@@ -971,7 +917,7 @@
       } else { prevEls.push(prev); }
       el = prev;
     }
-    return new Dom7(prevEls);
+    return $(prevEls);
   }
   function siblings(selector) {
     return this.nextAll(selector).add(this.prevAll(selector));
@@ -981,13 +927,14 @@
     for (var i = 0; i < this.length; i += 1) {
       if (this[i].parentNode !== null) {
         if (selector) {
-          if ($(this[i].parentNode).is(selector)) { parents.push(this[i].parentNode); }
+          if ($(this[i].parentNode).is(selector))
+            { parents.push(this[i].parentNode); }
         } else {
           parents.push(this[i].parentNode);
         }
       }
     }
-    return $(unique(parents));
+    return $(parents);
   }
   function parents(selector) {
     var parents = []; // eslint-disable-line
@@ -1002,12 +949,12 @@
         parent = parent.parentNode;
       }
     }
-    return $(unique(parents));
+    return $(parents);
   }
   function closest(selector) {
     var closest = this; // eslint-disable-line
     if (typeof selector === 'undefined') {
-      return new Dom7([]);
+      return $([]);
     }
     if (!closest.is(selector)) {
       closest = closest.parents(selector).eq(0);
@@ -1022,22 +969,20 @@
         foundElements.push(found[j]);
       }
     }
-    return new Dom7(foundElements);
+    return $(foundElements);
   }
   function children(selector) {
     var children = []; // eslint-disable-line
     for (var i = 0; i < this.length; i += 1) {
-      var childNodes = this[i].childNodes;
+      var childNodes = this[i].children;
 
       for (var j = 0; j < childNodes.length; j += 1) {
-        if (!selector) {
-          if (childNodes[j].nodeType === 1) { children.push(childNodes[j]); }
-        } else if (childNodes[j].nodeType === 1 && $(childNodes[j]).is(selector)) {
+        if (!selector || $(childNodes[j]).is(selector)) {
           children.push(childNodes[j]);
         }
       }
     }
-    return new Dom7(unique(children));
+    return $(children);
   }
   function remove() {
     for (var i = 0; i < this.length; i += 1) {
@@ -1049,19 +994,11 @@
     return this.remove();
   }
   function add() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
+    var els = [], len = arguments.length;
+    while ( len-- ) els[ len ] = arguments[ len ];
 
     var dom = this;
-    var i;
-    var j;
-    for (i = 0; i < args.length; i += 1) {
-      var toAdd = $(args[i]);
-      for (j = 0; j < toAdd.length; j += 1) {
-        dom[dom.length] = toAdd[j];
-        dom.length += 1;
-      }
-    }
+    dom.push.apply(dom, els);
     return dom;
   }
   function empty() {
@@ -1079,11 +1016,12 @@
     return this;
   }
 
-  var Methods = /*#__PURE__*/Object.freeze({
+  var methods = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     addClass: addClass,
     removeClass: removeClass,
-    hasClass: hasClass,
     toggleClass: toggleClass,
+    hasClass: hasClass,
     attr: attr,
     removeAttr: removeAttr,
     prop: prop,
@@ -1091,6 +1029,7 @@
     removeData: removeData,
     dataset: dataset,
     val: val,
+    value: value,
     transform: transform,
     transition: transition,
     on: on,
@@ -1108,16 +1047,11 @@
     show: show,
     styles: styles,
     css: css,
-    toArray: toArray,
     each: each,
-    forEach: forEach,
     filter: filter,
-    map: map,
     html: html,
     text: text,
     is: is,
-    indexOf: indexOf,
-    index: index,
     eq: eq,
     append: append,
     appendTo: appendTo,
@@ -1203,10 +1137,13 @@
           startTime = time;
         }
         var progress = Math.max(Math.min((time - startTime) / duration, 1), 0);
-        var easeProgress = easing === 'linear' ? progress : (0.5 - (Math.cos(progress * Math.PI) / 2));
+        var easeProgress =
+          easing === 'linear' ? progress : 0.5 - Math.cos(progress * Math.PI) / 2;
         var done;
-        if (animateTop) { scrollTop = currentTop + (easeProgress * (newTop - currentTop)); }
-        if (animateLeft) { scrollLeft = currentLeft + (easeProgress * (newLeft - currentLeft)); }
+        if (animateTop)
+          { scrollTop = currentTop + easeProgress * (newTop - currentTop); }
+        if (animateLeft)
+          { scrollLeft = currentLeft + easeProgress * (newLeft - currentLeft); }
         if (animateTop && newTop > currentTop && scrollTop >= newTop) {
           el.scrollTop = newTop;
           done = true;
@@ -1230,9 +1167,9 @@
         }
         if (animateTop) { el.scrollTop = scrollTop; }
         if (animateLeft) { el.scrollLeft = scrollLeft; }
-        requestAnimationFrame(render);
+        win.requestAnimationFrame(render);
       }
-      requestAnimationFrame(render);
+      win.requestAnimationFrame(render);
     });
   }
   // scrollTop(top, duration, easing, callback) {
@@ -1275,7 +1212,8 @@
     return dom.scrollTo(left, undefined, duration, easing, callback);
   }
 
-  var Scroll = /*#__PURE__*/Object.freeze({
+  var scroll = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     scrollTo: scrollTo,
     scrollTop: scrollTop,
     scrollLeft: scrollLeft
@@ -1285,15 +1223,18 @@
     var els = this;
     var a = {
       props: Object.assign({}, initialProps),
-      params: Object.assign({
-        duration: 300,
-        easing: 'swing', // or 'linear'
-        /* Callbacks
-        begin(elements)
-        complete(elements)
-        progress(elements, complete, remaining, start, tweenValue)
-        */
-      }, initialParams),
+      params: Object.assign(
+        {
+          duration: 300,
+          easing: 'swing', // or 'linear'
+          /* Callbacks
+          begin(elements)
+          complete(elements)
+          progress(elements, complete, remaining, start, tweenValue)
+          */
+        },
+        initialParams
+      ),
 
       elements: els,
       animating: false,
@@ -1301,7 +1242,7 @@
 
       easingProgress: function easingProgress(easing, progress) {
         if (easing === 'swing') {
-          return 0.5 - (Math.cos(progress * Math.PI) / 2);
+          return 0.5 - Math.cos(progress * Math.PI) / 2;
         }
         if (typeof easing === 'function') {
           return easing(progress);
@@ -1310,7 +1251,7 @@
       },
       stop: function stop() {
         if (a.frameId) {
-          cancelAnimationFrame(a.frameId);
+          win.cancelAnimationFrame(a.frameId);
         }
         a.animating = false;
         a.elements.each(function (index, el) {
@@ -1352,7 +1293,10 @@
             container: el,
           };
           Object.keys(props).forEach(function (prop) {
-            initialFullValue = win.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
+            initialFullValue = win
+              .getComputedStyle(el, null)
+              .getPropertyValue(prop)
+              .replace(',', '.');
             initialValue = parseFloat(initialFullValue);
             unit = initialFullValue.replace(initialValue, '');
             finalValue = parseFloat(props[prop]);
@@ -1391,7 +1335,14 @@
           }
           if (params.progress) {
             // eslint-disable-next-line
-            params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), ((startTime + params.duration) - time < 0 ? 0 : (startTime + params.duration) - time), startTime);
+            params.progress(
+              els,
+              Math.max(Math.min((time - startTime) / params.duration, 1), 0),
+              startTime + params.duration - time < 0
+                ? 0
+                : startTime + params.duration - time,
+              startTime
+            );
           }
 
           elements.forEach(function (element) {
@@ -1399,18 +1350,23 @@
             if (done || el.done) { return; }
             Object.keys(props).forEach(function (prop) {
               if (done || el.done) { return; }
-              progress = Math.max(Math.min((time - startTime) / params.duration, 1), 0);
+              progress = Math.max(
+                Math.min((time - startTime) / params.duration, 1),
+                0
+              );
               easeProgress = a.easingProgress(params.easing, progress);
               var ref = el[prop];
               var initialValue = ref.initialValue;
               var finalValue = ref.finalValue;
               var unit = ref.unit;
-              el[prop].currentValue = initialValue + (easeProgress * (finalValue - initialValue));
+              el[prop].currentValue =
+                initialValue + easeProgress * (finalValue - initialValue);
               var currentValue = el[prop].currentValue;
 
               if (
                 (finalValue > initialValue && currentValue >= finalValue) ||
-                (finalValue < initialValue && currentValue <= finalValue)) {
+                (finalValue < initialValue && currentValue <= finalValue)
+              ) {
                 el.container.style[prop] = finalValue + unit;
                 propsDone += 1;
                 if (propsDone === Object.keys(props).length) {
@@ -1430,9 +1386,9 @@
           });
           if (done) { return; }
           // Then call
-          a.frameId = requestAnimationFrame(render);
+          a.frameId = win.requestAnimationFrame(render);
         }
-        a.frameId = requestAnimationFrame(render);
+        a.frameId = win.requestAnimationFrame(render);
         return a;
       },
     };
@@ -1469,13 +1425,14 @@
     }
   }
 
-  var Animate = /*#__PURE__*/Object.freeze({
+  var animate$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     animate: animate,
     stop: stop
   });
 
-  var noTrigger = ('resize scroll').split(' ');
-  function eventShortcut(name) {
+  var noTrigger = 'resize scroll'.split(' ');
+  function shortcut(name) {
     var ref;
 
     var args = [], len = arguments.length - 1;
@@ -1493,166 +1450,39 @@
     }
     return (ref = this).on.apply(ref, [ name ].concat( args ));
   }
+  var shortcuts = {};
+  [
+    'click',
+    'blur',
+    'focus',
+    'focusin',
+    'focusout',
+    'keyup',
+    'keydown',
+    'keypress',
+    'submit',
+    'change',
+    'mousedown',
+    'mousemove',
+    'mouseup',
+    'mouseenter',
+    'mouseleave',
+    'mouseout',
+    'mouseover',
+    'touchstart',
+    'touchend',
+    'touchmove',
+    'resize',
+    'scroll' ].forEach(function (name) {
+    shortcuts[name] = function eventHandler() {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
 
-  function click() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'click' ].concat( args ));
-  }
-  function blur() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'blur' ].concat( args ));
-  }
-  function focus() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'focus' ].concat( args ));
-  }
-  function focusin() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'focusin' ].concat( args ));
-  }
-  function focusout() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'focusout' ].concat( args ));
-  }
-  function keyup() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'keyup' ].concat( args ));
-  }
-  function keydown() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'keydown' ].concat( args ));
-  }
-  function keypress() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'keypress' ].concat( args ));
-  }
-  function submit() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'submit' ].concat( args ));
-  }
-  function change() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'change' ].concat( args ));
-  }
-  function mousedown() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'mousedown' ].concat( args ));
-  }
-  function mousemove() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'mousemove' ].concat( args ));
-  }
-  function mouseup() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'mouseup' ].concat( args ));
-  }
-  function mouseenter() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'mouseenter' ].concat( args ));
-  }
-  function mouseleave() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'mouseleave' ].concat( args ));
-  }
-  function mouseout() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'mouseout' ].concat( args ));
-  }
-  function mouseover() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'mouseover' ].concat( args ));
-  }
-  function touchstart() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'touchstart' ].concat( args ));
-  }
-  function touchend() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'touchend' ].concat( args ));
-  }
-  function touchmove() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'touchmove' ].concat( args ));
-  }
-  function resize() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'resize' ].concat( args ));
-  }
-  function scroll() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    return eventShortcut.bind(this).apply(void 0, [ 'scroll' ].concat( args ));
-  }
-
-  var eventShortcuts = /*#__PURE__*/Object.freeze({
-    click: click,
-    blur: blur,
-    focus: focus,
-    focusin: focusin,
-    focusout: focusout,
-    keyup: keyup,
-    keydown: keydown,
-    keypress: keypress,
-    submit: submit,
-    change: change,
-    mousedown: mousedown,
-    mousemove: mousemove,
-    mouseup: mouseup,
-    mouseenter: mouseenter,
-    mouseleave: mouseleave,
-    mouseout: mouseout,
-    mouseover: mouseover,
-    touchstart: touchstart,
-    touchend: touchend,
-    touchmove: touchmove,
-    resize: resize,
-    scroll: scroll
+      return shortcut.bind(this).apply(void 0, [ name ].concat( args ));
+    };
   });
 
-  [Methods, Scroll, Animate, eventShortcuts].forEach(function (group) {
+  [methods, scroll, animate$1, shortcuts].forEach(function (group) {
     Object.keys(group).forEach(function (methodName) {
       $.fn[methodName] = group[methodName];
     });
@@ -1660,4 +1490,4 @@
 
   return $;
 
-}));
+})));

@@ -1,6 +1,10 @@
 .git
 build
+demo
 node_modules
+scripts
+src
+.editorconfig
+.eslintignore
 npm-debug.log
 index.html
-demo
