@@ -37,3 +37,11 @@ $('p').on('click', function() {
 ## Documentation
 
 See [full documenation here](https://framework7.io/docs/dom7.html)
+
+## Contribution
+
+Yes please! See the [contributing guidelines](https://github.com/nolimits4web/dom7/blob/master/CONTRIBUTING.md) for details.
+
+## Licence
+
+This project is licensed under the terms of the [MIT license](https://github.com/nolimits4web/dom7/blob/master/LICENSE).
