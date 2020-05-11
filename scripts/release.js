@@ -4,6 +4,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const path = require('path');
 const pkg = require('../package.json');
+const childPkg = require('../package/package.json');
 
 async function release() {
   const options = await inquirer.prompt([
@@ -63,9 +64,14 @@ async function release() {
     },
   ]);
   pkg.version = options.version;
+  childPkg.version = options.version;
 
   fs.writeFileSync(
     path.resolve(__dirname, '../package.json'),
+    JSON.stringify(pkg, null, 2),
+  );
+  fs.writeFileSync(
+    path.resolve(__dirname, '../package/package.json'),
     JSON.stringify(pkg, null, 2),
   );
 
