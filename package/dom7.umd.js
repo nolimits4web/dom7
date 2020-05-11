@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0-alpha.2
+ * Dom7 3.0.0-alpha.3
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *

@@ -42,7 +42,7 @@ function buildUMD() {
         strict: true,
         name: 'Dom7',
         format: 'umd',
-        file: path.resolve(__dirname, `../${outDir}/dom7.js`),
+        file: path.resolve(__dirname, `../${outDir}/dom7.umd.js`),
         sourcemap: false,
         banner,
       });
@@ -52,19 +52,19 @@ function buildUMD() {
       const minified = Terser.minify(result.code, {
         sourceMap: {
           content: result.map,
-          filename: `dom7.min.js`,
-          url: `dom7.min.js.map`,
+          filename: `dom7.umd.min.js`,
+          url: `dom7.umd.min.js.map`,
         },
         output: {
           preamble: banner,
         },
       });
       fs.writeFileSync(
-        path.resolve(__dirname, `../${outDir}/dom7.min.js`),
+        path.resolve(__dirname, `../${outDir}/dom7.umd.min.js`),
         minified.code,
       );
       fs.writeFileSync(
-        path.resolve(__dirname, `../${outDir}/dom7.min.js.map`),
+        path.resolve(__dirname, `../${outDir}/dom7.umd.min.js.map`),
         minified.map,
       );
     })
