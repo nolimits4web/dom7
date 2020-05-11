@@ -122,10 +122,8 @@ function buildCJS() {
 
 function copyDts() {
   fs.copyFileSync(
-    path.resolve(__dirname),
-    '../src/dom7.d.ts',
-    path.resolve(__dirname),
-    '../package/dom7.d.ts',
+    path.resolve(__dirname, '../src/dom7.d.ts'),
+    path.resolve(__dirname, '../package/dom7.d.ts'),
   );
 }
 
