@@ -1,5 +1,5 @@
 {
-  "name": "dom7-src",
+  "name": "dom7",
   "version": "3.0.0-alpha.1",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
@@ -7,18 +7,6 @@
   "types": "dom7.d.ts",
   "jsnext:main": "dom7.esm.js",
   "module": "dom7.esm.js",
-  "scripts": {
-    "build:dev": "cross-env NODE_ENV=development node ./scripts/build",
-    "build:prod": "cross-env NODE_ENV=production node ./scripts/build",
-    "serve": "serve",
-    "prettier": "prettier \"**/*.+(js|json|scss)\"",
-    "format": "npm run prettier -- --write",
-    "check-format": "npm run prettier -- --list-different",
-    "lint": "eslint --ext .js,.ts,.tsx .",
-    "test": "node ./scripts/test",
-    "validate": "npm-run-all --parallel test check-format lint",
-    "release": "npm run validate && node ./scripts/release"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nolimits4web/dom7.git"
@@ -35,26 +23,7 @@
   "bugs": {
     "url": "https://github.com/nolimits4web/dom7/issues"
   },
-  "homepage": "http://framework7.io/docs/dom.html",
-  "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "@rollup/plugin-babel": "^5.0.0",
-    "@rollup/plugin-node-resolve": "^7.1.3",
-    "cross-env": "^7.0.2",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-prettier": "^3.1.3",
-    "exec-sh": "^0.3.4",
-    "inquirer": "^7.1.0",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.0.5",
-    "rollup": "^2.9.1",
-    "serve": "^11.3.0",
-    "terser": "^4.6.13"
-  },
+  "homepage": "https://framework7.io/docs/dom7.html",
   "dependencies": {
     "ssr-window": "^3.0.0-alpha.1"
   }

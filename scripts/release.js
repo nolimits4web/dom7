@@ -72,7 +72,7 @@ async function release() {
   );
   fs.writeFileSync(
     path.resolve(__dirname, '../package/package.json'),
-    JSON.stringify(pkg, null, 2),
+    JSON.stringify(childPkg, null, 2),
   );
 
   await exec.promise(`VERSION=${pkg.version} npm run build:prod`);

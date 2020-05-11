@@ -35,7 +35,7 @@
   "bugs": {
     "url": "https://github.com/nolimits4web/dom7/issues"
   },
-  "homepage": "http://framework7.io/docs/dom.html",
+  "homepage": "https://framework7.io/docs/dom7.html",
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
