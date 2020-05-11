@@ -3,20 +3,21 @@
   "version": "2.1.3",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
-  "main": "dist/dom7.js",
-  "types": "dist/dom7.d.ts",
-  "jsnext:main": "dist/dom7.module.js",
-  "module": "dist/dom7.module.js",
+  "main": "dom7.cjs.js",
+  "types": "dom7.d.ts",
+  "jsnext:main": "dom7.esm.js",
+  "module": "dom7.esm.js",
   "scripts": {
     "build-dev": "cross-env NODE_ENV=development gulp build",
     "build-prod": "cross-env NODE_ENV=production gulp build",
-    "dev": "cross-env NODE_ENV=development gulp build && cross-env NODE_ENV=development gulp demo && gulp server",
-    "prod": "cross-env NODE_ENV=production gulp demo && cross-env NODE_ENV=production gulp server",
+    "serve": "serve",
     "prettier": "prettier \"**/*.+(js|json|scss)\"",
     "format": "npm run prettier -- --write",
     "check-format": "npm run prettier -- --list-different",
     "lint": "eslint --ext .js,.ts,.tsx .",
-    "test": "npm run build-dev"
+    "test": "node ./scripts/test",
+    "validate": "npm-run-all --parallel test check-format lint",
+    "release": "npm run validate && node ./scripts/release"
   },
   "repository": {
     "type": "git",
@@ -39,6 +40,7 @@
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
+    "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-node-resolve": "^7.1.3",
     "cross-env": "^5.2.0",
     "eslint": "^6.8.0",
@@ -46,12 +48,17 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-prettier": "^3.1.3",
+    "exec-sh": "^0.3.4",
     "gulp-connect": "^5.7.0",
     "gulp-open": "^3.0.1",
+    "inquirer": "^7.1.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
-    "rollup": "^2.8.0"
+    "rollup": "^2.9.1",
+    "serve": "^11.3.0",
+    "terser": "^4.6.13"
   },
   "dependencies": {
-    "ssr-window": "^1.0.1"
+    "ssr-window": "^3.0.0-alpha.1"
   }
 }

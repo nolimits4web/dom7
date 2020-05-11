@@ -1,6 +1,7 @@
-import { window } from 'ssr-window';
+import { getWindow } from 'ssr-window';
 
 function animate(initialProps, initialParams) {
+  const window = getWindow();
   const els = this;
   const a = {
     props: Object.assign({}, initialProps),

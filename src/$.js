@@ -1,4 +1,4 @@
-import { window, document } from 'ssr-window';
+import { getWindow, getDocument } from 'ssr-window';
 import Dom7 from './dom7-class';
 import { arrayUnique } from './utils';
 
@@ -15,6 +15,8 @@ function qsa(selector, context) {
 }
 
 function $(selector, context) {
+  const window = getWindow();
+  const document = getDocument();
   let arr = [];
   if (!context && selector instanceof Dom7) {
     return selector;

@@ -1,4 +1,4 @@
-import { window, document } from 'ssr-window';
+import { getWindow, getDocument } from 'ssr-window';
 import $ from './$';
 import Dom7 from './dom7-class';
 import { arrayFlat, arrayFilter, toCamelCase } from './utils';
@@ -313,21 +313,24 @@ function once(...args) {
   return dom.on(eventName, targetSelector, onceHandler, capture);
 }
 function trigger(...args) {
+  const window = getWindow();
   const events = args[0].split(' ');
   const eventData = args[1];
   for (let i = 0; i < events.length; i += 1) {
     const event = events[i];
     for (let j = 0; j < this.length; j += 1) {
       const el = this[j];
-      const evt = new window.CustomEvent(event, {
-        detail: eventData,
-        bubbles: true,
-        cancelable: true,
-      });
-      el.dom7EventData = args.filter((data, dataIndex) => dataIndex > 0);
-      el.dispatchEvent(evt);
-      el.dom7EventData = [];
-      delete el.dom7EventData;
+      if (window.CustomEvent) {
+        const evt = new window.CustomEvent(event, {
+          detail: eventData,
+          bubbles: true,
+          cancelable: true,
+        });
+        el.dom7EventData = args.filter((data, dataIndex) => dataIndex > 0);
+        el.dispatchEvent(evt);
+        el.dom7EventData = [];
+        delete el.dom7EventData;
+      }
     }
   }
   return this;
@@ -357,6 +360,7 @@ function animationEnd(callback) {
   return this;
 }
 function width() {
+  const window = getWindow();
   if (this[0] === window) {
     return window.innerWidth;
   }
@@ -382,6 +386,7 @@ function outerWidth(includeMargins) {
   return null;
 }
 function height() {
+  const window = getWindow();
   if (this[0] === window) {
     return window.innerHeight;
   }
@@ -408,6 +413,8 @@ function outerHeight(includeMargins) {
 }
 function offset() {
   if (this.length > 0) {
+    const window = getWindow();
+    const document = getDocument();
     const el = this[0];
     const box = el.getBoundingClientRect();
     const body = document.body;
@@ -430,6 +437,7 @@ function hide() {
   return this;
 }
 function show() {
+  const window = getWindow();
   for (let i = 0; i < this.length; i += 1) {
     const el = this[i];
     if (el.style.display === 'none') {
@@ -445,10 +453,12 @@ function show() {
   return this;
 }
 function styles() {
+  const window = getWindow();
   if (this[0]) return window.getComputedStyle(this[0], null);
   return {};
 }
 function css(props, value) {
+  const window = getWindow();
   let i;
   if (arguments.length === 1) {
     if (typeof props === 'string') {
@@ -503,6 +513,8 @@ function text(text) {
   return this;
 }
 function is(selector) {
+  const window = getWindow();
+  const document = getDocument();
   const el = this[0];
   let compareWith;
   let i;
@@ -549,6 +561,7 @@ function eq(index) {
 }
 function append(...els) {
   let newChild;
+  const document = getDocument();
 
   for (let k = 0; k < els.length; k += 1) {
     newChild = els[k];
@@ -576,6 +589,7 @@ function appendTo(parent) {
   return this;
 }
 function prepend(newChild) {
+  const document = getDocument();
   let i;
   let j;
   for (i = 0; i < this.length; i += 1) {

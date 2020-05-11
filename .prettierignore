@@ -1,4 +1,5 @@
 build
-demo
+demo/index.html
 dist
 node_modules
+package

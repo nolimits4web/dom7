@@ -1,6 +1,7 @@
-import { window } from 'ssr-window';
+import { getWindow } from 'ssr-window';
 
 function scrollTo(...args) {
+  const window = getWindow();
   let [left, top, duration, easing, callback] = args;
   if (args.length === 4 && typeof easing === 'function') {
     callback = easing;

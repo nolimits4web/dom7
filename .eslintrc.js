@@ -1,6 +1,5 @@
 module.exports = {
   env: {
-    browser: true,
     es6: true,
     node: true,
   },
@@ -19,5 +18,7 @@ module.exports = {
     'no-shadow': 'off',
     'guard-for-in': 'off',
     'no-restricted-syntax': 'off',
+    'import/no-extraneous-dependencies': 'off',
+    'no-console': 'off',
   },
 };

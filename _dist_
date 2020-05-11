@@ -1,8 +1,0 @@
-/cjs
-/esm
-dom7.cjs.js -> "main"
-dom7.esm.js -> "module" + "jsnext:main"
-dom7.js -> UMD -> "browser"
-dom7.min.js -> UMD min
-dom7.min.js.map -> UMD min map
-dom7.d.ts
