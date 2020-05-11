@@ -1,5 +1,5 @@
 {
-  "name": "dom7",
+  "name": "dom7-src",
   "version": "3.0.0-alpha.1",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
