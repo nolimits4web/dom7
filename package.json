@@ -8,8 +8,8 @@
   "jsnext:main": "dom7.esm.js",
   "module": "dom7.esm.js",
   "scripts": {
-    "build:dev": "cross-env NODE_ENV=development gulp build",
-    "build:prod": "cross-env NODE_ENV=production gulp build",
+    "build:dev": "cross-env NODE_ENV=development node ./scripts/build",
+    "build:prod": "cross-env NODE_ENV=production node ./scripts/build",
     "serve": "serve",
     "prettier": "prettier \"**/*.+(js|json|scss)\"",
     "format": "npm run prettier -- --write",
