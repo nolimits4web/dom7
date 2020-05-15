@@ -1,15 +1,15 @@
 /**
- * Dom7 2.1.3
+ * Dom7 2.1.5
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * http://framework7.io/docs/dom.html
  *
- * Copyright 2019, Vladimir Kharlampidi
+ * Copyright 2020, Vladimir Kharlampidi
  * The iDangero.us
  * http://www.idangero.us/
  *
  * Licensed under MIT
  *
- * Released on: February 11, 2019
+ * Released on: May 15, 2020
  */
 import { document, window } from 'ssr-window';
 

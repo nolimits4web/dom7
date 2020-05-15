@@ -1,5 +1,8 @@
 # Change Log
 
+## Dom7 v2.1.5 - Released on May 15, 2020
+  * Updated to latest `ssr-window`
+
 ## Dom7 v2.1.3 - Released on February 11, 2019
   * Fixed issue when `.once` bound event could still be there after unbinding it with `.off`
 
