@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0-alpha.3
+ * Dom7 3.0.0-alpha.4
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: May 11, 2020
+ * Released on: May 20, 2020
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -16,7 +16,7 @@
 }(this, (function () { 'use strict';
 
     /**
-     * SSR Window 3.0.0-alpha.1
+     * SSR Window 3.0.0-alpha.4
      * Better handling for window object in SSR environment
      * https://github.com/nolimits4web/ssr-window
      *
@@ -24,13 +24,25 @@
      *
      * Licensed under MIT
      *
-     * Released on: May 11, 2020
+     * Released on: May 20, 2020
      */
 
     /* eslint-disable no-param-reassign */
+    function isObject(obj) {
+      return obj !== null && typeof obj === 'object' && 'constructor' in obj && obj.constructor === Object;
+    }
+
     function extend(target, src) {
+      if (target === void 0) {
+        target = {};
+      }
+
+      if (src === void 0) {
+        src = {};
+      }
+
       Object.keys(src).forEach(function (key) {
-        if (typeof target[key] === 'undefined') target[key] = src[key];else if (typeof src[key] === 'object' && src[key].constructor === Object && Object.keys(src[key]).length > 0) {
+        if (typeof target[key] === 'undefined') target[key] = src[key];else if (isObject(src[key]) && isObject(target[key]) && Object.keys(src[key]).length > 0) {
           extend(target[key], src[key]);
         }
       });
@@ -133,6 +145,21 @@
       clearTimeout: function clearTimeout() {},
       matchMedia: function matchMedia() {
         return {};
+      },
+      requestAnimationFrame: function requestAnimationFrame(callback) {
+        if (typeof setTimeout === 'undefined') {
+          callback();
+          return null;
+        }
+
+        return setTimeout(callback, 0);
+      },
+      cancelAnimationFrame: function cancelAnimationFrame(id) {
+        if (typeof setTimeout === 'undefined') {
+          return;
+        }
+
+        clearTimeout(id);
       }
     };
 
@@ -1035,6 +1062,23 @@
       return false;
     }
 
+    function index() {
+      var child = this[0];
+      var i;
+
+      if (child) {
+        i = 0; // eslint-disable-next-line
+
+        while ((child = child.previousSibling) !== null) {
+          if (child.nodeType === 1) i += 1;
+        }
+
+        return i;
+      }
+
+      return undefined;
+    }
+
     function eq(index) {
       if (typeof index === 'undefined') return this;
       var length = this.length;
@@ -1371,6 +1415,7 @@
         html: html,
         text: text,
         is: is,
+        index: index,
         eq: eq,
         append: append,
         appendTo: appendTo,
