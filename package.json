@@ -56,6 +56,6 @@
     "terser": "^4.6.13"
   },
   "dependencies": {
-    "ssr-window": "^3.0.0-alpha.1"
+    "ssr-window": "^3.0.0-alpha.4"
   }
 }
