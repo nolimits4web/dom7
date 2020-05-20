@@ -546,6 +546,19 @@ function is(selector) {
   }
   return false;
 }
+function index() {
+  let child = this[0];
+  let i;
+  if (child) {
+    i = 0;
+    // eslint-disable-next-line
+    while ((child = child.previousSibling) !== null) {
+      if (child.nodeType === 1) i += 1;
+    }
+    return i;
+  }
+  return undefined;
+}
 function eq(index) {
   if (typeof index === 'undefined') return this;
   const length = this.length;
@@ -830,6 +843,7 @@ export {
   html,
   text,
   is,
+  index,
   eq,
   append,
   appendTo,
