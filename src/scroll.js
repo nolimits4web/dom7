@@ -1,7 +1,7 @@
 import { requestAnimationFrame } from './utils';
 
 function scrollTo(...args) {
-  let [left, top, duration, easing, callback] = args;
+  /*let [left, top, duration, easing, callback] = args;
   if (args.length === 4 && typeof easing === 'function') {
     callback = easing;
     [left, top, duration, callback, easing] = args;
@@ -86,7 +86,7 @@ function scrollTo(...args) {
       requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
-  });
+  });*/
 }
 // scrollTop(top, duration, easing, callback) {
 function scrollTop(...args) {
