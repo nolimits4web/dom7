@@ -485,7 +485,10 @@ function css(props, value) {
   return this;
 }
 function each(callback) {
-  this.forEach(callback);
+  if (!callback) return this;
+  this.forEach((el, index) => {
+    callback.apply(el, [el, index]);
+  });
   return this;
 }
 function filter(callback) {
