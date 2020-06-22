@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0-alpha.4
+ * Dom7 3.0.0-alpha.5
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: May 20, 2020
+ * Released on: June 22, 2020
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -987,7 +987,10 @@
     }
 
     function each(callback) {
-      this.forEach(callback);
+      if (!callback) return this;
+      this.forEach(function (el, index) {
+        callback.apply(el, [el, index]);
+      });
       return this;
     }
 

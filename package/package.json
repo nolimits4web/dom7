@@ -1,6 +1,6 @@
 {
   "name": "dom7",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-alpha.5",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
   "main": "dom7.cjs.js",
