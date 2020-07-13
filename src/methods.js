@@ -793,7 +793,14 @@ function detach() {
 }
 function add(...els) {
   const dom = this;
-  dom.push(...els);
+  let i;
+  let j;
+  for (i = 0; i < els.length; i += 1) {
+    const toAdd = $(els[i]);
+    for (j = 0; j < toAdd.length; j += 1) {
+      dom.push(toAdd[j]);
+    }
+  }
   return dom;
 }
 function empty() {

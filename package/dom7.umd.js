@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0-alpha.5
+ * Dom7 3.0.0-alpha.6
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: June 22, 2020
+ * Released on: July 13, 2020
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1360,7 +1360,21 @@
 
     function add() {
       var dom = this;
-      dom.push.apply(dom, arguments);
+      var i;
+      var j;
+
+      for (var _len10 = arguments.length, els = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+        els[_key10] = arguments[_key10];
+      }
+
+      for (i = 0; i < els.length; i += 1) {
+        var toAdd = $(els[i]);
+
+        for (j = 0; j < toAdd.length; j += 1) {
+          dom.push(toAdd[j]);
+        }
+      }
+
       return dom;
     }
 
