@@ -199,10 +199,8 @@ function on(...args) {
   if (!capture) capture = false;
 
   function handleLiveEvent(e) {
-    console.log(1);
     const target = e.target;
     if (!target) return;
-    console.log(2, target);
     const eventData = e.target.dom7EventData || [];
     if (eventData.indexOf(e) < 0) {
       eventData.unshift(e);
@@ -236,7 +234,6 @@ function on(...args) {
           listener,
           proxyListener: handleEvent,
         });
-        console.log(el, event, handleEvent);
         el.addEventListener(event, handleEvent, capture);
       }
     } else {
