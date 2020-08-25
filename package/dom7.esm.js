@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0-alpha.8
+ * Dom7 3.0.0-alpha.9
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: August 24, 2020
+ * Released on: August 25, 2020
  */
 import { getWindow, getDocument } from 'ssr-window';
 
@@ -489,10 +489,8 @@ function on() {
   if (!capture) capture = false;
 
   function handleLiveEvent(e) {
-    console.log(1);
     var target = e.target;
     if (!target) return;
-    console.log(2, target);
     var eventData = e.target.dom7EventData || [];
 
     if (eventData.indexOf(e) < 0) {
@@ -534,7 +532,6 @@ function on() {
           listener: listener,
           proxyListener: handleEvent
         });
-        console.log(el, event, handleEvent);
         el.addEventListener(event, handleEvent, capture);
       }
     } else {
