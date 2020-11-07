@@ -441,6 +441,8 @@ export interface Dom7Array {
   resize(handler: (event: Event) => void): Dom7Array;
   /** Add "scroll" event handler to collection */
   scroll(handler: (event: Event) => void): Dom7Array;
+  /** Perform a custom animation of a set of CSS properties */
+  animate(properties: any, parameters: any): Dom7Array;
 }
 
 export interface Dom7 {
