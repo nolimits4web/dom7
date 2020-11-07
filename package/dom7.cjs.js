@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0-alpha.9
+ * Dom7 3.0.0-alpha.10
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: August 25, 2020
+ * Released on: November 7, 2020
  */
 'use strict';
 
@@ -467,7 +467,7 @@ function transform(transform) {
 
 function transition(duration) {
   for (var i = 0; i < this.length; i += 1) {
-    this[i].style.transition = typeof duration !== 'string' ? duration + "ms" : duration;
+    this[i].style.transitionDuration = typeof duration !== 'string' ? duration + "ms" : duration;
   }
 
   return this;
