@@ -274,6 +274,10 @@ export interface Dom7Instance {
     resize(handler : (event : Event) => void) : Dom7Instance;
     /** Add "scroll" event handler to collection */
     scroll(handler : (event : Event) => void) : Dom7Instance;
+
+    // Animation
+    /** Perform a custom animation of a set of CSS properties */
+    animate(properties: any, parameters: any) : Dom7Instance;
 }
 
 export interface Dom7
