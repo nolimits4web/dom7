@@ -185,7 +185,7 @@ function transform(transform) {
 }
 function transition(duration) {
   for (let i = 0; i < this.length; i += 1) {
-    this[i].style.transition =
+    this[i].style.transitionDuration =
       typeof duration !== 'string' ? `${duration}ms` : duration;
   }
   return this;
