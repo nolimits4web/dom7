@@ -9,7 +9,7 @@
  *
  * Licensed under MIT
  *
- * Released on: May 15, 2020
+ * Released on: June 23, 2020
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1253,6 +1253,10 @@
         var startTime = null;
         if (animateTop && newTop === currentTop) { animateTop = false; }
         if (animateLeft && newLeft === currentLeft) { animateLeft = false; }
+        if (!animateLeft && !animateTop) {
+          if (callback) { callback(); }
+          return;
+        }
         function render(time) {
           if ( time === void 0 ) time = new Date().getTime();
 
