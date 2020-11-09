@@ -1,13 +1,10 @@
 import $ from './$';
-import * as Methods from './methods';
-import * as Scroll from './scroll';
-import * as Animate from './animate';
-import * as eventShortcuts from './event-shortcuts';
 
-[Methods, Scroll, Animate, eventShortcuts].forEach((group) => {
-  Object.keys(group).forEach((methodName) => {
-    $.fn[methodName] = group[methodName];
-  });
-});
+export * from './methods';
+export * from './scroll';
+export * from './animate';
+export * from './shortcuts';
+
+export { $ };
 
 export default $;

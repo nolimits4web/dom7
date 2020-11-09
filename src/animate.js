@@ -1,19 +1,22 @@
-import { window } from 'ssr-window';
-import { requestAnimationFrame, cancelAnimationFrame } from './utils';
+import { getWindow } from 'ssr-window';
 
 function animate(initialProps, initialParams) {
+  const window = getWindow();
   const els = this;
   const a = {
     props: Object.assign({}, initialProps),
-    params: Object.assign({
-      duration: 300,
-      easing: 'swing', // or 'linear'
-      /* Callbacks
-      begin(elements)
-      complete(elements)
-      progress(elements, complete, remaining, start, tweenValue)
-      */
-    }, initialParams),
+    params: Object.assign(
+      {
+        duration: 300,
+        easing: 'swing', // or 'linear'
+        /* Callbacks
+        begin(elements)
+        complete(elements)
+        progress(elements, complete, remaining, start, tweenValue)
+        */
+      },
+      initialParams,
+    ),
 
     elements: els,
     animating: false,
@@ -21,7 +24,7 @@ function animate(initialProps, initialParams) {
 
     easingProgress(easing, progress) {
       if (easing === 'swing') {
-        return 0.5 - (Math.cos(progress * Math.PI) / 2);
+        return 0.5 - Math.cos(progress * Math.PI) / 2;
       }
       if (typeof easing === 'function') {
         return easing(progress);
@@ -30,10 +33,10 @@ function animate(initialProps, initialParams) {
     },
     stop() {
       if (a.frameId) {
-        cancelAnimationFrame(a.frameId);
+        window.cancelAnimationFrame(a.frameId);
       }
       a.animating = false;
-      a.elements.each((index, el) => {
+      a.elements.each((el) => {
         const element = el;
         delete element.dom7AnimateInstance;
       });
@@ -41,7 +44,7 @@ function animate(initialProps, initialParams) {
     },
     done(complete) {
       a.animating = false;
-      a.elements.each((index, el) => {
+      a.elements.each((el) => {
         const element = el;
         delete element.dom7AnimateInstance;
       });
@@ -59,7 +62,7 @@ function animate(initialProps, initialParams) {
       const elements = [];
 
       // Define & Cache Initials & Units
-      a.elements.each((index, el) => {
+      a.elements.each((el, index) => {
         let initialFullValue;
         let initialValue;
         let unit;
@@ -72,7 +75,10 @@ function animate(initialProps, initialParams) {
           container: el,
         };
         Object.keys(props).forEach((prop) => {
-          initialFullValue = window.getComputedStyle(el, null).getPropertyValue(prop).replace(',', '.');
+          initialFullValue = window
+            .getComputedStyle(el, null)
+            .getPropertyValue(prop)
+            .replace(',', '.');
           initialValue = parseFloat(initialFullValue);
           unit = initialFullValue.replace(initialValue, '');
           finalValue = parseFloat(props[prop]);
@@ -111,7 +117,14 @@ function animate(initialProps, initialParams) {
         }
         if (params.progress) {
           // eslint-disable-next-line
-          params.progress(els, Math.max(Math.min((time - startTime) / params.duration, 1), 0), ((startTime + params.duration) - time < 0 ? 0 : (startTime + params.duration) - time), startTime);
+          params.progress(
+            els,
+            Math.max(Math.min((time - startTime) / params.duration, 1), 0),
+            startTime + params.duration - time < 0
+              ? 0
+              : startTime + params.duration - time,
+            startTime,
+          );
         }
 
         elements.forEach((element) => {
@@ -119,15 +132,20 @@ function animate(initialProps, initialParams) {
           if (done || el.done) return;
           Object.keys(props).forEach((prop) => {
             if (done || el.done) return;
-            progress = Math.max(Math.min((time - startTime) / params.duration, 1), 0);
+            progress = Math.max(
+              Math.min((time - startTime) / params.duration, 1),
+              0,
+            );
             easeProgress = a.easingProgress(params.easing, progress);
             const { initialValue, finalValue, unit } = el[prop];
-            el[prop].currentValue = initialValue + (easeProgress * (finalValue - initialValue));
+            el[prop].currentValue =
+              initialValue + easeProgress * (finalValue - initialValue);
             const currentValue = el[prop].currentValue;
 
             if (
               (finalValue > initialValue && currentValue >= finalValue) ||
-              (finalValue < initialValue && currentValue <= finalValue)) {
+              (finalValue < initialValue && currentValue <= finalValue)
+            ) {
               el.container.style[prop] = finalValue + unit;
               propsDone += 1;
               if (propsDone === Object.keys(props).length) {
@@ -147,9 +165,9 @@ function animate(initialProps, initialParams) {
         });
         if (done) return;
         // Then call
-        a.frameId = requestAnimationFrame(render);
+        a.frameId = window.requestAnimationFrame(render);
       }
-      a.frameId = requestAnimationFrame(render);
+      a.frameId = window.requestAnimationFrame(render);
       return a;
     },
   };
