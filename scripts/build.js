@@ -1,9 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 const { rollup } = require('rollup');
-const resolve = require('@rollup/plugin-node-resolve');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
+
 const { babel } = require('@rollup/plugin-babel');
-const Terser = require('terser');
+const { minify } = require('terser');
 const pkg = require('../package.json');
 
 const outDir = process.env.NODE_ENV === 'production' ? 'package' : 'build';
@@ -35,7 +36,7 @@ const banner = `
 function buildUMD() {
   rollup({
     input: path.resolve(__dirname, '../src/dom7.bundle.js'),
-    plugins: [resolve(), babel({ babelHelpers: 'bundled' })],
+    plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
   })
     .then((bundle) => {
       return bundle.write({
@@ -47,9 +48,9 @@ function buildUMD() {
         banner,
       });
     })
-    .then((bundle) => {
+    .then(async (bundle) => {
       const result = bundle.output[0];
-      const minified = Terser.minify(result.code, {
+      const minified = await minify(result.code, {
         sourceMap: {
           content: result.map,
           filename: `dom7.min.js`,
@@ -76,7 +77,7 @@ function buildUMD() {
 function buildESM() {
   rollup({
     input: path.resolve(__dirname, '../src/dom7.js'),
-    plugins: [resolve(), babel({ babelHelpers: 'bundled' })],
+    plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
     external: ['ssr-window'],
     onwarn() {
       // eslint-disable-next-line
@@ -99,7 +100,7 @@ function buildESM() {
 function buildCJS() {
   rollup({
     input: path.resolve(__dirname, '../src/dom7.js'),
-    plugins: [resolve(), babel({ babelHelpers: 'bundled' })],
+    plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
     external: ['ssr-window'],
     onwarn() {
       // eslint-disable-next-line
