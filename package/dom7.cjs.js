@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0-alpha.10
+ * Dom7 3.0.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: November 7, 2020
+ * Released on: November 9, 2020
  */
 'use strict';
 

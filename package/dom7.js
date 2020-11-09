@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0-alpha.10
+ * Dom7 3.0.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,16 +7,16 @@
  *
  * Licensed under MIT
  *
- * Released on: November 7, 2020
+ * Released on: November 9, 2020
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    (global = global || self, global.Dom7 = factory());
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Dom7 = factory());
 }(this, (function () { 'use strict';
 
     /**
-     * SSR Window 3.0.0-alpha.4
+     * SSR Window 3.0.0
      * Better handling for window object in SSR environment
      * https://github.com/nolimits4web/ssr-window
      *
@@ -24,7 +24,7 @@
      *
      * Licensed under MIT
      *
-     * Released on: May 20, 2020
+     * Released on: November 9, 2020
      */
 
     /* eslint-disable no-param-reassign */
