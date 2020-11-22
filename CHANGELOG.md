@@ -60,7 +60,7 @@
 
 ## Dom7 v1.7.2 - Released on September 7, 2017
 
-- Fixed issue when calling `.show()` always set `display: block` not repsecting actual display property
+- Fixed issue when calling `.show()` always set `display: block` not respecting actual display property
 
 ## Dom7 v1.7.1 - Released on September 2, 2017
 
