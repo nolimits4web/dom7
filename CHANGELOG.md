@@ -39,7 +39,7 @@
 ## Dom7 v2.0.5 - Released on April 20, 2018
 
 - Support for setting array value on multiple select
-- Imporved internal events proxies logic for better memory management
+- Improved internal events proxies logic for better memory management
 
 ## Dom7 v2.0.3 - Released on February 21, 2018
 
@@ -60,12 +60,12 @@
 
 ## Dom7 v1.7.2 - Released on September 7, 2017
 
-- Fixed issue when calling `.show()` always set `display: block` not repsecting actual display property
+- Fixed issue when calling `.show()` always set `display: block` not respecting actual display property
 
 ## Dom7 v1.7.1 - Released on September 2, 2017
 
 - Removed `$.getTranslate` method
-- Imporved logic of `$.extend` method
+- Improved logic of `$.extend` method
 - New `dom7.modular.js` version for custom es imports, e.g. `import { $, Methods, Ajax } from 'dom7.modular.js'`
 
 ## Dom7 v1.7.0 - Released on August 30, 2017
