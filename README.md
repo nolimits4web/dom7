@@ -20,7 +20,7 @@ $ npm install
 
 To build development version:
 ```
-$ npm run build-dev
+$ npm run build:dev
 ```
 
 The resulting files are:
@@ -30,7 +30,7 @@ The resulting files are:
 
 To build production (minified) version:
 ```
-$ npm run build-prod
+$ npm run build:prod
 ```
 
 The resulting files are:
