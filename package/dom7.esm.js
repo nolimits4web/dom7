@@ -3,18 +3,19 @@
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
- * Copyright 2020, Vladimir Kharlampidi
+ * Copyright 2021, Vladimir Kharlampidi
  *
  * Licensed under MIT
  *
- * Released on: November 9, 2020
+ * Released on: February 15, 2021
  */
 import { getWindow, getDocument } from 'ssr-window';
 
 function _inheritsLoose(subClass, superClass) {
   subClass.prototype = Object.create(superClass.prototype);
   subClass.prototype.constructor = subClass;
-  subClass.__proto__ = superClass;
+
+  _setPrototypeOf(subClass, superClass);
 }
 
 function _getPrototypeOf(o) {
