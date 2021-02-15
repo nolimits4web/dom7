@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const { rollup } = require('rollup');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
@@ -33,49 +33,38 @@ const banner = `
  */
 `.trim();
 
-function buildUMD() {
-  rollup({
+async function buildUMD() {
+  const bundle = await rollup({
     input: path.resolve(__dirname, '../src/dom7.bundle.js'),
     plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
-  })
-    .then((bundle) => {
-      return bundle.write({
-        strict: true,
-        name: 'Dom7',
-        format: 'umd',
-        file: path.resolve(__dirname, `../${outDir}/dom7.js`),
-        sourcemap: false,
-        banner,
-      });
-    })
-    .then(async (bundle) => {
-      const result = bundle.output[0];
-      const minified = await minify(result.code, {
-        sourceMap: {
-          content: result.map,
-          filename: `dom7.min.js`,
-          url: `dom7.min.js.map`,
-        },
-        output: {
-          preamble: banner,
-        },
-      });
-      fs.writeFileSync(
-        path.resolve(__dirname, `../${outDir}/dom7.min.js`),
-        minified.code,
-      );
-      fs.writeFileSync(
-        path.resolve(__dirname, `../${outDir}/dom7.min.js.map`),
-        minified.map,
-      );
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
+  const { output } = await bundle.write({
+    strict: true,
+    name: 'Dom7',
+    format: 'umd',
+    file: path.resolve(__dirname, `../${outDir}/dom7.js`),
+    sourcemap: false,
+    banner,
+  });
+  const result = output[0];
+  const { code, map } = await minify(result.code, {
+    sourceMap: {
+      content: result.map,
+      filename: `dom7.min.js`,
+      url: `dom7.min.js.map`,
+    },
+    output: {
+      preamble: banner,
+    },
+  });
+  await Promise.all([
+    fs.writeFile(path.resolve(__dirname, `../${outDir}/dom7.min.js`), code),
+    fs.writeFile(path.resolve(__dirname, `../${outDir}/dom7.min.js.map`), map),
+  ]);
 }
 
-function buildESM() {
-  rollup({
+async function buildESM() {
+  const bundle = await rollup({
     input: path.resolve(__dirname, '../src/dom7.js'),
     plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
     external: ['ssr-window'],
@@ -83,22 +72,18 @@ function buildESM() {
       // eslint-disable-next-line
       return;
     },
-  })
-    .then((bundle) => {
-      return bundle.write({
-        strict: true,
-        format: 'esm',
-        file: path.resolve(__dirname, `../${outDir}/dom7.esm.js`),
-        sourcemap: false,
-        banner,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
+  await bundle.write({
+    strict: true,
+    format: 'esm',
+    file: path.resolve(__dirname, `../${outDir}/dom7.esm.js`),
+    sourcemap: false,
+    banner,
+  });
 }
-function buildCJS() {
-  rollup({
+
+async function buildCJS() {
+  const bundle = await rollup({
     input: path.resolve(__dirname, '../src/dom7.js'),
     plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
     external: ['ssr-window'],
@@ -106,29 +91,28 @@ function buildCJS() {
       // eslint-disable-next-line
       return;
     },
-  })
-    .then((bundle) => {
-      return bundle.write({
-        strict: true,
-        format: 'cjs',
-        file: path.resolve(__dirname, `../${outDir}/dom7.cjs.js`),
-        sourcemap: false,
-        banner,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  });
+  await bundle.write({
+    strict: true,
+    format: 'cjs',
+    file: path.resolve(__dirname, `../${outDir}/dom7.cjs.js`),
+    sourcemap: false,
+    banner,
+  });
 }
 
-function copyDts() {
-  fs.copyFileSync(
+async function copyDts() {
+  await fs.copyFile(
     path.resolve(__dirname, '../src/dom7.d.ts'),
     path.resolve(__dirname, '../package/dom7.d.ts'),
   );
 }
 
-buildUMD();
-buildESM();
-buildCJS();
-copyDts();
+try {
+  buildUMD();
+  buildESM();
+  buildCJS();
+  copyDts();
+} catch (err) {
+  console.log(err);
+}
