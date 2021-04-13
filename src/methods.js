@@ -562,19 +562,12 @@ function index() {
   }
   return undefined;
 }
+
 function eq(index) {
-  if (typeof index === 'undefined') return this;
-  const length = this.length;
-  if (index > length - 1) {
-    return $([]);
-  }
-  if (index < 0) {
-    const returnIndex = length + index;
-    if (returnIndex < 0) return $([]);
-    return $([this[returnIndex]]);
-  }
-  return $([this[index]]);
+  if (index === undefined) return this;
+  return $(index < 0 ? this[index += this.length] : this[index]);
 }
+
 function append(...els) {
   let newChild;
   const document = getDocument();
