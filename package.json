@@ -37,26 +37,26 @@
   },
   "homepage": "https://framework7.io/docs/dom7.html",
   "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/preset-env": "^7.12.16",
+    "@babel/core": "^7.14.8",
+    "@babel/preset-env": "^7.14.8",
     "@rollup/plugin-babel": "^5.3.0",
-    "@rollup/plugin-node-resolve": "^11.2.0",
+    "@rollup/plugin-node-resolve": "^13.0.2",
     "cross-env": "^7.0.3",
     "eslint": "^7.20.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.1",
-    "exec-sh": "^0.3.4",
-    "fs-extra": "^9.1.0",
-    "inquirer": "^7.3.3",
+    "exec-sh": "^0.4.0",
+    "fs-extra": "^10.0.0",
+    "inquirer": "^8.1.2",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.2.1",
-    "rollup": "^2.39.0",
-    "serve": "^11.3.2",
-    "terser": "^5.6.0"
+    "prettier": "^2.3.2",
+    "rollup": "^2.53.3",
+    "serve": "^12.0.0",
+    "terser": "^5.7.1"
   },
   "dependencies": {
-    "ssr-window": "^3.0.0"
+    "ssr-window": "^4.0.0-beta.2"
   }
 }
