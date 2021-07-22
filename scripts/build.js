@@ -9,6 +9,7 @@ const pkg = require('../package.json');
 
 const outDir = process.env.NODE_ENV === 'production' ? 'package' : 'build';
 
+// prettier-ignore
 const date = {
   day: new Date().getDate(),
   month: 'January February March April May June July August September October November December'.split(
@@ -43,7 +44,7 @@ async function buildUMD() {
     name: 'Dom7',
     format: 'umd',
     file: path.resolve(__dirname, `../${outDir}/dom7.js`),
-    sourcemap: false,
+    sourcemap: true,
     banner,
   });
   const result = output[0];

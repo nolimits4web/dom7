@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import { getWindow } from 'ssr-window';
 
 function scrollTo(...args) {

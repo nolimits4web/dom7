@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import { getWindow, getDocument } from 'ssr-window';
 import $ from './$';
 import Dom7 from './dom7-class';
