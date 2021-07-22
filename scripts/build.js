@@ -9,12 +9,12 @@ const pkg = require('../package.json');
 
 const outDir = process.env.NODE_ENV === 'production' ? 'package' : 'build';
 
-// prettier-ignore
 const date = {
   day: new Date().getDate(),
-  month: 'January February March April May June July August September October November December'.split(
-    ' ',
-  )[new Date().getMonth()],
+  month:
+    'January February March April May June July August September October November December'.split(
+      ' ',
+    )[new Date().getMonth()],
   year: new Date().getFullYear(),
 };
 
