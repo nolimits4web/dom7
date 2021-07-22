@@ -1,5 +1,9 @@
 # Change Log
 
+## Dom7 v4.0.0-beta.1 - Released on July 22, 2021
+
+- Now it uses only ES module exports in package
+
 ## Dom7 v3.0.0 - Released on November 9, 2020
 
 - New modular export. Now it exports only main Dom7 `$` function and all methods. No bundle ESM/CJS version
