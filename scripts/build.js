@@ -82,25 +82,6 @@ async function buildESM() {
   });
 }
 
-async function buildCJS() {
-  const bundle = await rollup({
-    input: path.resolve(__dirname, '../src/dom7.js'),
-    plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
-    external: ['ssr-window'],
-    onwarn() {
-      // eslint-disable-next-line
-      return;
-    },
-  });
-  await bundle.write({
-    strict: true,
-    format: 'cjs',
-    file: path.resolve(__dirname, `../${outDir}/dom7.cjs.js`),
-    sourcemap: false,
-    banner,
-  });
-}
-
 async function copyDts() {
   await fs.copyFile(
     path.resolve(__dirname, '../src/dom7.d.ts'),
@@ -111,7 +92,6 @@ async function copyDts() {
 try {
   buildUMD();
   buildESM();
-  buildCJS();
   copyDts();
 } catch (err) {
   console.log(err);
