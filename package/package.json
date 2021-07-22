@@ -3,10 +3,11 @@
   "version": "3.0.0",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
-  "main": "dom7.cjs.js",
   "types": "dom7.d.ts",
-  "jsnext:main": "dom7.esm.js",
-  "module": "dom7.esm.js",
+  "type": "module",
+  "exports": {
+    ".": "./dom7.esm.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nolimits4web/dom7.git"
@@ -25,6 +26,6 @@
   },
   "homepage": "https://framework7.io/docs/dom7.html",
   "dependencies": {
-    "ssr-window": "^3.0.0-alpha.1"
+    "ssr-window": "^4.0.0-beta.2"
   }
 }
