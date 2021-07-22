@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0
+ * Dom7 4.0.0-beta.1
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: February 15, 2021
+ * Released on: July 22, 2021
  */
 import { getWindow, getDocument } from 'ssr-window';
 
@@ -40,7 +40,7 @@ function _isNativeReflectConstruct() {
   if (typeof Proxy === "function") return true;
 
   try {
-    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
     return true;
   } catch (e) {
     return false;
@@ -170,6 +170,8 @@ function toCamelCase(string) {
   });
 }
 
+// eslint-disable-next-line
+
 function qsa(selector, context) {
   if (typeof selector !== 'string') {
     return [selector];
@@ -229,6 +231,8 @@ function $(selector, context) {
 }
 
 $.fn = Dom7.prototype;
+
+// eslint-disable-next-line
 
 function addClass() {
   for (var _len = arguments.length, classes = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -1264,6 +1268,8 @@ function empty() {
   return this;
 }
 
+// eslint-disable-next-line
+
 function scrollTo() {
   var window = getWindow();
 
@@ -1441,6 +1447,8 @@ function scrollLeft() {
 
   return dom.scrollTo(left, undefined, duration, easing, callback);
 }
+
+// eslint-disable-next-line
 
 function animate(initialProps, initialParams) {
   var window = getWindow();

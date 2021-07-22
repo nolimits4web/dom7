@@ -1,5 +1,5 @@
 /**
- * Dom7 3.0.0
+ * Dom7 4.0.0-beta.1
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: February 15, 2021
+ * Released on: July 22, 2021
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -16,15 +16,15 @@
 }(this, (function () { 'use strict';
 
     /**
-     * SSR Window 3.0.0
+     * SSR Window 4.0.0-beta.2
      * Better handling for window object in SSR environment
      * https://github.com/nolimits4web/ssr-window
      *
-     * Copyright 2020, Vladimir Kharlampidi
+     * Copyright 2021, Vladimir Kharlampidi
      *
      * Licensed under MIT
      *
-     * Released on: November 9, 2020
+     * Released on: July 22, 2021
      */
 
     /* eslint-disable no-param-reassign */
@@ -198,7 +198,7 @@
       if (typeof Proxy === "function") return true;
 
       try {
-        Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
         return true;
       } catch (e) {
         return false;
@@ -328,6 +328,8 @@
       });
     }
 
+    // eslint-disable-next-line
+
     function qsa(selector, context) {
       if (typeof selector !== 'string') {
         return [selector];
@@ -387,6 +389,8 @@
     }
 
     $.fn = Dom7.prototype;
+
+    // eslint-disable-next-line
 
     function addClass() {
       for (var _len = arguments.length, classes = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -1482,6 +1486,8 @@
         empty: empty
     });
 
+    // eslint-disable-next-line
+
     function scrollTo() {
       var window = getWindow();
 
@@ -1660,12 +1666,14 @@
       return dom.scrollTo(left, undefined, duration, easing, callback);
     }
 
-    var scroll = /*#__PURE__*/Object.freeze({
+    var scroll$1 = /*#__PURE__*/Object.freeze({
         __proto__: null,
         scrollTo: scrollTo,
         scrollTop: scrollTop,
         scrollLeft: scrollLeft
     });
+
+    // eslint-disable-next-line
 
     function animate(initialProps, initialParams) {
       var window = getWindow();
@@ -1917,7 +1925,7 @@
     var touchend = shortcut('touchend');
     var touchmove = shortcut('touchmove');
     var resize = shortcut('resize');
-    var scroll$1 = shortcut('scroll');
+    var scroll = shortcut('scroll');
 
     var shortcuts = /*#__PURE__*/Object.freeze({
         __proto__: null,
@@ -1942,10 +1950,10 @@
         touchend: touchend,
         touchmove: touchmove,
         resize: resize,
-        scroll: scroll$1
+        scroll: scroll
     });
 
-    [methods, scroll, animate$1, shortcuts].forEach(function (group) {
+    [methods, scroll$1, animate$1, shortcuts].forEach(function (group) {
       Object.keys(group).forEach(function (methodName) {
         $.fn[methodName] = group[methodName];
       });
@@ -1954,3 +1962,4 @@
     return $;
 
 })));
+//# sourceMappingURL=dom7.js.map
