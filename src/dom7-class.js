@@ -12,7 +12,7 @@ function makeReactive(obj) {
 }
 class Dom7 extends Array {
   constructor(items) {
-    super(...items);
+    super(...(items || []));
 
     makeReactive(this);
   }

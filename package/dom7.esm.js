@@ -1,5 +1,5 @@
 /**
- * Dom7 4.0.0-beta.2
+ * Dom7 4.0.0-beta.3
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -28,7 +28,7 @@ function makeReactive(obj) {
 
 class Dom7 extends Array {
   constructor(items) {
-    super(...items);
+    super(...(items || []));
     makeReactive(this);
   }
 
