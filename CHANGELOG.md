@@ -1,5 +1,9 @@
 # Change Log
 
+## Dom7 v4.0.0-beta.2 - Released on August 4, 2021
+
+- Increase build target to `es6`
+
 ## Dom7 v4.0.0-beta.1 - Released on July 22, 2021
 
 - Now it uses only ES module exports in package
