@@ -1,6 +1,6 @@
 {
   "name": "dom7-src",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
   "main": "dom7.cjs.js",
@@ -57,6 +57,6 @@
     "terser": "^5.7.1"
   },
   "dependencies": {
-    "ssr-window": "^4.0.0-beta.2"
+    "ssr-window": "^4.0.0"
   }
 }

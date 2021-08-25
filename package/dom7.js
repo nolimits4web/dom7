@@ -1,5 +1,5 @@
 /**
- * Dom7 4.0.0-beta.3
+ * Dom7 4.0.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: August 4, 2021
+ * Released on: August 25, 2021
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -16,7 +16,7 @@
 }(this, (function () { 'use strict';
 
     /**
-     * SSR Window 4.0.0-beta.2
+     * SSR Window 4.0.0
      * Better handling for window object in SSR environment
      * https://github.com/nolimits4web/ssr-window
      *
@@ -24,7 +24,7 @@
      *
      * Licensed under MIT
      *
-     * Released on: July 22, 2021
+     * Released on: August 25, 2021
      */
 
     /* eslint-disable no-param-reassign */
@@ -32,61 +32,69 @@
       return obj !== null && typeof obj === 'object' && 'constructor' in obj && obj.constructor === Object;
     }
 
-    function extend(target, src) {
-      if (target === void 0) {
-        target = {};
-      }
-
-      if (src === void 0) {
-        src = {};
-      }
-
-      Object.keys(src).forEach(function (key) {
+    function extend(target = {}, src = {}) {
+      Object.keys(src).forEach(key => {
         if (typeof target[key] === 'undefined') target[key] = src[key];else if (isObject(src[key]) && isObject(target[key]) && Object.keys(src[key]).length > 0) {
           extend(target[key], src[key]);
         }
       });
     }
 
-    var ssrDocument = {
+    const ssrDocument = {
       body: {},
-      addEventListener: function () {},
-      removeEventListener: function () {},
+
+      addEventListener() {},
+
+      removeEventListener() {},
+
       activeElement: {
-        blur: function () {},
+        blur() {},
+
         nodeName: ''
       },
-      querySelector: function () {
+
+      querySelector() {
         return null;
       },
-      querySelectorAll: function () {
+
+      querySelectorAll() {
         return [];
       },
-      getElementById: function () {
+
+      getElementById() {
         return null;
       },
-      createEvent: function () {
+
+      createEvent() {
         return {
-          initEvent: function () {}
+          initEvent() {}
+
         };
       },
-      createElement: function () {
+
+      createElement() {
         return {
           children: [],
           childNodes: [],
           style: {},
-          setAttribute: function () {},
-          getElementsByTagName: function () {
+
+          setAttribute() {},
+
+          getElementsByTagName() {
             return [];
           }
+
         };
       },
-      createElementNS: function () {
+
+      createElementNS() {
         return {};
       },
-      importNode: function () {
+
+      importNode() {
         return null;
       },
+
       location: {
         hash: '',
         host: '',
@@ -100,12 +108,12 @@
     };
 
     function getDocument() {
-      var doc = typeof document !== 'undefined' ? document : {};
+      const doc = typeof document !== 'undefined' ? document : {};
       extend(doc, ssrDocument);
       return doc;
     }
 
-    var ssrWindow = {
+    const ssrWindow = {
       document: ssrDocument,
       navigator: {
         userAgent: ''
@@ -121,32 +129,47 @@
         search: ''
       },
       history: {
-        replaceState: function () {},
-        pushState: function () {},
-        go: function () {},
-        back: function () {}
+        replaceState() {},
+
+        pushState() {},
+
+        go() {},
+
+        back() {}
+
       },
       CustomEvent: function CustomEvent() {
         return this;
       },
-      addEventListener: function () {},
-      removeEventListener: function () {},
-      getComputedStyle: function () {
+
+      addEventListener() {},
+
+      removeEventListener() {},
+
+      getComputedStyle() {
         return {
-          getPropertyValue: function () {
+          getPropertyValue() {
             return '';
           }
+
         };
       },
-      Image: function () {},
-      Date: function () {},
+
+      Image() {},
+
+      Date() {},
+
       screen: {},
-      setTimeout: function () {},
-      clearTimeout: function () {},
-      matchMedia: function () {
+
+      setTimeout() {},
+
+      clearTimeout() {},
+
+      matchMedia() {
         return {};
       },
-      requestAnimationFrame: function (callback) {
+
+      requestAnimationFrame(callback) {
         if (typeof setTimeout === 'undefined') {
           callback();
           return null;
@@ -154,17 +177,19 @@
 
         return setTimeout(callback, 0);
       },
-      cancelAnimationFrame: function (id) {
+
+      cancelAnimationFrame(id) {
         if (typeof setTimeout === 'undefined') {
           return;
         }
 
         clearTimeout(id);
       }
+
     };
 
     function getWindow() {
-      var win = typeof window !== 'undefined' ? window : {};
+      const win = typeof window !== 'undefined' ? window : {};
       extend(win, ssrWindow);
       return win;
     }

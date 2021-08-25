@@ -1,5 +1,5 @@
 /**
- * Dom7 4.0.0-beta.3
+ * Dom7 4.0.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
@@ -7,7 +7,7 @@
  *
  * Licensed under MIT
  *
- * Released on: August 4, 2021
+ * Released on: August 25, 2021
  */
 import { getWindow, getDocument } from 'ssr-window';
 

@@ -1,6 +1,6 @@
 {
   "name": "dom7",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
   "types": "dom7.d.ts",
@@ -26,6 +26,6 @@
   },
   "homepage": "https://framework7.io/docs/dom7.html",
   "dependencies": {
-    "ssr-window": "^4.0.0-beta.2"
+    "ssr-window": "^4.0.0"
   }
 }
