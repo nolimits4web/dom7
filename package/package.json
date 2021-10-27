@@ -5,6 +5,8 @@
   "sideEffects": false,
   "types": "dom7.d.ts",
   "type": "module",
+  "main": "./dom7.esm.js",
+  "module": "./dom7.esm.js",
   "exports": {
     ".": "./dom7.esm.js"
   },
