@@ -1,6 +1,6 @@
 {
   "name": "dom7-src",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
   "main": "dom7.cjs.js",
@@ -17,7 +17,8 @@
     "lint": "eslint --ext .js,.ts,.tsx .",
     "test": "node ./scripts/test.mjs",
     "validate": "npm-run-all --parallel test check-format lint",
-    "release": "npm run validate && node ./scripts/release"
+    "release": "npm run validate && node ./scripts/release",
+    "changelog": "npx conventional-changelog -p angular -i CHANGELOG.md -u -s"
   },
   "repository": {
     "type": "git",

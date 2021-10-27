@@ -1,5 +1,11 @@
 # Change Log
 
+# [4.0.1](https://github.com/nolimits4web/dom7/compare/v4.0.0...v4.0.1) (2021-10-27)
+
+### Features
+
+- add "main" and "module" package.json fields ([2dfefb7](https://github.com/nolimits4web/dom7/commit/2dfefb7d8ee8f206b7e36602c066d71efaa2700c))
+
 ## 4.0.0 - Released on August 25, 2021
 
 - Increase build target to `es6`
