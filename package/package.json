@@ -8,6 +8,7 @@
   "main": "./dom7.esm.js",
   "module": "./dom7.esm.js",
   "exports": {
+    "./package.json": "./package.json",
     ".": "./dom7.esm.js"
   },
   "repository": {
