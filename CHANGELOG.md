@@ -1,5 +1,11 @@
 # Change Log
 
+# [4.0.2](https://github.com/nolimits4web/dom7/compare/v4.0.1...v4.0.2) (2021-12-13)
+
+### Features
+
+- export package.json ([#52](https://github.com/nolimits4web/dom7/issues/52)) ([63bc770](https://github.com/nolimits4web/dom7/commit/63bc7705de8c959edca7063bc77ae8ad520ab173))
+
 # [4.0.1](https://github.com/nolimits4web/dom7/compare/v4.0.0...v4.0.1) (2021-10-27)
 
 ### Features
