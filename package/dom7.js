@@ -210,11 +210,14 @@
     }
 
     class Dom7 extends Array {
-      constructor(items) {
-        super(...(items || []));
-        makeReactive(this);
+      constructor(items, ...rest) {
+        if (typeof items === 'number') {
+          super(items);
+        } else {
+          super(...(items || []));
+          makeReactive(this);
+        }
       }
-
     }
 
     function arrayFlat(arr = []) {
@@ -265,6 +268,7 @@
       const window = getWindow();
       const document = getDocument();
       let arr = [];
+      console.log('here 1111');
 
       if (!context && selector instanceof Dom7) {
         return selector;
@@ -300,7 +304,7 @@
         if (selector instanceof Dom7) return selector;
         arr = selector;
       }
-
+      console.log('here 2222');
       return new Dom7(arrayUnique(arr));
     }
 
