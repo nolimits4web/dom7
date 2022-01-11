@@ -12,9 +12,12 @@ function makeReactive(obj) {
 }
 class Dom7 extends Array {
   constructor(items) {
-    super(...(items || []));
-
-    makeReactive(this);
+    if (typeof items === 'number') {
+      super(items);
+    } else {
+      super(...(items || []));
+      makeReactive(this);
+    }
   }
 }
 export default Dom7;
