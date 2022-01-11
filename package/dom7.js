@@ -1,13 +1,13 @@
 /**
- * Dom7 4.0.2
+ * Dom7 4.0.3
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
- * Copyright 2021, Vladimir Kharlampidi
+ * Copyright 2022, Vladimir Kharlampidi
  *
  * Licensed under MIT
  *
- * Released on: December 13, 2021
+ * Released on: January 11, 2022
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -210,14 +210,11 @@
     }
 
     class Dom7 extends Array {
-      constructor(items, ...rest) {
-        if (typeof items === 'number') {
-          super(items);
-        } else {
-          super(...(items || []));
-          makeReactive(this);
-        }
+      constructor(items) {
+        super(...(items || []));
+        makeReactive(this);
       }
+
     }
 
     function arrayFlat(arr = []) {
@@ -268,7 +265,6 @@
       const window = getWindow();
       const document = getDocument();
       let arr = [];
-      console.log('here 1111');
 
       if (!context && selector instanceof Dom7) {
         return selector;
@@ -304,7 +300,7 @@
         if (selector instanceof Dom7) return selector;
         arr = selector;
       }
-      console.log('here 2222');
+
       return new Dom7(arrayUnique(arr));
     }
 

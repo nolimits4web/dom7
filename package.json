@@ -1,6 +1,6 @@
 {
   "name": "dom7-src",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API",
   "sideEffects": false,
   "main": "dom7.cjs.js",
