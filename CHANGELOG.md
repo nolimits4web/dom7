@@ -1,5 +1,9 @@
 # Change Log
 
+# [4.0.4](https://github.com/nolimits4web/dom7/compare/v4.0.3...v4.0.4) (2022-01-11)
+
+- fixed issue with `new Array(number)` use case
+
 # [4.0.3](https://github.com/nolimits4web/dom7/compare/v4.0.2...v4.0.3) (2022-01-11)
 
 - fixed issue with `new Array(number)` use case
