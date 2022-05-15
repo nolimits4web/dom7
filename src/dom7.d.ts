@@ -267,13 +267,13 @@ export interface Dom7Array {
   ): Dom7Array;
   /** Get scrollLeft position of element */
   scrollLeft(): number;
-  /** Set scrollLeft "position" with animation during "duration" (in ms). Scroll left postion will be set immediately if duration is not specified. If you have specified "callback" function, then it will be executed after scrolling completed */
+  /** Set scrollLeft "position" with animation during "duration" (in ms). Scroll left position will be set immediately if duration is not specified. If you have specified "callback" function, then it will be executed after scrolling completed */
   scrollLeft(
     position: number,
     duration?: number,
     callback?: () => void,
   ): Dom7Array;
-  /** Set scroll left and scroll top with animation during "duration" (in ms). Scroll postion will be set immediately if duration is not specified. If you have specified "callback" function, then it will be executed after scrolling completed */
+  /** Set scroll left and scroll top with animation during "duration" (in ms). Scroll position will be set immediately if duration is not specified. If you have specified "callback" function, then it will be executed after scrolling completed */
   scrollTo(
     left: number,
     top: number,
