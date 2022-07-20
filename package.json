@@ -55,7 +55,7 @@
     "prettier": "^2.3.2",
     "rollup": "^2.53.3",
     "serve": "^12.0.0",
-    "terser": "^5.7.1"
+    "terser": "^5.14.2"
   },
   "dependencies": {
     "ssr-window": "^4.0.0"
