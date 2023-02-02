@@ -1,13 +1,13 @@
 /**
- * Dom7 4.0.4
+ * Dom7 4.0.5
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
  * https://framework7.io/docs/dom7.html
  *
- * Copyright 2022, Vladimir Kharlampidi
+ * Copyright 2023, Vladimir Kharlampidi
  *
  * Licensed under MIT
  *
- * Released on: January 11, 2022
+ * Released on: February 2, 2023
  */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -691,6 +691,22 @@
       return this;
     }
 
+    function transitionStart(callback) {
+      const dom = this;
+
+      function fireCallBack(e) {
+        if (e.target !== this) return;
+        callback.call(this, e);
+        dom.off('transitionstart', fireCallBack);
+      }
+
+      if (callback) {
+        dom.on('transitionstart', fireCallBack);
+      }
+
+      return this;
+    }
+
     function transitionEnd(callback) {
       const dom = this;
 
@@ -1288,6 +1304,7 @@
         off: off,
         once: once,
         trigger: trigger,
+        transitionStart: transitionStart,
         transitionEnd: transitionEnd,
         animationEnd: animationEnd,
         width: width,

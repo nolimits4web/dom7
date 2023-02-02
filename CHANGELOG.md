@@ -1,5 +1,11 @@
 # Change Log
 
+# [4.0.5](https://github.com/nolimits4web/dom7/compare/v4.0.4...v4.0.5) (2023-02-02)
+
+### Features
+
+- add "transitionStart" event method ([#62](https://github.com/nolimits4web/dom7/issues/62)) ([795375f](https://github.com/nolimits4web/dom7/commit/795375f897105dc61e69af167a3e9c5c09821a9d))
+
 # [4.0.4](https://github.com/nolimits4web/dom7/compare/v4.0.3...v4.0.4) (2022-01-11)
 
 - fixed issue with `new Array(number)` use case

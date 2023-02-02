@@ -132,14 +132,14 @@ export interface Dom7Array {
   [index: number]: Element;
 
   // CLASSES
-  /** Add class to elements */
-  addClass(className: string): Dom7Array;
-  /** Remove specified class */
-  removeClass(className: string): Dom7Array;
-  /** Determine whether any of the matched elements are assigned the given class */
-  hasClass(className: string): Dom7Array;
+  /** Add one or more classes to elements */
+  addClass(...className: string): Dom7Array;
+  /** Remove one or more specified classes */
+  removeClass(...className: string): Dom7Array;
+  /** Determine whether any of the matched elements are assigned the given classes */
+  hasClass(...className: string): Dom7Array;
   /** Remove (if class is present) or add (if not) one or more classes from each element in the set of matched elements */
-  toggleClass(className: string): Dom7Array;
+  toggleClass(...className: string): Dom7Array;
 
   // ATTRIBUTES AND PROPERTIES
   /** Get property value */
@@ -219,6 +219,8 @@ export interface Dom7Array {
   ): Dom7Array;
   /** Execute all handlers added to the matched elements for the specified event */
   trigger(eventName: string, eventData?: any): Dom7Array;
+  /** Adds transitionStart event handler to collection */
+  transitionStart(callback: () => void): Dom7Array;
   /** Adds transitionEnd event handler to collection */
   transitionEnd(callback: () => void): Dom7Array;
   /** Adds animationEnd event handler to collection */
@@ -267,13 +269,13 @@ export interface Dom7Array {
   ): Dom7Array;
   /** Get scrollLeft position of element */
   scrollLeft(): number;
-  /** Set scrollLeft "position" with animation during "duration" (in ms). Scroll left postion will be set immediately if duration is not specified. If you have specified "callback" function, then it will be executed after scrolling completed */
+  /** Set scrollLeft "position" with animation during "duration" (in ms). Scroll left position will be set immediately if duration is not specified. If you have specified "callback" function, then it will be executed after scrolling completed */
   scrollLeft(
     position: number,
     duration?: number,
     callback?: () => void,
   ): Dom7Array;
-  /** Set scroll left and scroll top with animation during "duration" (in ms). Scroll postion will be set immediately if duration is not specified. If you have specified "callback" function, then it will be executed after scrolling completed */
+  /** Set scroll left and scroll top with animation during "duration" (in ms). Scroll position will be set immediately if duration is not specified. If you have specified "callback" function, then it will be executed after scrolling completed */
   scrollTo(
     left: number,
     top: number,
@@ -534,6 +536,7 @@ declare const touchmove: () => void;
 declare const touchstart: () => void;
 declare const transform: () => void;
 declare const transition: () => void;
+declare const transitionStart: () => void;
 declare const transitionEnd: () => void;
 declare const trigger: () => void;
 declare const val: () => void;
@@ -619,6 +622,7 @@ export {
   touchstart,
   transform,
   transition,
+  transitionStart,
   transitionEnd,
   trigger,
   val,
