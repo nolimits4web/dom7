@@ -336,6 +336,18 @@ function trigger(...args) {
   }
   return this;
 }
+function transitionStart(callback) {
+  const dom = this;
+  function fireCallBack(e) {
+    if (e.target !== this) return;
+    callback.call(this, e);
+    dom.off('transitionstart', fireCallBack);
+  }
+  if (callback) {
+    dom.on('transitionstart', fireCallBack);
+  }
+  return this;
+}
 function transitionEnd(callback) {
   const dom = this;
   function fireCallBack(e) {
@@ -838,6 +850,7 @@ export {
   off,
   once,
   trigger,
+  transitionStart,
   transitionEnd,
   animationEnd,
   width,
