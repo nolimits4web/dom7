@@ -1,5 +1,11 @@
 # Change Log
 
+# [4.0.6](https://github.com/nolimits4web/dom7/compare/v4.0.5...v4.0.6) (2023-02-02)
+
+### Bug Fixes
+
+- **types:** fix multiple class definitions on class manipulation methods ([#66](https://github.com/nolimits4web/dom7/issues/66)) ([47ee3c3](https://github.com/nolimits4web/dom7/commit/47ee3c3283851f9725032672a672c1aa3b89a845)), closes [#67](https://github.com/nolimits4web/dom7/issues/67)
+
 # [4.0.5](https://github.com/nolimits4web/dom7/compare/v4.0.4...v4.0.5) (2023-02-02)
 
 ### Features
