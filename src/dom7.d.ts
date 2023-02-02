@@ -219,6 +219,8 @@ export interface Dom7Array {
   ): Dom7Array;
   /** Execute all handlers added to the matched elements for the specified event */
   trigger(eventName: string, eventData?: any): Dom7Array;
+  /** Adds transitionStart event handler to collection */
+  transitionStart(callback: () => void): Dom7Array;
   /** Adds transitionEnd event handler to collection */
   transitionEnd(callback: () => void): Dom7Array;
   /** Adds animationEnd event handler to collection */
@@ -534,6 +536,7 @@ declare const touchmove: () => void;
 declare const touchstart: () => void;
 declare const transform: () => void;
 declare const transition: () => void;
+declare const transitionStart: () => void;
 declare const transitionEnd: () => void;
 declare const trigger: () => void;
 declare const val: () => void;
@@ -619,6 +622,7 @@ export {
   touchstart,
   transform,
   transition,
+  transitionStart,
   transitionEnd,
   trigger,
   val,
