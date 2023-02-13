@@ -1,13 +1,8 @@
+ 
+
 export function arrayFlat(arr = []) {
-  const res = [];
-  arr.forEach((el) => {
-    if (Array.isArray(el)) {
-      res.push(...arrayFlat(el));
-    } else {
-      res.push(el);
-    }
-  });
-  return res;
+  //there is already a flat method in javascript
+ return arr.flat()
 }
 export function arrayFilter(arr, callback) {
   return Array.prototype.filter.call(arr, callback);
